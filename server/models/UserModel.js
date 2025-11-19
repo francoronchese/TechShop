@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
     },
     refresh_token: {
       type: String,
-      default: '',
+      default: null,
     },
     verify_email: {
       type: Boolean,
@@ -33,26 +33,26 @@ const userSchema = new mongoose.Schema(
     },
     last_login_date: {
       type: Date,
-      default: '',
+      default: null,
     },
     status: {
       type: String,
       enum: ['Active', 'Inactive', 'Suspended'],
       default: 'Active',
     },
-    address_id: [
+    addresses: [
       {
         type: mongoose.Schema.ObjectId,
         ref: 'address',
       },
     ],
-    shopping_cart_details: [
+    shopping_cart_items: [
       {
         type: mongoose.Schema.ObjectId,
         ref: 'cartProduct',
       },
     ],
-    order_history_details: [
+    orders: [
       {
         type: mongoose.Schema.ObjectId,
         ref: 'order',
@@ -64,7 +64,7 @@ const userSchema = new mongoose.Schema(
     },
     forgot_password_expiry: {
       type: Date,
-      default: '',
+      default: null,
     },
     role: {
       type: String,
