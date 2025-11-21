@@ -6,30 +6,32 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import connectDB from './config/connectDB.js';
+import userRouter from './routes/userRoutes.js';
 
 const app = express();
+// Middleware for parsing JSON request bodies
+app.use(express.json());
+// CORS configuration for frontend communication
 app.use(
   cors({
-    credentials: true,
-    origin: process.env.FRONTEND_URL,
+    credentials: true, // Allow cookies to be sent
+    origin: process.env.FRONTEND_URL, // Only allow requests from frontend
   })
 );
-app.use(express.json());
+// Middleware for parsing cookies
 app.use(cookieParser());
+// HTTP request logger
 app.use(morgan('combined'));
+// Security headers middleware
 app.use(
   helmet({
-    crossOriginResourcePolicy: false,
+    crossOriginResourcePolicy: false, // Allow loading images from Cloudinary
   })
 );
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Server is running now',
-  });
-});
+app.use('/api/user', userRouter);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
