@@ -2,18 +2,22 @@ import { useState } from 'react';
 import { CircleUserRound } from 'lucide-react';
 import SignUpForm from '../components/forms/SignUpForm';
 import imageToBase64 from '../helpers/imageToBase64';
+import toast from 'react-hot-toast';
 
 const SignUpPage = () => {
   const [profileImage, setProfileImage] = useState('');
 
-  const handleUploadPhoto = async (e) => {
+  const handlePhotoUpload = async (e) => {
+    // Get first file from input (user can only select one image)
     const file = e.target.files[0];
     if (file) {
       try {
+        // Convert to base64 for instant preview
         const base64 = await imageToBase64(file);
         setProfileImage(base64);
       } catch (err) {
         console.log('Error converting image:', err);
+        toast.error('Failed to process image');
       }
     }
   };
@@ -43,7 +47,8 @@ const SignUpPage = () => {
             <input
               type='file'
               className='hidden'
-              onChange={handleUploadPhoto}
+              onChange={handlePhotoUpload}
+              accept='.jpg,.jpeg,.png,.webp'
             />
           </label>
         </form>

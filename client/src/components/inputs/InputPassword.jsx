@@ -7,7 +7,7 @@ const InputPassword = ({
   onChange,
   placeholder,
   showPassword,
-  onTogglePassword,
+  onToggleShowPassword,
 }) => {
   return (
     <div className='grid gap-1.5'>
@@ -23,7 +23,7 @@ const InputPassword = ({
           required
           className='w-full outline-none'
         />
-        <div className='cursor-pointer' onClick={onTogglePassword}>
+        <div className='cursor-pointer' onClick={onToggleShowPassword}>
           {showPassword ? <EyeOff /> : <Eye />}
         </div>
       </div>

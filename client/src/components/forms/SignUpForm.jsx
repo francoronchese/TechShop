@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import InputText from '../inputs/InputText';
 import InputPassword from '../inputs/InputPassword';
+import toast from 'react-hot-toast';
+import SummaryApi, { baseURL } from '../../config/summaryApi';
+import uploadToCloudinary from '../../helpers/cloudinaryUpload';
 
 const SignUpForm = ({ profileImage = '' }) => {
-  const [password, setPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -13,6 +16,7 @@ const SignUpForm = ({ profileImage = '' }) => {
     confirmPassword: '',
     profileImage: profileImage,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     setFormData((prev) => ({
@@ -28,19 +32,56 @@ const SignUpForm = ({ profileImage = '' }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { name, email, password, confirmPassword } = formData;
+    try {
+      // Upload image to Cloudinary if user selected one
+      const avatarUrl = profileImage
+        ? await uploadToCloudinary(profileImage)
+        : '';
 
-    if (!name || !email || !password || !confirmPassword) {
-      return alert('All fields required');
-    }
+      const response = await fetch(baseURL + SummaryApi.register.url, {
+        method: SummaryApi.register.method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+          avatar: avatarUrl, // Cloudinary URL or empty string
+        }),
+      });
 
-    if (password !== confirmPassword) {
-      return alert('Passwords do not match');
+      const data = await response.json();
+
+      // Display backend response messages
+      if (data.error) {
+        toast.error(data.message);
+      } else if (data.success) {
+        toast.success(data.message);
+        // Clear form
+        setFormData({
+          name: '',
+          email: '',
+          password: '',
+          confirmPassword: '',
+          profileImage: '',
+        });
+        // Redirect to login page after successful registration
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Connection error. Please try again later.');
     }
   };
+
+  const isFormValid =
+    formData.name &&
+    formData.email &&
+    formData.password &&
+    formData.confirmPassword;
 
   return (
     <form onSubmit={handleSubmit} className='flex flex-col gap-2'>
@@ -66,8 +107,8 @@ const SignUpForm = ({ profileImage = '' }) => {
         value={formData.password}
         onChange={handleChange}
         placeholder='enter password'
-        showPassword={password}
-        onTogglePassword={() => setPassword(!password)}
+        showPassword={showPassword}
+        onToggleShowPassword={() => setShowPassword(!showPassword)}
       />
 
       <InputPassword
@@ -77,10 +118,17 @@ const SignUpForm = ({ profileImage = '' }) => {
         onChange={handleChange}
         placeholder='enter confirm password'
         showPassword={confirmPassword}
-        onTogglePassword={() => setConfirmPassword(!confirmPassword)}
+        onToggleShowPassword={() => setConfirmPassword(!confirmPassword)}
       />
 
-      <button className='block w-full max-w-[150px] mx-auto my-6 px-6 py-1.5 text-[1.05rem] bg-orange-600 text-white rounded-full hover:bg-orange-500 hover:scale-110 transition-all delay-150 duration-300 ease-in-out'>
+      <button
+        disabled={!isFormValid}
+        className={`block w-full max-w-[150px] mx-auto my-6 px-6 py-1.5 text-[1.05rem]  text-white rounded-full ${
+          isFormValid
+            ? 'bg-orange-600 hover:bg-orange-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wide cursor-pointer'
+            : 'bg-slate-400 cursor-not-allowed'
+        }`}
+      >
         Sign Up
       </button>
 
@@ -88,7 +136,7 @@ const SignUpForm = ({ profileImage = '' }) => {
         Already have an account?{' '}
         <Link
           to='/login'
-          className='text-orange-500 hover:text-orange-600 hover:underline font-medium'
+          className='text-orange-500 hover:text-orange-600 hover:underline font-semibold'
         >
           Login
         </Link>

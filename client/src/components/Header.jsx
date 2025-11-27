@@ -25,7 +25,7 @@ const Header = () => {
       <div className='flex gap-4 items-center'>
         <div className='cursor-pointer relative'>
           <ShoppingCart size='30px' strokeWidth='1.75' />
-          <div className='flex items-center justify-center absolute -top-2 -right-2 w-5 p1 bg-orange-600 rounded-full'>
+          <div className='flex items-center justify-center absolute -top-2 -right-2 w-5 bg-orange-600 rounded-full'>
             <span className='text-sm text-white'>0</span>
           </div>
         </div>
@@ -38,7 +38,7 @@ const Header = () => {
 
         <Link
           to='/login'
-          className='hidden md:block px-3 py-1 bg-orange-600 hover:bg-orange-500 text-white rounded-full'
+          className='hidden md:block px-3 py-1 bg-orange-600 text-white rounded-sm hover:bg-orange-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
         >
           Login
         </Link>

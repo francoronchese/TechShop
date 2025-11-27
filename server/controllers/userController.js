@@ -8,10 +8,10 @@ import generateRefreshToken from '../utils/generateRefreshToken.js';
 //REGISTER CONTROLLERS
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, confirmPassword,avatar} = req.body;
 
     // Validate required fields for register
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !confirmPassword) {
       return res.status(400).json({
         message: 'Provide name, email and password',
         error: true,
@@ -19,11 +19,29 @@ export const registerUser = async (req, res) => {
       });
     }
 
-    // Check if email has valid format
+    // Check if email has valid format;
     const emailRegex = /^(\w+[/./-]?){1,}@[a-z]+[/.]\w{2,}$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({
         message: 'Please provide a valid email address',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Validate password length (min 8 characters)
+    if (password.length < 8) {
+      return res.status(400).json({
+        message: 'Password must be at least 8 characters long',
+        error: true,
+        success: false,
+      });
+    }
+
+    //Validate password and confirm password match
+    if (password !== confirmPassword) {
+      return res.status(400).json({
+        message: 'Passwords do not match',
         error: true,
         success: false,
       });
@@ -47,6 +65,7 @@ export const registerUser = async (req, res) => {
       name,
       email,
       password: hashPassword,
+      avatar
     };
     // Save user to database
     const newUser = await UserModel.create(userData);

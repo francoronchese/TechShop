@@ -11,6 +11,12 @@ import userRouter from './routes/userRoutes.js';
 const app = express();
 // Middleware for parsing JSON request bodies
 app.use(express.json());
+// Security headers middleware
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false, // Allow loading images from Cloudinary
+  })
+);
 // CORS configuration for frontend communication
 app.use(
   cors({
@@ -22,12 +28,6 @@ app.use(
 app.use(cookieParser());
 // HTTP request logger
 app.use(morgan('combined'));
-// Security headers middleware
-app.use(
-  helmet({
-    crossOriginResourcePolicy: false, // Allow loading images from Cloudinary
-  })
-);
 
 const PORT = process.env.PORT || 3000;
 
