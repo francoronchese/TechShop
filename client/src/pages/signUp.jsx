@@ -23,7 +23,7 @@ const SignUpPage = () => {
   };
 
   return (
-    <section id='signup' className='max-w-md mx-auto px-2 py-6 bg-white'>
+    <section className='max-w-md mx-auto px-2 py-6 bg-white'>
       <div className='mb-3'>
         <form>
           <label>

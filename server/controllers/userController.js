@@ -4,11 +4,12 @@ import sendEmail from '../services/sendEmail.js';
 import verifyEmailTemplate from '../utils/verifyEmailTemplate.js';
 import generateAccessToken from '../utils/generateAccessToken.js';
 import generateRefreshToken from '../utils/generateRefreshToken.js';
+import forgotPasswordTemplate from '../utils/forgotPasswordTemplate.js';
 
 //REGISTER CONTROLLERS
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword,avatar} = req.body;
+    const { name, email, password, confirmPassword, avatar } = req.body;
 
     // Validate required fields for register
     if (!name || !email || !password || !confirmPassword) {
@@ -65,13 +66,13 @@ export const registerUser = async (req, res) => {
       name,
       email,
       password: hashPassword,
-      avatar
+      avatar,
     };
     // Save user to database
     const newUser = await UserModel.create(userData);
 
     // Generate verification email URL with user ID
-    const verifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?userId=${newUser?._id}`;
+    const verifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?userId=${newUser._id}`;
 
     // Send verification email
     const verifyEmail = await sendEmail({
@@ -277,6 +278,182 @@ export const logoutUser = async (req, res) => {
     // Return success response
     return res.json({
       message: 'Logout successfully',
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+//FORGOT PASSWORD CONTROLLERS
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    // Find user by email to check if account exists
+    const user = await UserModel.findOne({ email });
+
+    // Check if user exists
+    if (!user) {
+      return res.status(400).json({
+        message: 'No account found with this email address',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Generate 6-digit One Time Password for password reset
+    // OTP range: 100000 to 999999
+    const otp = Math.floor(Math.random() * 900000 + 100000).toString();
+    const expiry = new Date(Date.now() + 15 * 60 * 1000); //15min
+
+    // Store OTP and expiration in database
+    await UserModel.findByIdAndUpdate(user._id, {
+      forgot_password_otp: otp,
+      forgot_password_expiry: expiry,
+    });
+
+    // Send password reset OTP email
+    await sendEmail({
+      sendTo: email,
+      subject: 'Reset password from TechShop',
+      html: forgotPasswordTemplate({
+        name: user.name,
+        otp,
+      }),
+    });
+
+    // Return success response
+    return res.json({
+      message: 'Password reset OTP sent to your email',
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+export const verifyForgotPasswordOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+
+    // Validate required fields for OTP verification
+    if (!email || !otp) {
+      return res.status(400).json({
+        message: 'Provide email and OTP',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Find user by email
+    const user = await UserModel.findOne({ email });
+
+    // Check if user exists
+    if (!user) {
+      return res.status(400).json({
+        message: 'No account found with this email address',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Check if OTP has expired
+    const currentTime = new Date();
+
+    if (user.forgot_password_expiry < currentTime) {
+      return res.status(400).json({
+        message: 'OTP has expired. Please request a new password reset',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Verify OTP matches stored OTP
+    if (otp !== user.forgot_password_otp) {
+      return res.status(400).json({
+        message: 'Invalid OTP',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Clear OTP fields after successful verification
+    await UserModel.findByIdAndUpdate(user._id, {
+      forgot_password_otp: '',
+      forgot_password_expiry: null,
+    });
+
+    // Return success response
+    return res.json({
+      message: 'OTP verified successfully',
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, newPassword, confirmPassword } = req.body;
+
+    // Validate required fields for password reset
+    if (!email || !newPassword || !confirmPassword) {
+      return res.status(400).json({
+        message: 'Provide email, new password and confirm password',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Find user by email
+    const user = await UserModel.findOne({ email });
+
+    // Check if user exists
+    if (!user) {
+      return res.status(400).json({
+        message: 'No account found with this email address',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Validate new password and confirm password match
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        message: 'Passwords do not match',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Hash new password for security
+    const hashPassword = await bcryptjs.hash(newPassword, 14);
+
+    // Update user password
+    await UserModel.findByIdAndUpdate(user._id, {
+      password: hashPassword,
+    });
+
+    // Return success response
+    return res.json({
+      message: 'Password updated successfully',
       error: false,
       success: true,
     });
