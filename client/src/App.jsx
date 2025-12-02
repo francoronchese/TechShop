@@ -18,12 +18,12 @@ function App() {
         <Routes>
           <Route path='/' element={<HomePage />} />
           <Route path='/login' element={<LoginPage />} />
+          <Route path='/sign-up' element={<SignUpPage />} />
           <Route path='/forgot-password' element={<ForgotPasswordPage />} />
           <Route
             path='/forgot-password-verification'
             element={<OTPVerificationPage />}
           />
-          <Route path='/sign-up' element={<SignUpPage />} />
           <Route path='/reset-password' element={<ResetPasswordPage />} />
           <Route path='*' element={<h2>404</h2>} />
         </Routes>

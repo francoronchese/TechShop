@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import InputText from '../inputs/InputText';
 import toast from 'react-hot-toast';
 import SummaryApi, { baseURL } from '../../config/summaryApi';
+import ButtonForm from '../buttons/ButtonForm';
 
 const ForgotPasswordForm = () => {
   const [email, setEmail] = useState('');
@@ -39,7 +40,7 @@ const ForgotPasswordForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <legend className='text-lg font-semibold mb-3'>Forgot Password</legend>
+      <legend className='text-2xl font-bold mb-2'>Forgot Password</legend>
 
       <InputText
         label='Email:'
@@ -49,17 +50,9 @@ const ForgotPasswordForm = () => {
         placeholder='enter your registered email'
       />
 
-      <button
-        type='submit'
-        disabled={!email}
-        className={`block w-full max-w-[180px] mx-auto mt-4 mb-6 px-6 py-2 text-[1.05rem] text-white rounded-full ${
-          email
-            ? 'bg-orange-600 outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 hover:bg-orange-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider cursor-pointer'
-            : 'bg-slate-400 cursor-not-allowed'
-        }`}
-      >
+      <ButtonForm disabled={!email} maxWidth={'180px'}>
         Reset Password
-      </button>
+      </ButtonForm>
 
       <p className='text-sm text-gray-600'>
         Already have an account?{' '}

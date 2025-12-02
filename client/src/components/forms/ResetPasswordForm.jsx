@@ -4,6 +4,7 @@ import InputText from '../inputs/InputText';
 import InputPassword from '../inputs/InputPassword';
 import toast from 'react-hot-toast';
 import SummaryApi, { baseURL } from '../../config/summaryApi';
+import ButtonForm from '../buttons/ButtonForm';
 
 const ResetPasswordForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,7 +14,7 @@ const ResetPasswordForm = () => {
     password: '',
     confirmPassword: '',
   });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const location = useLocation();
 
   // Pre-fill email from location state
@@ -33,7 +34,7 @@ const ResetPasswordForm = () => {
     });
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
@@ -73,6 +74,8 @@ const ResetPasswordForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className='flex flex-col gap-2'>
+      <legend className='text-2xl font-bold mb-2'>Reset Your Password</legend>
+
       <InputText
         label='Email:'
         name='email'
@@ -102,16 +105,9 @@ const ResetPasswordForm = () => {
         onToggleShowPassword={() => setConfirmPassword(!confirmPassword)}
       />
 
-      <button
-        disabled={!isFormValid}
-        className={`block w-full max-w-[180px] mx-auto mt-4 mb-6 px-6 py-2 text-[1.05rem] text-white rounded-full ${
-          isFormValid
-            ? 'bg-orange-600 outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 hover:bg-orange-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider cursor-pointer'
-            : 'bg-slate-400 cursor-not-allowed'
-        }`}
-      >
-        Change Password
-      </button>
+      <ButtonForm disabled={!isFormValid} maxWidth={'180px'}>
+        Reset Password
+      </ButtonForm>
     </form>
   );
 };
