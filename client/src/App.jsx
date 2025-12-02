@@ -6,6 +6,8 @@ import HomePage from './pages/home';
 import LoginPage from './pages/login';
 import ForgotPasswordPage from './pages/forgotPassword';
 import SignUpPage from './pages/signUp';
+import OTPVerificationPage from './pages/otpVerification';
+import ResetPasswordPage from './pages/resetPassword';
 
 function App() {
   return (
@@ -17,7 +19,12 @@ function App() {
           <Route path='/' element={<HomePage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/forgot-password' element={<ForgotPasswordPage />} />
+          <Route
+            path='/forgot-password-verification'
+            element={<OTPVerificationPage />}
+          />
           <Route path='/sign-up' element={<SignUpPage />} />
+          <Route path='/reset-password' element={<ResetPasswordPage />} />
           <Route path='*' element={<h2>404</h2>} />
         </Routes>
       </main>

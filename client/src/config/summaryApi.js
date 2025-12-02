@@ -7,7 +7,19 @@ const SummaryApi = {
   },
   login: {
     url: '/api/user/login',
-    method:'POST'
+    method: 'POST',
+  },
+  forgotPassword: {
+    url: '/api/user/forgot-password',
+    method: 'POST',
+  },
+  forgotPasswordVerification: {
+    url: '/api/user/verify-forgot-password-otp',
+    method: 'POST',
+  },
+  resetPassword: {
+    url: '/api/user/reset-password',
+    method: 'PUT',
   },
 };
 

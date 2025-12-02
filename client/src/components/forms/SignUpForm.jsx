@@ -41,7 +41,7 @@ const SignUpForm = ({ profileImage = '' }) => {
         ? await uploadToCloudinary(profileImage)
         : '';
 
-      const response = await fetch(baseURL + SummaryApi.register.url, {
+      const res = await fetch(baseURL + SummaryApi.register.url, {
         method: SummaryApi.register.method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -53,7 +53,7 @@ const SignUpForm = ({ profileImage = '' }) => {
         }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
       // Display backend response messages
       if (data.error) {
@@ -123,9 +123,9 @@ const SignUpForm = ({ profileImage = '' }) => {
 
       <button
         disabled={!isFormValid}
-        className={`block w-full max-w-[150px] mx-auto my-6 px-6 py-1.5 text-[1.05rem]  text-white rounded-full ${
+        className={`block w-full max-w-[150px] mx-auto mt-4 mb-6 px-6 py-2 text-[1.05rem] text-white rounded-full ${
           isFormValid
-            ? 'bg-orange-600 hover:bg-orange-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wide cursor-pointer'
+            ? 'bg-orange-600 outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 hover:bg-orange-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider cursor-pointer'
             : 'bg-slate-400 cursor-not-allowed'
         }`}
       >

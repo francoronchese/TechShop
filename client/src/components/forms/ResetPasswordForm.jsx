@@ -1,17 +1,30 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import InputText from '../inputs/InputText';
 import InputPassword from '../inputs/InputPassword';
 import toast from 'react-hot-toast';
 import SummaryApi, { baseURL } from '../../config/summaryApi';
 
-const LoginForm = () => {
+const ResetPasswordForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
   });
-  const navigate = useNavigate();
+  const navigate = useNavigate()
+  const location = useLocation();
+
+  // Pre-fill email from location state
+  useEffect(() => {
+    if (location?.state?.email) {
+      setFormData((prev) => ({
+        ...prev,
+        email: location.state.email,
+      }));
+    }
+  }, [location]);
 
   const handleChange = (e) => {
     setFormData({
@@ -20,16 +33,17 @@ const LoginForm = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
 
     try {
-      const res = await fetch(baseURL + SummaryApi.login.url, {
-        method: SummaryApi.login.method,
+      const res = await fetch(baseURL + SummaryApi.resetPassword.url, {
+        method: SummaryApi.resetPassword.method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: formData.email,
-          password: formData.password,
+          newPassword: formData.password,
+          confirmPassword: formData.confirmPassword,
         }),
       });
 
@@ -40,13 +54,13 @@ const LoginForm = () => {
         toast.error(data.message);
       } else if (data.success) {
         toast.success(data.message);
-        // Clear form
+        // Redirect to login
         setFormData({
           email: '',
           password: '',
+          confirmPassword: '',
         });
-        // Redirect to home page after successful login
-        navigate('/');
+        navigate('/login');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -54,7 +68,8 @@ const LoginForm = () => {
     }
   };
 
-  const isFormValid = formData.email && formData.password;
+  const isFormValid =
+    formData.email && formData.password && formData.confirmPassword;
 
   return (
     <form onSubmit={handleSubmit} className='flex flex-col gap-2'>
@@ -64,47 +79,41 @@ const LoginForm = () => {
         value={formData.email}
         onChange={handleChange}
         placeholder='enter email'
+        readOnly={true}
       />
 
       <InputPassword
-        label='Password'
+        label='New Password:'
         name='password'
         value={formData.password}
         onChange={handleChange}
-        placeholder='enter password'
+        placeholder='enter new password'
         showPassword={showPassword}
         onToggleShowPassword={() => setShowPassword(!showPassword)}
       />
 
-      <Link
-        to='/forgot-password'
-        className='ml-auto text-sm text-gray-600 hover:underline hover:text-orange-600'
-      >
-        Forgot password?
-      </Link>
+      <InputPassword
+        label='Confirm New Password:'
+        name='confirmPassword'
+        value={formData.confirmPassword}
+        onChange={handleChange}
+        placeholder='enter confirm new password'
+        showPassword={confirmPassword}
+        onToggleShowPassword={() => setConfirmPassword(!confirmPassword)}
+      />
 
       <button
         disabled={!isFormValid}
-        className={`block w-full max-w-[150px] mx-auto mt-4 mb-6 px-6 py-2 text-[1.05rem] text-white rounded-full ${
+        className={`block w-full max-w-[180px] mx-auto mt-4 mb-6 px-6 py-2 text-[1.05rem] text-white rounded-full ${
           isFormValid
             ? 'bg-orange-600 outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 hover:bg-orange-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider cursor-pointer'
             : 'bg-slate-400 cursor-not-allowed'
         }`}
       >
-        Login
+        Change Password
       </button>
-
-      <p className='text-sm text-gray-600'>
-        Don't have an account?{' '}
-        <Link
-          to='/sign-up'
-          className='text-orange-500 hover:text-orange-600 hover:underline font-semibold'
-        >
-          Sign up
-        </Link>
-      </p>
     </form>
   );
 };
 
-export default LoginForm;
+export default ResetPasswordForm;
