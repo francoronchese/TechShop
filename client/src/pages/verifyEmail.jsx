@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import SummaryApi, { baseURL } from '../config/summaryApi';
 import toast from 'react-hot-toast';
@@ -10,8 +10,19 @@ const VerifyEmailPage = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const userId = searchParams.get('userId');
+  const isVerified = useRef(false); // To prevent duplicate verification attempts
 
   useEffect(() => {
+    // Skip if already attempted verification or no userId
+    if (isVerified.current) return;
+    if (!userId) {
+      navigate('/');
+      return;
+    }
+
+    // Ensures verification runs only once
+    isVerified.current = true;
+
     const verifyEmail = async () => {
       try {
         const res = await fetch(baseURL + SummaryApi.verifyEmail.url, {
@@ -26,15 +37,15 @@ const VerifyEmailPage = () => {
         if (data.success) {
           toast.success('Email verified successfully!');
           // Redirect to login page after successful verification
-          setTimeout(() => navigate('/login'), 2000);
+          setTimeout(() => navigate('/login'), 3000);
         } else {
           toast.error(data.message);
-          navigate('/');
+          setTimeout(() => navigate('/'), 3000);
         }
       } catch (error) {
         console.error('Error:', error);
         toast.error('Connection error. Please try again later.');
-        navigate('/');
+        setTimeout(() => navigate('/'), 3000);
       } finally {
         setLoading(false);
       }
