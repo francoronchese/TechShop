@@ -32,6 +32,7 @@ const LoginForm = () => {
           email: formData.email,
           password: formData.password,
         }),
+        credentials: 'include', // Essential for cookie-based authentication
       });
 
       const data = await res.json();

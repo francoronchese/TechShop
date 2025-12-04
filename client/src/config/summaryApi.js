@@ -1,4 +1,8 @@
-export const baseURL = 'http://localhost:8080';
+// API configuration file
+// Defines all backend endpoints and base URLs for development and production
+export const baseURL = import.meta.env.DEV
+  ? '' // Empty string during development - Vite proxy handles the /api prefix
+  : 'http://localhost:8080'; // Direct backend URL for production (includes /api in endpoint URLs)
 
 const SummaryApi = {
   register: {
@@ -7,6 +11,10 @@ const SummaryApi = {
   },
   login: {
     url: '/api/user/login',
+    method: 'POST',
+  },
+  verifyEmail: {
+    url: '/api/user/verify-email',
     method: 'POST',
   },
   forgotPassword: {

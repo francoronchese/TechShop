@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "index.js",
-    "dev": "node --watch index.js"
+    "start": "node index.js",
+    "dev": "cross-env NODE_ENV=development node --watch index.js"
   },
   "keywords": [],
   "author": "Lucas Franco Ronchese",
@@ -23,5 +23,8 @@
     "mongoose": "^8.19.3",
     "morgan": "^1.10.1",
     "nodemailer": "^7.0.10"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
   }
 }

@@ -218,11 +218,12 @@ export const loginUser = async (req, res) => {
       last_login_date: new Date(),
     });
 
-    // Configure secure cookie options
+    // Configure dynamic secure cookie options based on environment
+    const isProduction = process.env.NODE_ENV === 'production';
     const cookieOptions = {
       httpOnly: true, // Prevent XSS attacks
-      secure: true, // Only send over HTTPS
-      sameSite: 'None', // Allow cross-site requests
+      secure: isProduction, // true only in production (HTTPS), false in development (HTTP)
+      sameSite: isProduction ? 'None' : 'Lax', // 'None' for cross-site in production, 'Lax' for local development
     };
 
     // Set tokens as HTTP-only cookies
@@ -260,10 +261,11 @@ export const logoutUser = async (req, res) => {
     const userId = req.userId;
 
     // Clear authentication cookies to log user out
+    const isProduction = process.env.NODE_ENV === 'production';
     const cookieOptions = {
       httpOnly: true, // Prevent XSS attacks
-      secure: true, // Only send over HTTPS
-      sameSite: 'None', // Allow cross-site requests
+      secure: isProduction, // true only in production (HTTPS), false in development (HTTP)
+      sameSite: isProduction ? 'None' : 'Lax', // 'None' for cross-site in production, 'Lax' for local development
     };
 
     // Remove access and refresh tokens from cookies
