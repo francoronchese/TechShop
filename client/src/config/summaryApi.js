@@ -29,6 +29,14 @@ const SummaryApi = {
     url: '/api/user/reset-password',
     method: 'PUT',
   },
+  logout: {
+    url: '/api/user/logout',
+    method: 'POST',
+  },
+  userDetails: {
+    url: '/api/user/user-details',
+    method: 'GET',
+  },
 };
 
 export default SummaryApi;

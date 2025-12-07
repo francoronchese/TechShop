@@ -1,10 +1,48 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import Logo from './Logo';
 import { Search } from 'lucide-react';
 import { SquareUserRound } from 'lucide-react';
 import { ShoppingCart } from 'lucide-react';
+import toast from 'react-hot-toast';
+import SummaryApi, { baseURL } from '../config/summaryApi';
+import { endUserSession } from '../store/slices/userSlice';
 
 const Header = () => {
+  const navigate = useNavigate();
+  // Get user state from Redux store
+  const userState = useSelector((state) => state.user);
+  // Send actions to update Redux store
+  const dispatch = useDispatch();
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch(baseURL + SummaryApi.logout.url, {
+        method: SummaryApi.logout.method,
+        credentials: 'include',
+      });
+
+      const data = await res.json();
+
+      // Display backend response messages
+      if (data.error) {
+        toast.error(data.message);
+      } else if (data.success) {
+        toast.success(data.message);
+        // Clear user from Redux store
+        dispatch(endUserSession());
+        // Redirect to login page
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Connection error. Please try again later.');
+    }
+  };
+
+  // Check if user is authenticated
+  const isLoggedIn = userState._id !== '';
+
   return (
     <header className='flex items-center justify-between sticky top-0 z-40 p-6 bg-white shadow-md '>
       <Link to='/'>
@@ -36,12 +74,21 @@ const Header = () => {
           className='cursor-pointer'
         />
 
-        <Link
-          to='/login'
-          className='hidden md:block px-3 py-1 bg-orange-600 text-white rounded-sm hover:bg-orange-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
-        >
-          Login
-        </Link>
+        {isLoggedIn ? (
+          <button
+            onClick={handleLogout}
+            className='hidden md:block px-3 py-1 bg-red-600 text-white rounded-sm hover:bg-red-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider cursor-pointer'
+          >
+            Logout
+          </button>
+        ) : (
+          <Link
+            to='/login'
+            className='hidden md:block px-3 py-1 bg-orange-600 text-white rounded-sm hover:bg-orange-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
+          >
+            Login
+          </Link>
+        )}
       </div>
     </header>
   );

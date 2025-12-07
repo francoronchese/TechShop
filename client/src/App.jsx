@@ -9,8 +9,12 @@ import SignUpPage from './pages/signUp';
 import OTPVerificationPage from './pages/otpVerification';
 import ResetPasswordPage from './pages/resetPassword';
 import VerifyEmailPage from './pages/verifyEmail';
+import { useAuthCheck } from './hooks/useAuthCheck';
 
 function App() {
+  // Check authentication on app load and page refresh
+  useAuthCheck();
+
   return (
     <>
       <Toaster />

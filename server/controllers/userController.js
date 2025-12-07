@@ -467,3 +467,40 @@ export const resetPassword = async (req, res) => {
     });
   }
 };
+
+// GET CURRENT USER CONTROLLER
+// Retrieves logged-in user details (requires authentication)
+export const getCurrentUser = async (req, res) => {
+  try {
+    // Extract userId from authentication middleware
+    const userId = req.userId;
+
+    // Find user by ID, exclude sensitive information
+    const user = await UserModel.findById(userId).select(
+      '-password -refresh_token'
+    );
+
+    // Check if user exists
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Return user data
+    return res.json({
+      message: 'User details retrieved successfully',
+      error: false,
+      success: true,
+      data: user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};

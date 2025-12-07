@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import InputText from '../inputs/InputText';
 import InputPassword from '../inputs/InputPassword';
 import toast from 'react-hot-toast';
 import SummaryApi, { baseURL } from '../../config/summaryApi';
 import ButtonForm from '../buttons/ButtonForm';
+import { setUserDetails } from '../../store/slices/userSlice';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,6 +15,8 @@ const LoginForm = () => {
     password: '',
   });
   const navigate = useNavigate();
+  // Send actions to update Redux store
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({
@@ -42,6 +46,16 @@ const LoginForm = () => {
         toast.error(data.message);
       } else if (data.success) {
         toast.success(data.message);
+
+        // Update Redux store with authenticated user data
+        dispatch(
+          setUserDetails({
+            _id: data.data.user.id,
+            name: data.data.user.name,
+            email: data.data.user.email,
+          })
+        );
+        
         // Clear form
         setFormData({
           email: '',
