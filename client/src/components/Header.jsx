@@ -1,14 +1,15 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Logo from './Logo';
-import { Search } from 'lucide-react';
-import { SquareUserRound } from 'lucide-react';
-import { ShoppingCart } from 'lucide-react';
+import { Search, SquareUserRound, Menu, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import SummaryApi, { baseURL } from '../config/summaryApi';
 import { endUserSession } from '../store/slices/userSlice';
+import ShoppingCartIcon from './ShoppingCartIcon.jsx';
 
 const Header = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   // Get user state from Redux store
   const userState = useSelector((state) => state.user);
@@ -31,6 +32,8 @@ const Header = () => {
         toast.success(data.message);
         // Clear user from Redux store
         dispatch(endUserSession());
+        // Close mobile menu if open
+        setIsMobileMenuOpen(false);
         // Redirect to login page
         navigate('/login');
       }
@@ -44,12 +47,14 @@ const Header = () => {
   const isLoggedIn = userState._id !== '';
 
   return (
-    <header className='flex items-center justify-between sticky top-0 z-40 p-6 bg-white shadow-md '>
-      <Link to='/'>
+    <header className='grid grid-cols-2 md:grid-cols-3 grid-rows-[auto_auto] md:grid-rows-1 items-center gap-3 md:gap-0 sticky top-0 z-40 p-6 bg-white shadow-md'>
+      {/* Logo */}
+      <Link to='/' className='col-start-1 col-end-2'>
         <Logo />
       </Link>
 
-      <div className='hidden md:flex w-full max-w-md ml-3'>
+      {/* Search Bar */}
+      <div className='flex w-full col-start-1 col-end-3 md:col-start-2 md:col-end-3 row-start-2 md:row-start-1'>
         <input
           type='text'
           placeholder='Search product here...'
@@ -60,36 +65,55 @@ const Header = () => {
         </div>
       </div>
 
-      <div className='flex gap-4 items-center'>
-        <div className='cursor-pointer relative'>
-          <ShoppingCart size='30px' strokeWidth='1.75' />
-          <div className='flex items-center justify-center absolute -top-2 -right-2 w-5 bg-orange-600 rounded-full'>
-            <span className='text-sm text-white'>0</span>
-          </div>
-        </div>
+      {/* Nav container */}
+      <nav className='col-start-2 col-end-3 md:col-start-3 md:col-end-4 row-start-1'>
+        <div className='flex gap-2 justify-end items-center h-9'>
+          {/* Shopping cart Allways Visible*/}
+          <ShoppingCartIcon />
 
-        <SquareUserRound
-          size='36px'
-          strokeWidth='1.25'
-          className='cursor-pointer'
-        />
-
-        {isLoggedIn ? (
+          {/* MOBILE VIEW - Hamburger Menu Button */}
           <button
-            onClick={handleLogout}
-            className='hidden md:block px-3 py-1 bg-red-600 text-white rounded-sm hover:bg-red-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider cursor-pointer'
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className='md:hidden'
           >
-            Logout
+            {isMobileMenuOpen ? <X size='28px' /> : <Menu size='28px' />}
           </button>
-        ) : (
-          <Link
-            to='/login'
-            className='hidden md:block px-3 py-1 bg-orange-600 text-white rounded-sm hover:bg-orange-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
-          >
-            Login
-          </Link>
-        )}
-      </div>
+
+          {/* DESKTOP VIEW - User authentication actions */}
+          {isLoggedIn ? (
+            // Display user profile and logout for authenticated users
+            <>
+              <SquareUserRound
+                size='36px'
+                strokeWidth='1.25'
+                className='cursor-pointer hidden md:block'
+              />
+              <button
+                onClick={handleLogout}
+                className='hidden md:block px-3 py-1 bg-red-600 text-white rounded-sm hover:bg-red-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider cursor-pointer'
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            // Display register and login for unauthenticated users
+            <>
+              <Link
+                to='/login'
+                className='hidden md:block px-3 py-1 bg-orange-600 text-white rounded-sm hover:bg-orange-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
+              >
+                Login
+              </Link>
+              <Link
+                to='/sign-up'
+                className='hidden md:block px-3 py-1 bg-gray-800 text-white rounded-sm hover:bg-gray-700 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
+              >
+                Register
+              </Link>
+            </>
+          )}
+        </div>
+      </nav>
     </header>
   );
 };
