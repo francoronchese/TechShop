@@ -6,6 +6,7 @@ import {
   logoutUser,
   registerUser,
   resetPassword,
+  updateProfile,
   verifyEmail,
   verifyForgotPasswordOTP,
 } from '../controllers/userController.js';
@@ -22,5 +23,6 @@ userRouter.post('/forgot-password', forgotPassword);
 userRouter.post('/verify-forgot-password-otp', verifyForgotPasswordOTP);
 userRouter.put('/reset-password', resetPassword);
 userRouter.get('/user-details', auth, getCurrentUser);
+userRouter.put('/update-profile', updateProfile);
 
 export default userRouter;

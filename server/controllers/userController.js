@@ -489,12 +489,56 @@ export const getCurrentUser = async (req, res) => {
       });
     }
 
-    // Return user data
+    // Return success response
     return res.json({
       message: 'User details retrieved successfully',
       error: false,
       success: true,
       data: user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+// UPDATE PROFILE CONTROLLER
+export const updateProfile = async (req, res) => {
+  try {
+    // Extract userId from authentication middleware
+    const userId = req.userId;
+    // Extract profile update fields from request body
+    const { name, avatar, mobile } = req.body;
+
+    //Validate name is not empty string
+    if (name === '') {
+      return res.status(400).json({
+        message: 'Name must not be empty',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Update user in database, exclude sensitive information
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        name,
+        avatar,
+        mobile,
+      },
+      { new: true } // Return the updated document instead of the old one
+    ).select('-password -refresh_token');
+
+    // Return success response
+    return res.json({
+      message: 'Profile updated successfully',
+      error: false,
+      success: true,
+      data: updatedUser,
     });
   } catch (error) {
     return res.status(500).json({
