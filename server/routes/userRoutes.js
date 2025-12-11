@@ -4,6 +4,7 @@ import {
   getCurrentUser,
   loginUser,
   logoutUser,
+  refreshToken,
   registerUser,
   resetPassword,
   updateProfile,
@@ -24,5 +25,6 @@ userRouter.post('/verify-forgot-password-otp', verifyForgotPasswordOTP);
 userRouter.put('/reset-password', resetPassword);
 userRouter.get('/user-details', auth, getCurrentUser);
 userRouter.put('/update-profile', updateProfile);
+userRouter.post('/refresh-token', refreshToken);
 
 export default userRouter;

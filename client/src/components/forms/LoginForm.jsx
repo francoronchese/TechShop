@@ -53,9 +53,16 @@ const LoginForm = () => {
             _id: data.data.user.id,
             name: data.data.user.name,
             email: data.data.user.email,
+            avatar: '',
+            mobile: null,
+            role: 'User',
+            status: 'Active',
+            addresses: [],
+            shopping_cart_items: [],
+            orders: [],
           })
         );
-        
+
         // Clear form
         setFormData({
           email: '',

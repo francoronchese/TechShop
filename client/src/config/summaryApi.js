@@ -37,6 +37,14 @@ const SummaryApi = {
     url: '/api/user/user-details',
     method: 'GET',
   },
+  updateProfile: {
+    url: '/api/user/update-profile',
+    method: 'PUT',
+  },
+  refreshToken: {
+    url: '/api/user/refresh-token',
+    method: 'POST',
+  },
 };
 
 export default SummaryApi;

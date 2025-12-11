@@ -1,5 +1,6 @@
 import UserModel from '../models/UserModel.js';
 import bcryptjs from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import sendEmail from '../services/sendEmail.js';
 import verifyEmailTemplate from '../utils/verifyEmailTemplate.js';
 import generateAccessToken from '../utils/generateAccessToken.js';
@@ -224,6 +225,7 @@ export const loginUser = async (req, res) => {
       httpOnly: true, // Prevent XSS attacks
       secure: isProduction, // true only in production (HTTPS), false in development (HTTP)
       sameSite: isProduction ? 'None' : 'Lax', // 'None' for cross-site in production, 'Lax' for local development
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days - persists even after browser closes
     };
 
     // Set tokens as HTTP-only cookies
@@ -282,6 +284,76 @@ export const logoutUser = async (req, res) => {
       message: 'Logout successfully',
       error: false,
       success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+//REFRESH TOKEN CONTROLLER
+export const refreshToken = async (req, res) => {
+  try {
+    // Get refresh token from browser cookies
+    const token = req.cookies.refreshToken;
+
+    // Check if refresh token exists in request
+    if (!token) {
+      return res.status(401).json({
+        message: 'Refresh token required',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Verify refresh token validity and decode user information
+    const decode = await jwt.verify(
+      token,
+      process.env.SECRET_KEY_REFRESH_TOKEN
+    );
+    const userId = decode.userId;
+
+    // Find user and verify refresh token matches database
+    const user = await UserModel.findOne({
+      _id: userId,
+      refresh_token: token,
+    });
+
+    // Check if user exists with matching token
+    if (!user) {
+      return res.status(401).json({
+        message: 'Invalid refresh token',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Generate new access token
+    const newAccessToken = await generateAccessToken(userId);
+
+    // Configure dynamic secure cookie options based on environment
+    const isProduction = process.env.NODE_ENV === 'production';
+    const cookieOptions = {
+      httpOnly: true, // Prevent XSS attacks
+      secure: isProduction, // true only in production (HTTPS), false in development (HTTP)
+      sameSite: isProduction ? 'None' : 'Lax', // 'None' for cross-site in production, 'Lax' for local development
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days - persists even after browser closes
+    };
+
+    // Set new access token as HTTP-only cookie
+    res.cookie('accessToken', newAccessToken, cookieOptions);
+
+    // Return success response with new access token
+    return res.json({
+      message: 'New access token generated',
+      error: false,
+      success: true,
+      data: {
+        accessToken: newAccessToken,
+      },
     });
   } catch (error) {
     return res.status(500).json({
@@ -468,7 +540,7 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-// GET CURRENT USER CONTROLLER
+//GET CURRENT USER CONTROLLER
 // Retrieves logged-in user details (requires authentication)
 export const getCurrentUser = async (req, res) => {
   try {
@@ -505,7 +577,7 @@ export const getCurrentUser = async (req, res) => {
   }
 };
 
-// UPDATE PROFILE CONTROLLER
+//UPDATE PROFILE CONTROLLER
 export const updateProfile = async (req, res) => {
   try {
     // Extract userId from authentication middleware
