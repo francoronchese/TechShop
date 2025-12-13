@@ -1,4 +1,4 @@
-const InputText = ({
+export const InputText = ({
   label,
   name,
   value,
@@ -28,5 +28,3 @@ const InputText = ({
     </div>
   );
 };
-
-export default InputText;

@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import userReducer from './slices/userSlice.js';
+import userReducer from './slices/userSlice';
 
 // Centralized Redux store for global state management
 const store = configureStore({

@@ -1,7 +1,10 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { endUserSession, setUserDetails } from '../store/slices/userSlice';
-import SummaryApi, { baseURL } from '../config/summaryApi';
+import {
+  endUserSession,
+  setUserDetails,
+} from '@store/slices/userSlice';
+import SummaryApi, { baseURL } from '@config/summaryApi';
 
 // Checks user authentication status on app load
 // Automatically refreshes access token when expired using refresh token

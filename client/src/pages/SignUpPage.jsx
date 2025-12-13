@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { CircleUserRound } from 'lucide-react';
-import SignUpForm from '../components/forms/SignUpForm';
-import imageToBase64 from '../helpers/imageToBase64';
 import toast from 'react-hot-toast';
+import { SignUpForm } from '@features/auth';
+import imageToBase64 from '@utils/imageToBase64';
 
 const SignUpPage = () => {
   const [profileImage, setProfileImage] = useState('');

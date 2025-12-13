@@ -1,6 +1,6 @@
 import { Eye, EyeOff } from 'lucide-react';
 
-const InputPassword = ({
+export const InputPassword = ({
   label,
   name,
   value,
@@ -30,5 +30,3 @@ const InputPassword = ({
     </div>
   );
 };
-
-export default InputPassword;

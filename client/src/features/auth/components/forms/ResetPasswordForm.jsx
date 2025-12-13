@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import InputText from '../inputs/InputText';
-import InputPassword from '../inputs/InputPassword';
 import toast from 'react-hot-toast';
-import SummaryApi, { baseURL } from '../../config/summaryApi';
-import ButtonForm from '../buttons/ButtonForm';
+import { InputText, InputPassword } from '@components/ui';
+import SummaryApi, { baseURL } from '@config/summaryApi';
+import {ButtonForm} from '@features/auth';
 
 const ResetPasswordForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -112,4 +111,4 @@ const ResetPasswordForm = () => {
   );
 };
 
-export default ResetPasswordForm;
+export {ResetPasswordForm};

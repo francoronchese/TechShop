@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import SummaryApi, { baseURL } from '../../config/summaryApi';
-import ButtonForm from '../buttons/ButtonForm';
+import SummaryApi, { baseURL } from '@config/summaryApi';
+import {ButtonForm} from '@features/auth';
 
 const OtpVerificationForm = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -121,4 +121,4 @@ const OtpVerificationForm = () => {
   );
 };
 
-export default OtpVerificationForm;
+export {OtpVerificationForm};

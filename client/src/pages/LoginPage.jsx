@@ -1,5 +1,5 @@
 import { CircleUserRound } from 'lucide-react';
-import LoginForm from '../components/forms/LoginForm';
+import { LoginForm } from '@features/auth';
 
 const LoginPage = () => {
   return (

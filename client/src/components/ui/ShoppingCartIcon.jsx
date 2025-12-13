@@ -1,6 +1,6 @@
 import { ShoppingCart } from 'lucide-react';
 
-const ShoppingCartIcon = () => {
+export const ShoppingCartIcon = () => {
   return (
     <div className='cursor-pointer relative mr-2'>
       <ShoppingCart size='30px' strokeWidth='1.75' />
@@ -10,5 +10,3 @@ const ShoppingCartIcon = () => {
     </div>
   );
 };
-
-export default ShoppingCartIcon;

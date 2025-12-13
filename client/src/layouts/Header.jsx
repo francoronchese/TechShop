@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import Logo from './Logo';
-import { Search, SquareUserRound, Menu, X } from 'lucide-react';
 import toast from 'react-hot-toast';
-import SummaryApi, { baseURL } from '../config/summaryApi';
-import { endUserSession } from '../store/slices/userSlice';
-import ShoppingCartIcon from './ShoppingCartIcon.jsx';
+import { Search, SquareUserRound, Menu, X } from 'lucide-react';
+import { Logo, ShoppingCartIcon } from '@components/ui';
+import SummaryApi, { baseURL } from '@config/summaryApi';
+import { endUserSession } from '@store/slices/userSlice';
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

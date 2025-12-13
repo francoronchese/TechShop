@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import InputText from '../inputs/InputText';
-import InputPassword from '../inputs/InputPassword';
 import toast from 'react-hot-toast';
-import SummaryApi, { baseURL } from '../../config/summaryApi';
-import ButtonForm from '../buttons/ButtonForm';
-import { setUserDetails } from '../../store/slices/userSlice';
+import { InputText, InputPassword } from '@components/ui';
+import SummaryApi, { baseURL } from '@config/summaryApi';
+import {ButtonForm} from '@features/auth';
+import { setUserDetails } from '@store/slices/userSlice';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -123,4 +122,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export {LoginForm};

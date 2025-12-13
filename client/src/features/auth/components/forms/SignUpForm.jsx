@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import InputText from '../inputs/InputText';
-import InputPassword from '../inputs/InputPassword';
 import toast from 'react-hot-toast';
-import SummaryApi, { baseURL } from '../../config/summaryApi';
-import uploadToCloudinary from '../../helpers/cloudinaryUpload';
-import ButtonForm from '../buttons/ButtonForm';
+import { InputText, InputPassword } from '@components/ui';
+import SummaryApi, { baseURL } from '@config/summaryApi';
+import uploadToCloudinary from '@helpers/cloudinaryUpload';
+import { ButtonForm } from '@features/auth';
 
 const SignUpForm = ({ profileImage = '' }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -139,4 +138,4 @@ const SignUpForm = ({ profileImage = '' }) => {
   );
 };
 
-export default SignUpForm;
+export { SignUpForm };

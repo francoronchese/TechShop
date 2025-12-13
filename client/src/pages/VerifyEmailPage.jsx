@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import SummaryApi, { baseURL } from '../config/summaryApi';
 import toast from 'react-hot-toast';
+import SummaryApi, { baseURL } from '@config/summaryApi';
 
 const VerifyEmailPage = () => {
   // Extract userId from URL query parameters

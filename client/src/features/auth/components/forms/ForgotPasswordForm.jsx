@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import InputText from '../inputs/InputText';
 import toast from 'react-hot-toast';
-import SummaryApi, { baseURL } from '../../config/summaryApi';
-import ButtonForm from '../buttons/ButtonForm';
+import SummaryApi, { baseURL } from '@config/summaryApi';
+import {InputText} from '@components/ui';
+import { ButtonForm } from '@features/auth';
 
 const ForgotPasswordForm = () => {
   const [email, setEmail] = useState('');
@@ -67,4 +67,4 @@ const ForgotPasswordForm = () => {
   );
 };
 
-export default ForgotPasswordForm;
+export {ForgotPasswordForm};

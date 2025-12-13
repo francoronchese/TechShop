@@ -1,4 +1,4 @@
-const ButtonForm = ({ children, disabled, maxWidth }) => {
+export const ButtonForm = ({ children, disabled, maxWidth }) => {
   return (
     <button
       type='submit'
@@ -14,5 +14,3 @@ const ButtonForm = ({ children, disabled, maxWidth }) => {
     </button>
   );
 };
-
-export default ButtonForm;

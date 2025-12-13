@@ -1,15 +1,15 @@
 import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import HomePage from './pages/home';
-import LoginPage from './pages/login';
-import ForgotPasswordPage from './pages/forgotPassword';
-import SignUpPage from './pages/signUp';
-import OTPVerificationPage from './pages/otpVerification';
-import ResetPasswordPage from './pages/resetPassword';
-import VerifyEmailPage from './pages/verifyEmail';
-import { useAuthCheck } from './hooks/useAuthCheck';
+import Header from '@layouts/Header';
+import Footer from '@layouts/Footer';
+import HomePage from '@pages/HomePage';
+import LoginPage from '@pages/LoginPage';
+import ForgotPasswordPage from '@pages/ForgotPasswordPage';
+import SignUpPage from '@pages/SignUpPage';
+import OTPVerificationPage from '@pages/OtpVerificationPage';
+import ResetPasswordPage from '@pages/ResetPasswordPage';
+import VerifyEmailPage from '@pages/VerifyEmailPage';
+import { useAuthCheck } from '@features/auth';
 
 function App() {
   // Check authentication on app load and page refresh
