@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { InputText, InputPassword } from '@components/ui';
+import { Input, InputPassword } from '@components';
 import SummaryApi, { baseURL } from '@config/summaryApi';
-import {ButtonForm} from '@features/auth';
+import { ButtonForm } from '@features/auth';
 
 const ResetPasswordForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +15,8 @@ const ResetPasswordForm = () => {
   });
   const navigate = useNavigate();
   const location = useLocation();
+  // Check if request originates from user profile (not forgot password flow)
+  const isFromProfile = location.state.fromProfile || false;
 
   // Pre-fill email from location state
   useEffect(() => {
@@ -60,7 +62,13 @@ const ResetPasswordForm = () => {
           password: '',
           confirmPassword: '',
         });
-        navigate('/login');
+
+        // Conditional redirect based on request origin
+        if (isFromProfile) {
+          navigate('/dashboard/profile'); // Return to dashboard for profile changes
+        } else {
+          navigate('/login'); // Go to login for password recovery
+        }
       }
     } catch (error) {
       console.error('Error:', error);
@@ -75,7 +83,7 @@ const ResetPasswordForm = () => {
     <form onSubmit={handleSubmit} className='flex flex-col gap-2'>
       <legend className='text-2xl font-bold mb-2'>Reset Your Password</legend>
 
-      <InputText
+      <Input
         label='Email:'
         name='email'
         value={formData.email}
@@ -111,4 +119,4 @@ const ResetPasswordForm = () => {
   );
 };
 
-export {ResetPasswordForm};
+export { ResetPasswordForm };

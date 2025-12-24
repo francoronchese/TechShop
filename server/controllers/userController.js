@@ -178,7 +178,8 @@ export const loginUser = async (req, res) => {
     // Check if email is verified
     if (!user.verify_email) {
       return res.status(400).json({
-        message: 'Please verify your email before logging in',
+        message:
+          'Email verification required. Please check your inbox or spam folder for the verification email',
         error: true,
         success: false,
       });
@@ -611,6 +612,54 @@ export const updateProfile = async (req, res) => {
       error: false,
       success: true,
       data: updatedUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+};
+
+// DELETE ACCOUNT CONTROLLER - Hard Delete (Permanent)
+export const deleteUser = async (req, res) => {
+  try {
+    // Get userId from authentication middleware
+    const userId = req.userId;
+
+    // Find user by ID to verify existence before deletion
+    const user = await UserModel.findById(userId);
+
+    // Check if user exists in database
+    if (!user) {
+      return res.status(404).json({
+        message: 'User not found',
+        error: true,
+        success: false,
+      });
+    }
+
+    // Permanent delete user from database
+    await UserModel.findByIdAndDelete(userId);
+
+    // Clear authentication cookies to log user out immediately
+    const isProduction = process.env.NODE_ENV === 'production';
+    const cookieOptions = {
+      httpOnly: true, // Prevent XSS attacks
+      secure: isProduction, // true only in production (HTTPS), false in development (HTTP)
+      sameSite: isProduction ? 'None' : 'Lax', // 'None' for cross-site in production, 'Lax' for local development
+    };
+
+    // Remove access and refresh tokens from cookies
+    res.clearCookie('accessToken', cookieOptions);
+    res.clearCookie('refreshToken', cookieOptions);
+
+    // Return success response
+    return res.json({
+      message: 'Account permanently deleted successfully',
+      error: false,
+      success: true,
     });
   } catch (error) {
     return res.status(500).json({

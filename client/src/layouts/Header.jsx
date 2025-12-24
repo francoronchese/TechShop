@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
 import { Search, SquareUserRound, Menu, X } from 'lucide-react';
-import { Logo, ShoppingCartIcon } from '@components/ui';
+import { Logo, ShoppingCartIcon } from '@components';
 import SummaryApi, { baseURL } from '@config/summaryApi';
 import { endUserSession } from '@store/slices/userSlice';
 
@@ -46,7 +46,7 @@ const Header = () => {
   const isLoggedIn = userState._id !== '';
 
   return (
-    <header className='grid grid-cols-2 md:grid-cols-3 grid-rows-[auto_auto] md:grid-rows-1 items-center gap-3 md:gap-0 sticky top-0 z-40 p-6 bg-white shadow-md'>
+    <header className='grid grid-cols-2 md:grid-cols-3 grid-rows-[auto_auto] md:grid-rows-1 items-center gap-4 md:gap-0 sticky top-0 z-40 p-6 bg-white shadow-md'>
       {/* Logo */}
       <Link to='/' className='col-start-1 col-end-2'>
         <Logo />
@@ -59,7 +59,7 @@ const Header = () => {
           placeholder='Search product here...'
           className='w-full pl-2 border border-gray-300 outline-none rounded-l-full'
         />
-        <div className='flex items-center justify-center w-[50px] h-8 bg-orange-600 text-white rounded-r-full cursor-pointer'>
+        <div className='flex items-center justify-center w-[50px] h-8 bg-orange-500 text-white rounded-r-full cursor-pointer'>
           <Search />
         </div>
       </div>
@@ -89,7 +89,7 @@ const Header = () => {
               />
               <button
                 onClick={handleLogout}
-                className='hidden md:block px-3 py-1 bg-red-600 text-white rounded-sm hover:bg-red-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider cursor-pointer'
+                className='hidden md:block px-3 py-1 bg-red-500 text-white rounded-sm hover:bg-red-600 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider cursor-pointer'
               >
                 Logout
               </button>
@@ -99,13 +99,13 @@ const Header = () => {
             <>
               <Link
                 to='/login'
-                className='hidden md:block px-3 py-1 bg-orange-600 text-white rounded-sm hover:bg-orange-500 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
+                className='hidden md:block px-3 py-1 bg-orange-500 text-white rounded-sm hover:bg-orange-600 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
               >
                 Login
               </Link>
               <Link
                 to='/sign-up'
-                className='hidden md:block px-3 py-1 bg-gray-800 text-white rounded-sm hover:bg-gray-700 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
+                className='hidden md:block px-3 py-1 bg-gray-700 text-white rounded-sm hover:bg-gray-800 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
               >
                 Register
               </Link>

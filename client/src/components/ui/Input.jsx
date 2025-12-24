@@ -1,4 +1,5 @@
-export const InputText = ({
+export const Input = ({
+  type = 'text',
   label,
   name,
   value,
@@ -10,7 +11,7 @@ export const InputText = ({
     <div className='grid gap-1.5'>
       <label htmlFor={name}>{label}</label>
       <input
-        type='text'
+        type={type}
         name={name}
         id={name}
         value={value}
@@ -18,7 +19,7 @@ export const InputText = ({
         placeholder={placeholder}
         required
         readOnly={readOnly}
-        className={`p-2 bg-slate-100 outline-none ${
+        className={`p-2 bg-slate-100 rounded-lg outline-none ${
           readOnly
             ? // Hide text cursor (caret) for readonly inputs to prevent user interaction
               'text-gray-500 outline-none cursor-not-allowed caret-transparent'

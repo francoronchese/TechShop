@@ -45,6 +45,10 @@ const SummaryApi = {
     url: '/api/user/refresh-token',
     method: 'POST',
   },
+  deleteAccount: {
+    url: '/api/user/delete-account',
+    method: 'DELETE',
+  },
 };
 
 export default SummaryApi;

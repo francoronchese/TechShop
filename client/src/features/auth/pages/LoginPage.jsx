@@ -1,9 +1,9 @@
 import { CircleUserRound } from 'lucide-react';
-import { LoginForm } from '@features/auth';
+import { LoginForm } from '../components/forms/LoginForm.jsx';
 
-const LoginPage = () => {
+export const LoginPage = () => {
   return (
-    <section className='max-w-md mx-auto px-2 py-6 bg-white'>
+    <section className='max-w-md mx-auto px-3 py-6 bg-white rounded-xl'>
       <CircleUserRound
         size='80px'
         strokeWidth='0.85'
@@ -14,5 +14,3 @@ const LoginPage = () => {
     </section>
   );
 };
-
-export default LoginPage;

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
-import { InputText, InputPassword } from '@components/ui';
+import { Input, InputPassword } from '@components';
 import SummaryApi, { baseURL } from '@config/summaryApi';
 import {ButtonForm} from '@features/auth';
 import { setUserDetails } from '@store/slices/userSlice';
@@ -80,7 +80,7 @@ const LoginForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className='flex flex-col gap-2'>
-      <InputText
+      <Input
         label='Email:'
         name='email'
         value={formData.email}

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { CircleUserRound } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { SignUpForm } from '@features/auth';
+import { SignUpForm } from '../components/forms/SignUpForm.jsx';
 import imageToBase64 from '@utils/imageToBase64';
 
-const SignUpPage = () => {
+export const SignUpPage = () => {
   const [profileImage, setProfileImage] = useState('');
 
   const handlePhotoUpload = async (e) => {
@@ -23,7 +23,7 @@ const SignUpPage = () => {
   };
 
   return (
-    <section className='max-w-md mx-auto px-2 py-6 bg-white'>
+    <section className='max-w-md mx-auto px-3 py-6 bg-white rounded-xl'>
       <div className='mb-3'>
         <form>
           <label>
@@ -58,5 +58,3 @@ const SignUpPage = () => {
     </section>
   );
 };
-
-export default SignUpPage;

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import SummaryApi, { baseURL } from '@config/summaryApi';
-import {InputText} from '@components/ui';
+import {Input} from '@components';
 import { ButtonForm } from '@features/auth';
 
 const ForgotPasswordForm = () => {
@@ -42,7 +42,7 @@ const ForgotPasswordForm = () => {
     <form onSubmit={handleSubmit}>
       <legend className='text-2xl font-bold mb-2'>Forgot Password</legend>
 
-      <InputText
+      <Input
         label='Email:'
         name='email'
         value={email}

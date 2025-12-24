@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  deleteUser,
   forgotPassword,
   getCurrentUser,
   loginUser,
@@ -24,7 +25,8 @@ userRouter.post('/forgot-password', forgotPassword);
 userRouter.post('/verify-forgot-password-otp', verifyForgotPasswordOTP);
 userRouter.put('/reset-password', resetPassword);
 userRouter.get('/user-details', auth, getCurrentUser);
-userRouter.put('/update-profile', updateProfile);
+userRouter.put('/update-profile', auth, updateProfile);
 userRouter.post('/refresh-token', refreshToken);
+userRouter.delete('/delete-account', auth, deleteUser);
 
 export default userRouter;

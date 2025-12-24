@@ -1,9 +1,10 @@
-// Form components
-export { LoginForm } from './components/forms/LoginForm.jsx';
-export { SignUpForm } from './components/forms/SignUpForm.jsx';
-export { ForgotPasswordForm } from './components/forms/ForgotPasswordForm.jsx';
-export { OtpVerificationForm } from './components/forms/OtpVerificationForm.jsx';
-export { ResetPasswordForm } from './components/forms/ResetPasswordForm.jsx';
+// Pages
+export { LoginPage } from './pages/LoginPage.jsx';
+export { SignUpPage } from './pages/SignUpPage.jsx';
+export { ForgotPasswordPage } from './pages/ForgotPasswordPage.jsx';
+export { OTPVerificationPage } from './pages/OTPVerificationPage.jsx';
+export { ResetPasswordPage } from './pages/ResetPasswordPage.jsx';
+export { VerifyEmailPage } from './pages/VerifyEmailPage.jsx';
 
 // Form Button
 export { ButtonForm } from './components/buttons/ButtonForm.jsx';

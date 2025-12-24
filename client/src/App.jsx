@@ -1,15 +1,18 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Header from '@layouts/Header';
 import Footer from '@layouts/Footer';
 import HomePage from '@pages/HomePage';
-import LoginPage from '@pages/LoginPage';
-import ForgotPasswordPage from '@pages/ForgotPasswordPage';
-import SignUpPage from '@pages/SignUpPage';
-import OTPVerificationPage from '@pages/OtpVerificationPage';
-import ResetPasswordPage from '@pages/ResetPasswordPage';
-import VerifyEmailPage from '@pages/VerifyEmailPage';
-import { useAuthCheck } from '@features/auth';
+import {
+  LoginPage,
+  SignUpPage,
+  ForgotPasswordPage,
+  OTPVerificationPage,
+  ResetPasswordPage,
+  VerifyEmailPage,
+  useAuthCheck
+} from '@features/auth';
+import { DashboardLayout, ProfilePage } from '@features/dashboard';
 
 function App() {
   // Check authentication on app load and page refresh
@@ -31,6 +34,17 @@ function App() {
             element={<OTPVerificationPage />}
           />
           <Route path='/reset-password' element={<ResetPasswordPage />} />
+          {/* Dashboard routes (protected) */}
+          <Route path='/dashboard' element={<DashboardLayout />}>
+            <Route
+              index
+              element={<Navigate to='/dashboard/profile' replace />}
+            />
+            <Route path='profile' element={<ProfilePage />} />
+            {/* <Route path='orders' element={<OrdersPage />} /> */}
+            {/* <Route path='favorites' element={<FavoritesPage />} /> */}
+            {/* <Route path='addresses' element={<AddressesPage />} /> */}
+          </Route>
           <Route path='*' element={<h2>404</h2>} />
         </Routes>
       </main>

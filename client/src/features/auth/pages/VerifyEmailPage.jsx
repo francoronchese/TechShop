@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import SummaryApi, { baseURL } from '@config/summaryApi';
 
-const VerifyEmailPage = () => {
+export const VerifyEmailPage = () => {
   // Extract userId from URL query parameters
   // Example: http://localhost:5173/verify-email?userId=507f1f77bcf86cd799439011
   const [searchParams] = useSearchParams();
@@ -57,7 +57,7 @@ const VerifyEmailPage = () => {
   }, [userId, navigate]);
 
   return (
-    <section className='max-w-md mx-auto px-2 py-6 bg-white text-center'>
+    <section className='max-w-md mx-auto px-3 py-6 bg-white text-center rounded-xl'>
       <h1 className='mb-4 text-2xl font-bold'>Email Verification</h1>
       {loading ? (
         <p className='text-gray-700'>Verifying your email address...</p>
@@ -70,5 +70,3 @@ const VerifyEmailPage = () => {
     </section>
   );
 };
-
-export default VerifyEmailPage;

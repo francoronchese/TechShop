@@ -12,7 +12,7 @@ export const InputPassword = ({
   return (
     <div className='grid gap-1.5'>
       <label htmlFor={name}>{label} </label>
-      <div className='flex p-2 bg-slate-100'>
+      <div className='flex p-2 bg-slate-100 rounded-lg'>
         <input
           type={showPassword ? 'text' : 'password'}
           name={name}
