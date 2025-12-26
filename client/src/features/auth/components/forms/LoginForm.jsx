@@ -62,6 +62,10 @@ const LoginForm = () => {
           })
         );
 
+        // Store authentication flag in sessionStorage for page refresh persistence
+        // Used in: ProtectedRoutes & PublicRoutes
+        sessionStorage.setItem('isLoggedIn', 'true');
+
         // Clear form
         setFormData({
           email: '',

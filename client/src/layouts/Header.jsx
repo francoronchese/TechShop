@@ -29,12 +29,19 @@ const Header = () => {
         toast.error(data.message);
       } else if (data.success) {
         toast.success(data.message);
+
         // Clear user from Redux store
         dispatch(endUserSession());
+
+        // Clear sessionStorage authentication flag
+        // isLoggedIn: Used by ProtectedRoutes & PublicRoutes
+        sessionStorage.removeItem('isLoggedIn');
+
         // Close mobile menu if open
         setIsMobileMenuOpen(false);
-        // Redirect to login page
-        navigate('/login');
+
+        // Redirect to home page
+        navigate('/');
       }
     } catch (error) {
       console.error('Error:', error);

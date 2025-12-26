@@ -48,11 +48,10 @@ export const ProfilePage = () => {
   };
 
   const handlePasswordChange = () => {
+    // Navigate to reset-password page with user's email
     navigate('/reset-password', {
       state: {
         email: user.email,
-        // Differentiates between profile-initiated and recovery-initiated password reset
-        fromProfile: true,
       },
     });
   };

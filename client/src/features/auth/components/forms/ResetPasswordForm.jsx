@@ -15,8 +15,6 @@ const ResetPasswordForm = () => {
   });
   const navigate = useNavigate();
   const location = useLocation();
-  // Check if request originates from user profile (not forgot password flow)
-  const isFromProfile = location.state.fromProfile || false;
 
   // Pre-fill email from location state
   useEffect(() => {
@@ -25,8 +23,12 @@ const ResetPasswordForm = () => {
         ...prev,
         email: location.state.email,
       }));
+    } else {
+      // Redirect to home if accessed directly without email in location state
+      // This prevents unauthorized access to the password reset form
+      navigate('/');
     }
-  }, [location]);
+  }, [location,navigate]);
 
   const handleChange = (e) => {
     setFormData({
@@ -56,19 +58,15 @@ const ResetPasswordForm = () => {
         toast.error(data.message);
       } else if (data.success) {
         toast.success(data.message);
-        // Redirect to login
+        /// Clear form after successful password reset
         setFormData({
           email: '',
           password: '',
           confirmPassword: '',
         });
 
-        // Conditional redirect based on request origin
-        if (isFromProfile) {
-          navigate('/dashboard/profile'); // Return to dashboard for profile changes
-        } else {
-          navigate('/login'); // Go to login for password recovery
-        }
+        // Return to dashboard for profile changes
+        navigate('/dashboard/profile');
       }
     } catch (error) {
       console.error('Error:', error);

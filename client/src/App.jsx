@@ -13,6 +13,8 @@ import {
   useAuthCheck
 } from '@features/auth';
 import { DashboardLayout, ProfilePage } from '@features/dashboard';
+import { ProtectedRoutes } from './routes/ProtectedRoutes';
+import { PublicRoutes } from './routes/PublicRoutes';
 
 function App() {
   // Check authentication on app load and page refresh
@@ -24,27 +26,38 @@ function App() {
       <Header />
       <main className='min-h-[calc(100vh-128px)] md:min-h-[calc(100vh-148px)] p-6 bg-slate-100'>
         <Routes>
+          {/* Public Routes without auth check */}
           <Route path='/' element={<HomePage />} />
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/sign-up' element={<SignUpPage />} />
-          <Route path='/verify-email' element={<VerifyEmailPage />} />
-          <Route path='/forgot-password' element={<ForgotPasswordPage />} />
-          <Route
-            path='/forgot-password-verification'
-            element={<OTPVerificationPage />}
-          />
           <Route path='/reset-password' element={<ResetPasswordPage />} />
-          {/* Dashboard routes (protected) */}
-          <Route path='/dashboard' element={<DashboardLayout />}>
+
+          {/* Public Routes with auth check */}
+          <Route element={<PublicRoutes />}>
+            <Route path='/login' element={<LoginPage />} />
+            <Route path='/sign-up' element={<SignUpPage />} />
+            <Route path='/verify-email' element={<VerifyEmailPage />} />
+            <Route path='/forgot-password' element={<ForgotPasswordPage />} />
             <Route
-              index
-              element={<Navigate to='/dashboard/profile' replace />}
+              path='/forgot-password-verification'
+              element={<OTPVerificationPage />}
             />
-            <Route path='profile' element={<ProfilePage />} />
-            {/* <Route path='orders' element={<OrdersPage />} /> */}
-            {/* <Route path='favorites' element={<FavoritesPage />} /> */}
-            {/* <Route path='addresses' element={<AddressesPage />} /> */}
           </Route>
+
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoutes />}>
+            {/* Dashboard routes*/}
+            <Route path='/dashboard' element={<DashboardLayout />}>
+              <Route
+                index
+                element={<Navigate to='/dashboard/profile' replace />}
+              />
+              <Route path='profile' element={<ProfilePage />} />
+              {/* <Route path='orders' element={<OrdersPage />} /> */}
+              {/* <Route path='favorites' element={<FavoritesPage />} /> */}
+              {/* <Route path='addresses' element={<AddressesPage />} /> */}
+            </Route>
+          </Route>
+
+          {/* 404 Error */}
           <Route path='*' element={<h2>404</h2>} />
         </Routes>
       </main>
