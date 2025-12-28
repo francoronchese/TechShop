@@ -1,4 +1,4 @@
-export const ButtonForm = ({ children, disabled, maxWidth }) => {
+export const ButtonForm = ({ children, disabled, maxWidth, loading }) => {
   return (
     <button
       type='submit'
@@ -8,7 +8,7 @@ export const ButtonForm = ({ children, disabled, maxWidth }) => {
         disabled
           ? 'bg-slate-400 cursor-not-allowed'
           : 'bg-orange-600 outline-none [&:hover,&:focus]:bg-orange-500 [&:hover,&:focus]:ring-2 [&:hover,&:focus]:ring-orange-500 [&:hover,&:focus]:ring-offset-2  transition-all duration-300 ease-in-out tracking-wider cursor-pointer'
-      }`}
+      } ${loading ? 'opacity-85' : ''}`}
     >
       {children}
     </button>

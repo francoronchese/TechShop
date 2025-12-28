@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
-import { Input, InputPassword } from '@components';
+import { Input, InputPassword, Loader } from '@components';
 import SummaryApi, { baseURL } from '@config/summaryApi';
-import {ButtonForm} from '@features/auth';
+import { ButtonForm } from '@features/auth';
 import { setUserDetails } from '@store/slices/userSlice';
 
 const LoginForm = () => {
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -26,6 +27,7 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await fetch(baseURL + SummaryApi.login.url, {
@@ -77,6 +79,8 @@ const LoginForm = () => {
     } catch (error) {
       console.error('Error:', error);
       toast.error('Connection error. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,8 +113,8 @@ const LoginForm = () => {
         Forgot password?
       </Link>
 
-      <ButtonForm disabled={!isFormValid} maxWidth={'150px'}>
-        Login
+      <ButtonForm disabled={!isFormValid} loading={loading} maxWidth={'150px'}>
+        {loading ? <Loader /> : 'Login'}
       </ButtonForm>
 
       <p className='text-sm text-gray-600'>
@@ -126,4 +130,4 @@ const LoginForm = () => {
   );
 };
 
-export {LoginForm};
+export { LoginForm };

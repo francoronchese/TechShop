@@ -23,6 +23,7 @@ export const ProfilePage = () => {
     mobile: '',
     avatar: '',
   });
+  const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   // Temporary base64 image for preview before Cloudinary upload
   const [profileImage, setProfileImage] = useState('');
@@ -37,6 +38,7 @@ export const ProfilePage = () => {
     });
   }, [user]);
 
+  // Handles input changes in profile form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -47,8 +49,8 @@ export const ProfilePage = () => {
     });
   };
 
+  // Navigate to reset-password page with user's email in navigation state
   const handlePasswordChange = () => {
-    // Navigate to reset-password page with user's email
     navigate('/reset-password', {
       state: {
         email: user.email,
@@ -56,6 +58,7 @@ export const ProfilePage = () => {
     });
   };
 
+  // Resets form data to original user values
   const handleCancel = () => {
     setFormData({
       name: user.name,
@@ -63,10 +66,11 @@ export const ProfilePage = () => {
       mobile: user.mobile || '',
       avatar: user.avatar || '',
     });
+    setProfileImage('');
     setIsEditing(false);
   };
 
-  // Handle profile picture selection and preview
+  // Handle profile picture selection and convert to base64 for preview
   const handlePhotoUpload = async (e) => {
     // Get first file from input (user can only select one image)
     const file = e.target.files[0];
@@ -83,8 +87,10 @@ export const ProfilePage = () => {
     }
   };
 
+  // Submit updated profile data to backend with optional image upload
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       // Use current user avatar unless a new image was selected for upload
@@ -127,11 +133,14 @@ export const ProfilePage = () => {
     } catch (error) {
       toast.error('Connection error. Please try again later.');
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Permanently delete user account and clear authentication state
   const handleDeleteAccount = async () => {
-try {
+    try {
       // Send DELETE request to backend account deletion endpoint
       const res = await fetch(baseURL + SummaryApi.deleteAccount.url, {
         method: SummaryApi.deleteAccount.method,
@@ -145,10 +154,18 @@ try {
         toast.error(data.message);
       } else if (data.success) {
         toast.success(data.message);
-        // Clear user data from Redux store
-        dispatch(endUserSession());
+
         // Redirect to home page after successful deletion
         navigate('/');
+
+        // Use setTimeout to ensure navigation executes before state is cleared.
+        // Without this, ProtectedRoutes will detect the cleared state and redirect to login.
+        setTimeout(() => {
+          // Clear user data from Redux store
+          dispatch(endUserSession());
+          // Clear sessionStorage authentication flag to prevent access to protected routes
+          sessionStorage.removeItem('isLoggedIn');
+        }, 1000);
       }
     } catch (error) {
       toast.error('Connection error. Please try again later.');
@@ -165,6 +182,7 @@ try {
           onEdit={() => setIsEditing(true)}
           onCancel={handleCancel}
           onSave={handleSubmit}
+          loading={loading}
         />
         {/* Profile Picture */}
         <ProfileAvatar

@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Input, InputPassword } from '@components';
+import { Input, InputPassword, Loader } from '@components';
 import SummaryApi, { baseURL } from '@config/summaryApi';
 import { ButtonForm } from '@features/auth';
 
 const ResetPasswordForm = () => {
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ const ResetPasswordForm = () => {
       // This prevents unauthorized access to the password reset form
       navigate('/');
     }
-  }, [location,navigate]);
+  }, [location, navigate]);
 
   const handleChange = (e) => {
     setFormData({
@@ -39,6 +40,7 @@ const ResetPasswordForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await fetch(baseURL + SummaryApi.resetPassword.url, {
@@ -71,6 +73,8 @@ const ResetPasswordForm = () => {
     } catch (error) {
       console.error('Error:', error);
       toast.error('Connection error. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -110,8 +114,8 @@ const ResetPasswordForm = () => {
         onToggleShowPassword={() => setConfirmPassword(!confirmPassword)}
       />
 
-      <ButtonForm disabled={!isFormValid} maxWidth={'180px'}>
-        Reset Password
+      <ButtonForm disabled={!isFormValid} loading={loading} maxWidth={'180px'}>
+        {loading ? <Loader /> : 'Reset Password'}
       </ButtonForm>
     </form>
   );

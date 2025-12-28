@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import toast from 'react-hot-toast';
-import { Search, SquareUserRound, Menu, X } from 'lucide-react';
-import { Logo, ShoppingCartIcon } from '@components';
+import { Search, SquareUserRound, Menu, X, LogOut } from 'lucide-react';
+import { Logo, ShoppingCartIcon, Loader } from '@components';
 import SummaryApi, { baseURL } from '@config/summaryApi';
 import { endUserSession } from '@store/slices/userSlice';
 
 const Header = () => {
+  const [loading, setLoading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   // Get user state from Redux store
@@ -16,6 +17,8 @@ const Header = () => {
   const dispatch = useDispatch();
 
   const handleLogout = async () => {
+    setLoading(true);
+
     try {
       const res = await fetch(baseURL + SummaryApi.logout.url, {
         method: SummaryApi.logout.method,
@@ -46,6 +49,8 @@ const Header = () => {
     } catch (error) {
       console.error('Error:', error);
       toast.error('Connection error. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -96,9 +101,17 @@ const Header = () => {
               />
               <button
                 onClick={handleLogout}
-                className='hidden md:block px-3 py-1 bg-red-500 text-white rounded-sm hover:bg-red-600 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider cursor-pointer'
+                disabled={loading}
+                className='hidden md:flex items-center justify-center min-w-[100px] px-3 py-1 bg-red-500 text-white rounded-sm hover:bg-red-600 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider disabled:opacity-85 cursor-pointer'
               >
-                Logout
+                {loading ? (
+                  <Loader />
+                ) : (
+                  <div className='flex justify-center items-center gap-1'>
+                    <LogOut size={20} />
+                    Logout
+                  </div>
+                )}
               </button>
             </>
           ) : (

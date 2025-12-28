@@ -2,15 +2,17 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import SummaryApi, { baseURL } from '@config/summaryApi';
-import {Input} from '@components';
+import { Input, Loader } from '@components';
 import { ButtonForm } from '@features/auth';
 
 const ForgotPasswordForm = () => {
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await fetch(baseURL + SummaryApi.forgotPassword.url, {
@@ -35,6 +37,8 @@ const ForgotPasswordForm = () => {
     } catch (error) {
       console.error('Error:', error);
       toast.error('Connection error. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -50,8 +54,8 @@ const ForgotPasswordForm = () => {
         placeholder='enter your registered email'
       />
 
-      <ButtonForm disabled={!email} maxWidth={'180px'}>
-        Reset Password
+      <ButtonForm disabled={!email} loading={loading} maxWidth={'180px'}>
+        {loading ? <Loader /> : 'Reset Password'}
       </ButtonForm>
 
       <p className='text-sm text-gray-600'>
@@ -67,4 +71,4 @@ const ForgotPasswordForm = () => {
   );
 };
 
-export {ForgotPasswordForm};
+export { ForgotPasswordForm };

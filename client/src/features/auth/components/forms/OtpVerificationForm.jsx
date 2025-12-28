@@ -2,9 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import SummaryApi, { baseURL } from '@config/summaryApi';
-import {ButtonForm} from '@features/auth';
+import { ButtonForm } from '@features/auth';
+import { Loader } from '@components';
 
 const OtpVerificationForm = () => {
+  const [loading, setLoading] = useState(false);
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
@@ -42,6 +44,7 @@ const OtpVerificationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await fetch(
@@ -72,6 +75,8 @@ const OtpVerificationForm = () => {
     } catch (error) {
       console.error('Error:', error);
       toast.error('Connection error. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,8 +109,12 @@ const OtpVerificationForm = () => {
         ))}
       </div>
 
-      <ButtonForm disabled={!isOtpComplete} maxWidth={'180px'}>
-        Verify OTP
+      <ButtonForm
+        disabled={!isOtpComplete}
+        loading={loading}
+        maxWidth={'180px'}
+      >
+        {loading ? <Loader /> : 'Verify OTP'}
       </ButtonForm>
 
       <p className='text-sm text-gray-600'>
@@ -121,4 +130,4 @@ const OtpVerificationForm = () => {
   );
 };
 
-export {OtpVerificationForm};
+export { OtpVerificationForm };

@@ -1,7 +1,7 @@
 import { Pencil, X, Check } from 'lucide-react';
-import { Button } from '@components';
+import { Button, Loader } from '@components';
 
-const ProfileActions = ({ isEditing, onEdit, onCancel, onSave }) => {
+const ProfileActions = ({ isEditing, onEdit, onCancel, onSave, loading }) => {
   return (
     <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4'>
       <div>
@@ -23,11 +23,13 @@ const ProfileActions = ({ isEditing, onEdit, onCancel, onSave }) => {
           </Button>
           <Button
             onClick={onSave}
-            className='w-full sm:w-auto justify-center bg-orange-500 text-white hover:bg-orange-600'
-            icon={Check}
+            className={`w-full sm:w-auto justify-center bg-orange-500 text-white hover:bg-orange-600 ${
+              loading ? 'opacity-85 px-10' : ''
+            }`}
+            icon={loading ? null : Check}
             iconSize={15}
           >
-            Save
+            {loading ? <Loader /> : 'Save'}
           </Button>
         </div>
       ) : (

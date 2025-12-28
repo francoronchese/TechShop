@@ -1,7 +1,8 @@
-import { useRef } from 'react';
-import { Button } from '@components';
+import { useRef, useState } from 'react';
+import { Button, Loader } from '@components';
 
 const DangerZone = ({ onDelete }) => {
+  const [loading, setLoading] = useState(false);
   // Create reference to access the native DOM dialog element
   // Required to call showModal() and close() methods
   const dialogRef = useRef(null);
@@ -17,9 +18,14 @@ const DangerZone = ({ onDelete }) => {
   };
 
   // Handle delete confirmation
-  const handleDelete = () => {
-    onDelete();
-    closeModal();
+  const handleDelete = async () => {
+    setLoading(true);
+    try {
+      await onDelete();
+    } finally {
+      setLoading(false);
+      closeModal();
+    }
   };
 
   return (
@@ -63,9 +69,11 @@ const DangerZone = ({ onDelete }) => {
           </Button>
           <Button
             onClick={handleDelete}
-            className='justify-center w-full min-[350px]:w-auto bg-red-600 text-white hover:bg-red-700'
+            className={`justify-center w-full min-[350px]:w-auto bg-red-600 text-white hover:bg-red-700 ${
+              loading ? 'opacity-85 px-16' : ''
+            }`}
           >
-            Delete Account
+            {loading ? <Loader /> : 'Delete Account'}
           </Button>
         </div>
       </dialog>

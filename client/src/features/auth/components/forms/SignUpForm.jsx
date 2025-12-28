@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Input, InputPassword } from '@components';
+import { Input, InputPassword, Loader } from '@components';
 import SummaryApi, { baseURL } from '@config/summaryApi';
 import uploadToCloudinary from '@helpers/cloudinaryUpload';
 import { ButtonForm } from '@features/auth';
 
 const SignUpForm = ({ profileImage = '' }) => {
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -34,6 +35,7 @@ const SignUpForm = ({ profileImage = '' }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       // Upload image to Cloudinary if user selected one
@@ -74,6 +76,8 @@ const SignUpForm = ({ profileImage = '' }) => {
     } catch (error) {
       console.error('Error:', error);
       toast.error('Connection error. Please try again later.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -121,8 +125,8 @@ const SignUpForm = ({ profileImage = '' }) => {
         onToggleShowPassword={() => setConfirmPassword(!confirmPassword)}
       />
 
-      <ButtonForm disabled={!isFormValid} maxWidth={'150px'}>
-        Sign Up
+      <ButtonForm disabled={!isFormValid} loading={loading} maxWidth={'150px'}>
+        {loading ? <Loader /> : 'Sign Up'}
       </ButtonForm>
 
       <p className='text-sm text-gray-600'>
