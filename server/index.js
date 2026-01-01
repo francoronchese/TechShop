@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import errorMiddleware from './middlewares/errorMiddleware.js';
 
 // Load environment variables based on current environment
 // This ensures correct .env file is loaded (development vs production)
@@ -47,6 +48,9 @@ const PORT = process.env.PORT || 3000;
 
 // API routes
 app.use('/api/user', userRouter);
+
+// Error handler
+app.use(errorMiddleware);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
