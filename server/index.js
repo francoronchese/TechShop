@@ -17,6 +17,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import connectDB from './config/connectDB.js';
 import userRouter from './routes/userRoutes.js';
+import productRouter from './routes/productRoutes.js';
 
 const app = express();
 
@@ -48,6 +49,7 @@ const PORT = process.env.PORT || 3000;
 
 // API routes
 app.use('/api/user', userRouter);
+app.use('/api/product', productRouter);
 
 // Error handler
 app.use(errorMiddleware);

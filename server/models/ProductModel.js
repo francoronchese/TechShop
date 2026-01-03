@@ -5,18 +5,19 @@ const productSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
+      unique: true,
     },
     image: {
       type: Array,
       default: [],
     },
-    category_id: [
+    categories: [
       {
         type: mongoose.Schema.ObjectId,
         ref: 'category',
       },
     ],
-    sub_category_id: [
+    sub_categories: [
       {
         type: mongoose.Schema.ObjectId,
         ref: 'subCategory',
