@@ -1,13 +1,43 @@
 import { NavLink } from 'react-router-dom';
-import { User, ShoppingBag, Heart, MapPin } from 'lucide-react';
+import {
+  User,
+  ShoppingBag,
+  Heart,
+  MapPin,
+  Users,
+  Package,
+  Folder,
+  FolderOpen,
+} from 'lucide-react';
+import { useSelector } from 'react-redux';
 
 export const DashboardSidebar = () => {
-  const navItems = [
+  // Access user data from Redux store to determine permissions
+  const user = useSelector((state) => state.user);
+
+  // Navigation items available only to normal users
+  const userNavItems = [
     { to: '/dashboard/profile', label: 'My Account', icon: User },
     { to: '/dashboard/orders', label: 'My Orders', icon: ShoppingBag },
     { to: '/dashboard/favorites', label: 'Favorites', icon: Heart },
     { to: '/dashboard/addresses', label: 'Addresses', icon: MapPin },
   ];
+
+  // Navigation items available only to administrators
+  const adminNavItems = [
+    { to: '/dashboard/profile', label: 'My Account', icon: User },
+    { to: '/dashboard/users', label: 'Users', icon: Users },
+    { to: '/dashboard/products', label: 'Products', icon: Package },
+    { to: '/dashboard/categories', label: 'Categories', icon: Folder },
+    {
+      to: '/dashboard/sub-categories',
+      label: 'Sub Categories',
+      icon: FolderOpen,
+    },
+  ];
+
+  // Select the appropriate navigation set based on user role
+  const navItems = user.role === 'Admin' ? adminNavItems : userNavItems;
 
   return (
     <nav className='p-2 bg-white rounded-xl shadow-sm'>
