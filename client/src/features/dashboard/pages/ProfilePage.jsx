@@ -96,7 +96,10 @@ export const ProfilePage = () => {
       // Use current user avatar unless a new image was selected for upload
       let avatarUrl = user.avatar || '';
       if (profileImage) {
-        avatarUrl = await uploadToCloudinary(profileImage);
+        avatarUrl = await uploadToCloudinary(
+          profileImage,
+          import.meta.env.VITE_CLOUDINARY_PRESET_AVATARS
+        );
       }
 
       const res = await fetch(baseURL + SummaryApi.updateProfile.url, {
@@ -163,8 +166,7 @@ export const ProfilePage = () => {
         setTimeout(() => {
           // Clear user data from Redux store
           dispatch(endUserSession());
-          // Clear sessionStorage authentication flag to prevent access to protected routes
-          sessionStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('isLoggedIn');
         }, 1000);
       }
     } catch (error) {

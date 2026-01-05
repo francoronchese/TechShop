@@ -12,7 +12,7 @@ import {
 import { useSelector } from 'react-redux';
 
 export const DashboardSidebar = () => {
-  // Access user data from Redux store to determine permissions
+  // Access user data from Redux store to determine permissions for Amin or User roles
   const user = useSelector((state) => state.user);
 
   // Navigation items available only to normal users

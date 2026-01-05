@@ -40,7 +40,10 @@ const SignUpForm = ({ profileImage = '' }) => {
     try {
       // Upload image to Cloudinary if user selected one
       const avatarUrl = profileImage
-        ? await uploadToCloudinary(profileImage)
+        ? await uploadToCloudinary(
+            profileImage,
+            import.meta.env.VITE_CLOUDINARY_PRESET_AVATARS
+          )
         : '';
 
       const res = await fetch(baseURL + SummaryApi.register.url, {

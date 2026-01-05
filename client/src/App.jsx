@@ -10,9 +10,14 @@ import {
   OTPVerificationPage,
   ResetPasswordPage,
   VerifyEmailPage,
-  useAuthCheck
+  useAuthCheck,
 } from '@features/auth';
-import { DashboardLayout, ProfilePage } from '@features/dashboard';
+import {
+  DashboardLayout,
+  ProfilePage,
+  CategoryPage,
+  SubCategoryPage,
+} from '@features/dashboard';
 import { ProtectedRoutes } from './routes/ProtectedRoutes';
 import { PublicRoutes } from './routes/PublicRoutes';
 
@@ -54,6 +59,8 @@ function App() {
               {/* <Route path='orders' element={<OrdersPage />} /> */}
               {/* <Route path='favorites' element={<FavoritesPage />} /> */}
               {/* <Route path='addresses' element={<AddressesPage />} /> */}
+              <Route path='categories' element={<CategoryPage />} />
+              <Route path='sub-categories' element={<SubCategoryPage />} />
             </Route>
           </Route>
 

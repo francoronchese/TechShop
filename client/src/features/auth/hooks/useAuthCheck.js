@@ -15,6 +15,9 @@ export const useAuthCheck = () => {
   useEffect(() => {
     // Call backend logout endpoint to clear HTTP-only cookies
     const serverLogout = async () => {
+      // Clear localStorage authentication flag
+      // isLoggedIn: Used by ProtectedRoutes & PublicRoutes
+      localStorage.removeItem('isLoggedIn');
       await fetch(baseURL + SummaryApi.logout.url, {
         method: SummaryApi.logout.method,
         credentials: 'include',

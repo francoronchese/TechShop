@@ -36,9 +36,9 @@ const Header = () => {
         // Clear user from Redux store
         dispatch(endUserSession());
 
-        // Clear sessionStorage authentication flag
+        // Clear localStorage authentication flag
         // isLoggedIn: Used by ProtectedRoutes & PublicRoutes
-        sessionStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('isLoggedIn');
 
         // Close mobile menu if open
         setIsMobileMenuOpen(false);
