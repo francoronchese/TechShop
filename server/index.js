@@ -18,6 +18,7 @@ import helmet from 'helmet';
 import connectDB from './config/connectDB.js';
 import userRouter from './routes/userRoutes.js';
 import productRouter from './routes/productRoutes.js';
+import categoryRouter from './routes/categoryRoutes.js';
 
 const app = express();
 
@@ -50,6 +51,7 @@ const PORT = process.env.PORT || 3000;
 // API routes
 app.use('/api/user', userRouter);
 app.use('/api/product', productRouter);
+app.ues('api/category', categoryRouter);
 
 // Error handler
 app.use(errorMiddleware);
