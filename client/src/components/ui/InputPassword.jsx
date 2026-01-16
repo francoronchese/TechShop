@@ -11,8 +11,10 @@ export const InputPassword = ({
 }) => {
   return (
     <div className='grid gap-1.5'>
-      <label htmlFor={name}>{label} </label>
-      <div className='flex p-2 bg-slate-100 rounded-lg'>
+      <label className='font-semibold text-orange-500' htmlFor={name}>
+        {label}{' '}
+      </label>
+      <div className='flex p-2 bg-slate-100 rounded-lg border border-slate-200'>
         <input
           type={showPassword ? 'text' : 'password'}
           name={name}

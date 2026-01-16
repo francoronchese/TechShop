@@ -51,14 +51,14 @@ const ForgotPasswordForm = () => {
         name='email'
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder='enter your registered email'
+        placeholder='Enter your registered email'
       />
 
       <ButtonForm disabled={!email} loading={loading} maxWidth={'180px'}>
         {loading ? <Loader /> : 'Reset Password'}
       </ButtonForm>
 
-      <p className='text-sm text-gray-600'>
+      <p className='text-sm text-gray-500 italic'>
         Already have an account?{' '}
         <Link
           to='/login'

@@ -11,7 +11,7 @@ const categoryRouter = Router();
 
 // Public routes
 categoryRouter.get('/get', getAllCategories);
-// Protected routes (Only for logged admins)
+// Protected routes (Admin Only)
 categoryRouter.post('/create', auth, createCategory);
 categoryRouter.put('/update', auth, updateCategory);
 categoryRouter.delete('/delete', auth, deleteCategory);

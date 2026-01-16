@@ -40,7 +40,7 @@ export const DashboardSidebar = () => {
   const navItems = user.role === 'Admin' ? adminNavItems : userNavItems;
 
   return (
-    <nav className='p-2 bg-white rounded-xl shadow-sm'>
+    <nav className='p-2 bg-white rounded-xl shadow-sm border border-slate-200'>
       {navItems.map((item) => (
         <NavLink
           key={item.to}

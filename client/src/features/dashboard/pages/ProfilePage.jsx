@@ -7,7 +7,7 @@ import { setUserDetails, endUserSession } from '@store/slices/userSlice';
 import imageToBase64 from '@utils/imageToBase64';
 import uploadToCloudinary from '@helpers/cloudinaryUpload';
 import ProfileAvatar from '../components/profile/ProfileAvatar';
-import ProfileActions from '../components/profile/ProfileActions';
+import ProfileHeader from '../components/profile/ProfileHeader';
 import ProfileInfoForm from '../components/profile/ProfileInfoForm';
 import DangerZone from '../components/profile/DangerZone';
 
@@ -177,9 +177,9 @@ export const ProfilePage = () => {
 
   return (
     <>
-      <div className='p-6 mt-6 lg:mt-0 bg-white rounded-xl shadow-sm'>
+      <div className='p-6 mt-6 lg:mt-0 bg-white rounded-xl shadow-sm border border-slate-200'>
         {/* Personal Information section header with action buttons */}
-        <ProfileActions
+        <ProfileHeader
           isEditing={isEditing}
           onEdit={() => setIsEditing(true)}
           onCancel={handleCancel}

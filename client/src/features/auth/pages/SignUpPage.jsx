@@ -23,7 +23,7 @@ export const SignUpPage = () => {
   };
 
   return (
-    <section className='max-w-md mx-auto px-3 py-6 bg-white rounded-xl'>
+    <section className='max-w-md mx-auto px-3 py-6 bg-white rounded-xl border border-slate-200'>
       <div className='mb-3'>
         <form>
           <label>

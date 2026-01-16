@@ -57,7 +57,7 @@ export const VerifyEmailPage = () => {
   }, [userId, navigate]);
 
   return (
-    <section className='max-w-md mx-auto px-3 py-6 bg-white text-center rounded-xl'>
+    <section className='max-w-md mx-auto px-3 py-6 bg-white text-center rounded-xl border border-slate-200'>
       <h1 className='mb-4 text-2xl font-bold'>Email Verification</h1>
       {loading ? (
         <p className='text-gray-700'>Verifying your email address...</p>

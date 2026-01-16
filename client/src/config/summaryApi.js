@@ -1,53 +1,90 @@
 // API configuration file
 // Defines all backend endpoints and base URLs for development and production
 export const baseURL = import.meta.env.DEV
-  ? '' // Empty string during development - Vite proxy handles the /api prefix
-  : 'http://localhost:8080'; // Direct backend URL for production (includes /api in endpoint URLs)
+  ? "" // Empty string during development - Vite proxy handles the /api prefix
+  : "http://localhost:8080"; // Direct backend URL for production (includes /api in endpoint URLs)
 
 const SummaryApi = {
+  // USER ENDPOINTS
   register: {
-    url: '/api/user/register',
-    method: 'POST',
+    url: "/api/user/register",
+    method: "POST",
   },
   login: {
-    url: '/api/user/login',
-    method: 'POST',
+    url: "/api/user/login",
+    method: "POST",
   },
   verifyEmail: {
-    url: '/api/user/verify-email',
-    method: 'POST',
+    url: "/api/user/verify-email",
+    method: "POST",
   },
   forgotPassword: {
-    url: '/api/user/forgot-password',
-    method: 'POST',
+    url: "/api/user/forgot-password",
+    method: "POST",
   },
   forgotPasswordVerification: {
-    url: '/api/user/verify-forgot-password-otp',
-    method: 'POST',
+    url: "/api/user/verify-forgot-password-otp",
+    method: "POST",
   },
   resetPassword: {
-    url: '/api/user/reset-password',
-    method: 'PUT',
+    url: "/api/user/reset-password",
+    method: "PUT",
   },
   logout: {
-    url: '/api/user/logout',
-    method: 'POST',
+    url: "/api/user/logout",
+    method: "POST",
   },
   userDetails: {
-    url: '/api/user/user-details',
-    method: 'GET',
+    url: "/api/user/user-details",
+    method: "GET",
   },
   updateProfile: {
-    url: '/api/user/update-profile',
-    method: 'PUT',
+    url: "/api/user/update-profile",
+    method: "PUT",
   },
   refreshToken: {
-    url: '/api/user/refresh-token',
-    method: 'POST',
+    url: "/api/user/refresh-token",
+    method: "POST",
   },
   deleteAccount: {
-    url: '/api/user/delete-account',
-    method: 'DELETE',
+    url: "/api/user/delete-account",
+    method: "DELETE",
+  },
+
+  // CATEGORY ENDPOINTS
+  createCategory: {
+    url: "/api/category/create",
+    method: "POST",
+  },
+  getAllCategories: {
+    url: "/api/category/get",
+    method: "GET",
+  },
+  updateCategory: {
+    url: "/api/category/update",
+    method: "PUT",
+  },
+  deleteCategory: {
+    url: "/api/category/delete",
+    method: "DELETE",
+  },
+
+  // SUB-CATEGORY ENDPOINTS
+  createSubCategory: {
+    url: "/api/sub-category/create",
+    method: "POST",
+  },
+  getSubCategory: {
+    url: "/api/sub-category/get",
+    method: "GET",
+  },
+  updateSubCategory: {
+    url: "/api/sub-category/update",
+    method: "PUT",
+  },
+  deleteSubCategory: {
+    url: "/api/sub-category/delete",
+    method: "DELETE",
   },
 };
 

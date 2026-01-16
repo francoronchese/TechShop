@@ -9,7 +9,9 @@ export const Input = ({
 }) => {
   return (
     <div className='grid gap-1.5'>
-      <label htmlFor={name}>{label}</label>
+      <label className='font-semibold text-orange-500' htmlFor={name}>
+        {label}
+      </label>
       <input
         type={type}
         name={name}
@@ -19,7 +21,7 @@ export const Input = ({
         placeholder={placeholder}
         required
         readOnly={readOnly}
-        className={`p-2 bg-slate-100 rounded-lg outline-none ${
+        className={`p-2 bg-slate-100 rounded-lg outline-none border border-slate-200 ${
           readOnly
             ? // Hide text cursor (caret) for readonly inputs to prevent user interaction
               'text-gray-500 outline-none cursor-not-allowed caret-transparent'

@@ -93,7 +93,7 @@ const LoginForm = () => {
         name='email'
         value={formData.email}
         onChange={handleChange}
-        placeholder='enter email'
+        placeholder='Enter email'
       />
 
       <InputPassword
@@ -101,14 +101,14 @@ const LoginForm = () => {
         name='password'
         value={formData.password}
         onChange={handleChange}
-        placeholder='enter password'
+        placeholder='Enter password'
         showPassword={showPassword}
         onToggleShowPassword={() => setShowPassword(!showPassword)}
       />
 
       <Link
         to='/forgot-password'
-        className='ml-auto text-sm text-gray-600 hover:underline hover:text-orange-600'
+        className='ml-auto text-sm text-gray-500 italic hover:underline hover:text-orange-600'
       >
         Forgot password?
       </Link>
@@ -117,7 +117,7 @@ const LoginForm = () => {
         {loading ? <Loader /> : 'Login'}
       </ButtonForm>
 
-      <p className='text-sm text-gray-600'>
+      <p className='text-sm text-gray-500 italic'>
         Don't have an account?{' '}
         <Link
           to='/sign-up'

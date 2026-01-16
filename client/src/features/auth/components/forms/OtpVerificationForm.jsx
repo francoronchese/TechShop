@@ -117,7 +117,7 @@ const OtpVerificationForm = () => {
         {loading ? <Loader /> : 'Verify OTP'}
       </ButtonForm>
 
-      <p className='text-sm text-gray-600'>
+      <p className='text-sm text-gray-500 italic'>
         Didn't receive the code?{' '}
         <Link
           to='/forgot-password'

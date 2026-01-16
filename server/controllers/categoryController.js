@@ -69,6 +69,22 @@ export const updateCategory = asyncHandler(async (req, res) => {
       success: false,
     });
   }
+  
+  // Check if the new name is already taken by another category (excluding current ID)
+    if (name) {
+      const existingCategory = await CategoryModel.findOne({
+        name,
+        _id: { $ne: _id },
+      });
+  
+      if (existingCategory) {
+        return res.status(400).json({
+          message: 'Category name already exists',
+          error: true,
+          success: false,
+        });
+      }
+    }
 
   // Update category in database
   const updatedCategory = await CategoryModel.findByIdAndUpdate(

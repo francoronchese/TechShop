@@ -102,13 +102,13 @@ const Header = () => {
               <button
                 onClick={handleLogout}
                 disabled={loading}
-                className='hidden md:flex items-center justify-center min-w-[100px] px-3 py-1 bg-red-500 text-white rounded-sm hover:bg-red-600 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider disabled:opacity-85 cursor-pointer'
+                className='hidden md:flex items-center justify-center min-w-[100px] px-3 py-1 bg-red-500 font-semibold text-white rounded-sm hover:bg-red-600 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider disabled:opacity-85 cursor-pointer'
               >
                 {loading ? (
                   <Loader />
                 ) : (
                   <div className='flex justify-center items-center gap-1'>
-                    <LogOut size={20} />
+                    <LogOut size={22} />
                     Logout
                   </div>
                 )}
@@ -119,13 +119,13 @@ const Header = () => {
             <>
               <Link
                 to='/login'
-                className='hidden md:block px-3 py-1 bg-orange-500 text-white rounded-sm hover:bg-orange-600 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
+                className='hidden md:block px-3 py-1 font-semibold bg-orange-500 text-white rounded-sm hover:bg-orange-600 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
               >
                 Login
               </Link>
               <Link
                 to='/sign-up'
-                className='hidden md:block px-3 py-1 bg-gray-700 text-white rounded-sm hover:bg-gray-800 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
+                className='hidden md:block px-3 py-1 font-semibold bg-gray-700 text-white rounded-sm hover:bg-gray-800 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider'
               >
                 Register
               </Link>

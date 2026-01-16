@@ -97,7 +97,7 @@ const SignUpForm = ({ profileImage = '' }) => {
         name='name'
         value={formData.name}
         onChange={handleChange}
-        placeholder='enter your name'
+        placeholder='Enter your name'
       />
 
       <Input
@@ -105,7 +105,7 @@ const SignUpForm = ({ profileImage = '' }) => {
         name='email'
         value={formData.email}
         onChange={handleChange}
-        placeholder='enter email'
+        placeholder='Enter email'
       />
 
       <InputPassword
@@ -113,7 +113,7 @@ const SignUpForm = ({ profileImage = '' }) => {
         name='password'
         value={formData.password}
         onChange={handleChange}
-        placeholder='enter password'
+        placeholder='Enter password'
         showPassword={showPassword}
         onToggleShowPassword={() => setShowPassword(!showPassword)}
       />
@@ -123,7 +123,7 @@ const SignUpForm = ({ profileImage = '' }) => {
         name='confirmPassword'
         value={formData.confirmPassword}
         onChange={handleChange}
-        placeholder='enter confirm password'
+        placeholder='Enter confirm password'
         showPassword={confirmPassword}
         onToggleShowPassword={() => setConfirmPassword(!confirmPassword)}
       />
@@ -132,7 +132,7 @@ const SignUpForm = ({ profileImage = '' }) => {
         {loading ? <Loader /> : 'Sign Up'}
       </ButtonForm>
 
-      <p className='text-sm text-gray-600'>
+      <p className='text-sm text-gray-500 italic'>
         Already have an account?{' '}
         <Link
           to='/login'

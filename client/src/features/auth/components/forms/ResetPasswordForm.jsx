@@ -90,7 +90,7 @@ const ResetPasswordForm = () => {
         name='email'
         value={formData.email}
         onChange={handleChange}
-        placeholder='enter email'
+        placeholder='Enter email'
         readOnly={true}
       />
 
@@ -99,7 +99,7 @@ const ResetPasswordForm = () => {
         name='password'
         value={formData.password}
         onChange={handleChange}
-        placeholder='enter new password'
+        placeholder='Enter new password'
         showPassword={showPassword}
         onToggleShowPassword={() => setShowPassword(!showPassword)}
       />
@@ -109,7 +109,7 @@ const ResetPasswordForm = () => {
         name='confirmPassword'
         value={formData.confirmPassword}
         onChange={handleChange}
-        placeholder='enter confirm new password'
+        placeholder='Enter confirm new password'
         showPassword={confirmPassword}
         onToggleShowPassword={() => setConfirmPassword(!confirmPassword)}
       />
