@@ -64,7 +64,16 @@ const ProductList = ({ items, onEdit, onDelete }) => {
 
             {/* Price and stock information */}
             <div className="flex items-center justify-between mt-3">
-              <p className="text-lg font-bold text-orange-600">${item.price}</p>
+              <div className="flex items-baseline gap-2">
+                <p className="text-lg font-bold text-orange-600">
+                  ${item.price}
+                </p>
+                {item.discount > 0 && (
+                  <span className="text-xs text-slate-400 line-through">
+                    ${(item.price / (1 - item.discount / 100)).toFixed(2)}
+                  </span>
+                )}
+              </div>
               <div className="flex items-center gap-1 text-gray-500 text-xs font-bold">
                 <Package size={14} /> {item.stock || 0}
               </div>
