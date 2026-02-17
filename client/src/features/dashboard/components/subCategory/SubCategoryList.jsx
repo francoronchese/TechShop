@@ -1,5 +1,5 @@
 import React from "react";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, FolderOpen } from "lucide-react";
 
 // Renders flat cards. Accesses populated category objects to display the actual names in the chips.
 const SubCategoryList = ({ items, onEdit, onDelete }) => {
@@ -8,7 +8,7 @@ const SubCategoryList = ({ items, onEdit, onDelete }) => {
       {items.map((item) => (
         <div
           key={item._id}
-          className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100 shadow-sm hover:border-orange-200 transition-colors"
+          className="flex items-center justify-between p-4 bg-slate-200 rounded-xl border border-slate-200 shadow-sm hover:border-orange-200 transition-colors"
         >
           {/* Info Section: Name and Dynamic Chips */}
           <div className="flex flex-col gap-2">
@@ -30,13 +30,13 @@ const SubCategoryList = ({ items, onEdit, onDelete }) => {
           <div className="flex gap-1">
             <button
               onClick={() => onEdit(item)}
-              className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+              className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
             >
               <Pencil size={18} />
             </button>
             <button
               onClick={() => onDelete(item._id)}
-              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+              className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all cursor-pointer"
             >
               <Trash2 size={18} />
             </button>
@@ -47,6 +47,7 @@ const SubCategoryList = ({ items, onEdit, onDelete }) => {
       {/* Empty List */}
       {items.length === 0 && (
         <div className="col-span-full p-12 text-center bg-slate-50 rounded-xl border-2 border-dashed border-slate-300">
+          <FolderOpen className="w-12 h-12 text-slate-400 mx-auto mb-3" />
           <p className="text-sm text-gray-500">No sub-categories created yet</p>
         </div>
       )}

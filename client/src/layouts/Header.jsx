@@ -95,6 +95,7 @@ const Header = () => {
             // Display user profile and logout for authenticated users
             <>
               <SquareUserRound
+                onClick={() => navigate("/dashboard")}
                 size='36px'
                 strokeWidth='1.25'
                 className='cursor-pointer hidden md:block'

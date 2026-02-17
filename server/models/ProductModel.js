@@ -39,10 +39,6 @@ const productSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
-    publish: {
-      type: Boolean,
-      default: true,
-    },
   },
   {
     timestamps: true,

@@ -86,6 +86,28 @@ const SummaryApi = {
     url: "/api/sub-category/delete",
     method: "DELETE",
   },
+
+  // PRODUCT ENDPOINTS
+  createProduct: {
+    url: "/api/product/create",
+    method: "POST",
+  },
+  getAllProducts: {
+    url: "/api/product/get",
+    method: "GET",
+  },
+  getProduct: {
+    url: "/api/product/get/:id",
+    method: "GET",
+  },
+  updateProduct: {
+    url: "/api/product/update",
+    method: "PUT",
+  },
+  deleteProduct: {
+    url: "/api/product/delete",
+    method: "DELETE",
+  },
 };
 
 export default SummaryApi;

@@ -1,4 +1,4 @@
-import { Pencil, Trash2, Image as ImageIcon } from "lucide-react";
+import { Pencil, Trash2, Folder } from "lucide-react";
 import { Button } from "@components";
 
 const CategoryList = ({ items, onEdit, onDelete }) => {
@@ -8,10 +8,10 @@ const CategoryList = ({ items, onEdit, onDelete }) => {
       {items.map((item) => (
         <div
           key={item._id}
-          className="bg-slate-50 rounded-xl border border-slate-100 shadow-sm hover:border-orange-200 hover:shadow-md transition-all overflow-hidden"
+          className="bg-slate-50 rounded-xl border border-slate-300 shadow-sm hover:border-orange-200 hover:shadow-md transition-all overflow-hidden"
         >
           {/* Wrapper for category image  */}
-          <div className="relative w-full h-48 bg-slate-200 overflow-hidden">
+          <div className="relative w-full h-48">
             {item.image ? (
               <img
                 src={item.image}
@@ -26,7 +26,7 @@ const CategoryList = ({ items, onEdit, onDelete }) => {
           </div>
 
           {/* Category details and action buttons */}
-          <div className="p-4">
+          <div className="p-4 bg-white border-t border-slate-300/80">
             <h3 className="text-gray-800 font-bold mb-3 truncate">
               {item.name}
             </h3>
@@ -34,7 +34,7 @@ const CategoryList = ({ items, onEdit, onDelete }) => {
             <div className="flex flex-col min-[600px]:flex-row gap-2">
               <Button
                 onClick={() => onEdit(item)}
-                className="flex-1 justify-center bg-blue-50 text-blue-600 hover:bg-blue-100 border-none shadow-none"
+                className="flex-1 justify-center bg-blue-600 text-white hover:shadow-md"
                 icon={Pencil}
                 iconSize={16}
               >
@@ -42,7 +42,7 @@ const CategoryList = ({ items, onEdit, onDelete }) => {
               </Button>
               <Button
                 onClick={() => onDelete(item._id)}
-                className="flex-1 justify-center bg-red-50 text-red-600 hover:bg-red-100 border-none shadow-none"
+                className="flex-1 justify-center  bg-white text-red-600 border border-red-500 hover:bg-red-100 hover:shadow-md"
                 icon={Trash2}
                 iconSize={16}
               >
@@ -56,7 +56,7 @@ const CategoryList = ({ items, onEdit, onDelete }) => {
       {/* Empty List */}
       {items.length === 0 && (
         <div className="col-span-full p-12 text-center bg-slate-50 rounded-xl border-2 border-dashed border-slate-300">
-          <ImageIcon className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+          <Folder className="w-12 h-12 text-slate-400 mx-auto mb-3" />
           <p className="text-sm text-gray-500">No categories created yet</p>
         </div>
       )}

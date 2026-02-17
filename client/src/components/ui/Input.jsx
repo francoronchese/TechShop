@@ -4,6 +4,7 @@ export const Input = ({
   name,
   value,
   onChange,
+  onKeyDown,
   placeholder,
   readOnly = false,
 }) => {
@@ -18,6 +19,7 @@ export const Input = ({
         id={name}
         value={value}
         onChange={onChange}
+        onKeyDown={onKeyDown}
         placeholder={placeholder}
         required
         readOnly={readOnly}

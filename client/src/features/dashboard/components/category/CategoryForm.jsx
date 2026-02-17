@@ -6,7 +6,7 @@ const CategoryForm = ({ formData, onChange, onPhotoUpload }) => {
     <div className="grid grid-cols-1 items-start gap-6">
       {/* Category name input field using global component */}
       <Input
-        label="Category Name"
+        label="Category Name *"
         name="name"
         value={formData.name}
         onChange={onChange}
@@ -17,7 +17,7 @@ const CategoryForm = ({ formData, onChange, onPhotoUpload }) => {
       {/* Image upload and preview section */}
       <div className="flex flex-col">
         <label className="block mb-2 text-orange-500 font-semibold">
-          Category Image
+          Category Image *
         </label>
 
         <div className="flex flex-col sm:flex-row gap-4">

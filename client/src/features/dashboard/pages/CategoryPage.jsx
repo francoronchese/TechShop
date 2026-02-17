@@ -14,6 +14,7 @@ export const CategoryPage = () => {
   const { allCategories } = useSelector((state) => state.category);
   // Send actions to update Redux store
   const dispatch = useDispatch();
+  
   const [loading, setLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({
@@ -30,6 +31,7 @@ export const CategoryPage = () => {
   const fetchCategories = useCallback(async () => {
     try {
       const res = await fetch(baseURL + SummaryApi.getAllCategories.url);
+      
       const data = await res.json();
 
       if (data.success) {
