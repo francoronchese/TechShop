@@ -8,7 +8,7 @@ import {
 
 const ProductList = ({ items, onEdit, onDelete }) => {
   return (
-    <div className="grid grid-cols-1 min-[480px]:grid-cols-2 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 min-[485px]:grid-cols-2 md:grid-cols-3 gap-4">
       {/* Map through all existing products to display card view */}
       {items.map((item) => (
         <div

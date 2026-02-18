@@ -372,13 +372,19 @@ export const ProductPage = () => {
               onClick={() => handlePageChange(page - 1)}
               disabled={page <= 1}
             >
-              Previous
+              Prev
             </button>
-          
+
             <span className="text-sm font-medium text-slate-500">
-              Page {page} of {totalPages || 1} (Total: {totalCount || 0})
+              {/* Simplified version for mobile, full version for desktop */}
+              <span className="sm:hidden">
+                {page} / {totalPages || 1}
+              </span>
+              <span className="hidden sm:inline">
+                Page {page} of {totalPages || 1} (Total: {totalCount || 0})
+              </span>
             </span>
-          
+
             <button
               className="px-4 py-1.5 bg-white border border-slate-400 text-sm font-semibold text-slate-600 rounded-lg hover:bg-slate-50 hover:text-blue-600 hover:border-blue-400 transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={() => handlePageChange(page + 1)}
