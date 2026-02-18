@@ -32,6 +32,9 @@ export const ProductPage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
+  // Search State
+  const [searchProduct, setSearchProduct] = useState("");
+
   // State to store the ID of the product being edited
   const [editId, setEditId] = useState("");
   const [formData, setFormData] = useState({
@@ -56,11 +59,10 @@ export const ProductPage = () => {
   }, [searchParams, setSearchParams]);
 
   // Fetch all products from backend and update Redux store
-  // useCallback memoizes this function to prevent infinite loops in useEffect
   const fetchProducts = useCallback(async () => {
     try {
       const response = await fetch(
-        `${baseURL}${SummaryApi.getAllProducts.url}?page=${page}&limit=10`,
+        `${baseURL}${SummaryApi.getAllProducts.url}?page=${page}&limit=9`,
       );
       const data = await response.json();
 
@@ -110,15 +112,9 @@ export const ProductPage = () => {
   }, [dispatch]);
 
   // Filter subcategories based on the categories selected in the form.
-  // This ensures the user only sees relevant sub-options.
   const filteredSubCategories = allSubCategories.filter((sub) => {
-    // If no categories are selected, hide all subcategories
     if (!formData.categories || formData.categories.length === 0) return false;
-
-    // Create a Set of strings for high-performance lookup
     const selectedCategoryIds = new Set(formData.categories.map(String));
-
-    // Check if any category in the subcategory exists in the Set
     return sub.categories.some((cat) =>
       selectedCategoryIds.has(String(cat._id)),
     );
@@ -151,7 +147,6 @@ export const ProductPage = () => {
 
   // Blocks any input that is not a digit or a decimal point
   const handleNumericInput = (e) => {
-    // Allow control keys for editing and navigation
     const allowedControlKeys = [
       "Backspace",
       "Delete",
@@ -163,17 +158,15 @@ export const ProductPage = () => {
     ];
 
     if (allowedControlKeys.includes(e.key)) {
-      return; // Let these keys work normally
+      return;
     }
 
-    // Block anything that is NOT a number or a dot
     if (!/^[0-9.]$/.test(e.key)) {
       e.preventDefault();
     }
   };
 
   // Toggles (adds/removes) an ID in the specified formData array field
-  // Used for managing multiple selections of categories and sub-categories
   const handleToggleArray = (id, field) => {
     setFormData((prev) => {
       const current = prev[field];
@@ -224,15 +217,12 @@ export const ProductPage = () => {
     if (!files.length) return;
 
     try {
-      // Convert all selected images to base64 for instant preview
       const base64Images = await Promise.all(
         files.map((file) => imageToBase64(file)),
       );
 
-      // Store base64 images for later Cloudinary upload
       setProductImages((prev) => [...prev, ...base64Images]);
 
-      // Update form data for immediate preview display
       setFormData((prev) => ({
         ...prev,
         image: [...prev.image, ...base64Images],
@@ -261,7 +251,6 @@ export const ProductPage = () => {
     try {
       let uploadedImages = [];
 
-      // Only upload if there are new images (base64)
       if (productImages.length > 0) {
         uploadedImages = await Promise.all(
           productImages.map((img) =>
@@ -272,7 +261,6 @@ export const ProductPage = () => {
           ),
         );
       } else {
-        // If no new images, use existing ones
         uploadedImages = formData.image;
       }
 
@@ -287,7 +275,7 @@ export const ProductPage = () => {
         body: JSON.stringify({
           ...formData,
           image: uploadedImages,
-          _id: editId, // Pass ID for updates (ignored by create if empty)
+          _id: editId,
         }),
       });
 
@@ -320,7 +308,6 @@ export const ProductPage = () => {
 
       const data = await response.json();
 
-      // Display backend response messages
       if (data.error) {
         toast.error(data.message);
       } else if (data.success) {
@@ -332,6 +319,11 @@ export const ProductPage = () => {
       toast.error("Connection error. Please try again later.");
     }
   };
+
+  // Local filter logic for instant search in the current page
+  const filteredProducts = allProducts.filter((product) =>
+    product.name.toLowerCase().includes(searchProduct.toLowerCase())
+  );
 
   return (
     <div className="p-6 mt-6 lg:mt-0 bg-white rounded-xl shadow-sm border border-slate-200">
@@ -359,8 +351,19 @@ export const ProductPage = () => {
         />
       ) : (
         <>
+          {/* Search Bar */}
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder="Search product by name..."
+              value={searchProduct}
+              onChange={(e) => setSearchProduct(e.target.value)}
+              className="w-full max-w-sm p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-orange-500 transition-all shadow-sm"
+            />
+          </div>
+
           <ProductList
-            items={allProducts}
+            items={filteredProducts}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
@@ -376,7 +379,6 @@ export const ProductPage = () => {
             </button>
 
             <span className="text-sm font-medium text-slate-500">
-              {/* Simplified version for mobile, full version for desktop */}
               <span className="sm:hidden">
                 {page} / {totalPages || 1}
               </span>

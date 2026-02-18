@@ -17,9 +17,12 @@ export const createProduct = asyncHandler(async (req, res) => {
   // Validate required fields for product creation
   if (
     !name ||
-    !image || image.length === 0 ||
-    !categories || categories.length === 0 ||
-    !subCategories || subCategories.length === 0 ||
+    !image ||
+    image.length === 0 ||
+    !categories ||
+    categories.length === 0 ||
+    !subCategories ||
+    subCategories.length === 0 ||
     !price ||
     !description
   ) {
@@ -69,7 +72,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   // Get pagination values from query or set defaults
   // page: current page number, limit: items per page
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
+  const limit = parseInt(req.query.limit) || 9;
   const skip = (page - 1) * limit;
 
   // Fetch products and total count in parallel for performance
