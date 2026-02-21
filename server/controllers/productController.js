@@ -69,21 +69,25 @@ export const createProduct = asyncHandler(async (req, res) => {
 
 // GET ALL PRODUCTS CONTROLLER
 export const getAllProducts = asyncHandler(async (req, res) => {
-  // Get pagination values from query or set defaults
-  // page: current page number, limit: items per page
+  // Get pagination and search values from query or set defaults
+  // page: current page number, limit: items per page, search: term to filter by name
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 9;
   const skip = (page - 1) * limit;
+  const search = req.query.search || "";
+
+  // Create query filter for search if a term is provided
+  const query = search ? { name: { $regex: search, $options: "i" } } : {};
 
   // Fetch products and total count in parallel for performance
   // populate() is used to include full category and sub-category objects
   const [data, count] = await Promise.all([
-    ProductModel.find()
+    ProductModel.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .populate("categories sub_categories"),
-    ProductModel.countDocuments(),
+    ProductModel.countDocuments(query),
   ]);
 
   // Calculate total pages based on count and limit

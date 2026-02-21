@@ -11,6 +11,7 @@ import uploadToCloudinary from "@helpers/cloudinaryUpload";
 import ProductHeader from "../components/product/ProductHeader";
 import ProductForm from "../components/product/ProductForm";
 import ProductList from "../components/product/ProductList";
+import { PageLoader } from "@components";
 
 export const ProductPage = () => {
   // Get data from Redux store
@@ -25,12 +26,12 @@ export const ProductPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page")) || 1;
 
-  const [loading, setLoading] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
-
   // Pagination State
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+
+  const [loading, setLoading] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   // Search State
   const [searchProduct, setSearchProduct] = useState("");
@@ -60,9 +61,10 @@ export const ProductPage = () => {
 
   // Fetch all products from backend and update Redux store
   const fetchProducts = useCallback(async () => {
+    setLoading(true);
     try {
       const response = await fetch(
-        `${baseURL}${SummaryApi.getAllProducts.url}?page=${page}&limit=9`,
+        `${baseURL}${SummaryApi.getAllProducts.url}?page=${page}&search=${searchProduct}`,
       );
       const data = await response.json();
 
@@ -76,8 +78,10 @@ export const ProductPage = () => {
     } catch (error) {
       toast.error("Error loading products");
       console.error("Fetch Error:", error);
+    } finally {
+      setLoading(false);
     }
-  }, [dispatch, page]);
+  }, [dispatch, page, searchProduct]);
 
   // Fetch all categories
   const fetchCategories = useCallback(async () => {
@@ -128,7 +132,15 @@ export const ProductPage = () => {
 
   // Load products whenever the page or fetchProducts function changes
   useEffect(() => {
-    fetchProducts();
+    setLoading(true);
+
+    // Start a timer to wait for the user to stop typing
+    const searchTimer = setTimeout(() => {
+      fetchProducts();
+    }, 300);
+
+    // If the user types again before 300ms, cancel the previous timer
+    return () => clearTimeout(searchTimer);
   }, [fetchProducts]);
 
   // Update URL search params when changing page
@@ -320,11 +332,6 @@ export const ProductPage = () => {
     }
   };
 
-  // Local filter logic for instant search in the current page
-  const filteredProducts = allProducts.filter((product) =>
-    product.name.toLowerCase().includes(searchProduct.toLowerCase())
-  );
-
   return (
     <div className="p-6 mt-6 lg:mt-0 bg-white rounded-xl shadow-sm border border-slate-200">
       {/* Product Management header with action buttons */}
@@ -357,16 +364,30 @@ export const ProductPage = () => {
               type="text"
               placeholder="Search product by name..."
               value={searchProduct}
-              onChange={(e) => setSearchProduct(e.target.value)}
+              onChange={(e) => {
+                setSearchProduct(e.target.value);
+                setSearchParams({ page: 1 }); // Reset to first page on search
+              }}
               className="w-full max-w-sm p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-orange-500 transition-all shadow-sm"
             />
           </div>
 
-          <ProductList
-            items={filteredProducts}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          {/* Search Results Logic*/}
+          {loading ? (
+            <PageLoader />
+          ) : allProducts.length > 0 ? (
+            <ProductList
+              items={allProducts}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ) : (
+            <div className="text-center py-20">
+              <p className="text-slate-400">
+                No products found matching your search.
+              </p>
+            </div>
+          )}
 
           {/* Pagination UI */}
           <div className="flex justify-between items-center mt-6 pt-4 border-t border-slate-300">

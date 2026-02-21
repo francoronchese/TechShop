@@ -1,6 +1,7 @@
-export { Logo } from './ui/Logo.jsx';
-export { ShoppingCartIcon } from './ui/ShoppingCartIcon.jsx';
-export { Input } from './ui/Input.jsx';
-export { InputPassword } from './ui/InputPassword.jsx';
-export { Button } from './ui/Button.jsx';
-export {Loader} from './ui/Loader.jsx'
+export { Logo } from "./ui/Logo.jsx";
+export { ShoppingCartIcon } from "./ui/ShoppingCartIcon.jsx";
+export { Input } from "./ui/Input.jsx";
+export { InputPassword } from "./ui/InputPassword.jsx";
+export { Button } from "./ui/Button.jsx";
+export { Loader } from "./ui/Loader.jsx";
+export { PageLoader } from "./ui/PageLoader.jsx";
