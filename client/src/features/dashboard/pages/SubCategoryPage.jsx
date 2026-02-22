@@ -7,6 +7,7 @@ import { setAllSubCategories } from "@store/slices/subCategorySlice";
 import SubCategoryHeader from "../components/subCategory/SubCategoryHeader";
 import SubCategoryForm from "../components/subCategory/SubCategoryForm";
 import SubCategoryList from "../components/subCategory/SubCategoryList";
+import { PageLoader } from "@components";
 
 export const SubCategoryPage = () => {
   // Get sub-category and category data from Redux store
@@ -55,8 +56,14 @@ export const SubCategoryPage = () => {
 
   // Load initial data on component mount
   useEffect(() => {
-    fetchCategories();
-    fetchSubCategories();
+    const loadInitialData = async () => {
+      setLoading(true);
+      // Wait for both requests to complete
+      await Promise.all([fetchCategories(), fetchSubCategories()]);
+      setLoading(false);
+    };
+
+    loadInitialData();
   }, [fetchCategories, fetchSubCategories]);
 
   // Handle input changes in sub-category form fields
@@ -186,6 +193,11 @@ export const SubCategoryPage = () => {
           onToggle={handleToggle}
           allCategories={allCategories}
         />
+      ) : /* Show loader while fetching the sub-categories list */
+      loading ? (
+        <div className="py-20">
+          <PageLoader />
+        </div>
       ) : (
         <SubCategoryList
           items={allSubCategories}

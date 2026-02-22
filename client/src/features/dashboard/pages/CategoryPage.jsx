@@ -8,13 +8,14 @@ import uploadToCloudinary from "@helpers/cloudinaryUpload";
 import CategoryHeader from "../components/category/CategoryHeader";
 import CategoryForm from "../components/category/CategoryForm";
 import CategoryList from "../components/category/CategoryList";
+import { PageLoader } from "@components";
 
 export const CategoryPage = () => {
   // Get category data from Redux store
   const { allCategories } = useSelector((state) => state.category);
   // Send actions to update Redux store
   const dispatch = useDispatch();
-  
+
   const [loading, setLoading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [formData, setFormData] = useState({
@@ -29,9 +30,10 @@ export const CategoryPage = () => {
   // Fetch all categories from backend and update Redux store
   // useCallback memoizes this function to prevent infinite loops in useEffect
   const fetchCategories = useCallback(async () => {
+    setLoading(true);
     try {
       const res = await fetch(baseURL + SummaryApi.getAllCategories.url);
-      
+
       const data = await res.json();
 
       if (data.success) {
@@ -41,6 +43,8 @@ export const CategoryPage = () => {
     } catch (error) {
       toast.error("Connection error. Please try again later.");
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   }, [dispatch]);
 
@@ -189,6 +193,11 @@ export const CategoryPage = () => {
           onChange={handleChange}
           onPhotoUpload={handlePhotoUpload}
         />
+      ) : /* Show loader while fetching the categories list */
+      loading ? (
+        <div className="py-20">
+          <PageLoader />
+        </div>
       ) : (
         <CategoryList
           items={allCategories}
