@@ -72,7 +72,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   // Get pagination and search values from query or set defaults
   // page: current page number, limit: items per page, search: term to filter by name
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 9;
+  const limit = parseInt(req.query.limit) || 12;
   const skip = (page - 1) * limit;
   const search = req.query.search || "";
 

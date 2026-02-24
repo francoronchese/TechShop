@@ -1,4 +1,4 @@
-import { Pencil, Trash2, Folder } from "lucide-react";
+import { Pencil, Trash2, Folder, Image as ImageIcon } from "lucide-react";
 import { Button } from "@components";
 
 const CategoryList = ({ items, onEdit, onDelete }) => {

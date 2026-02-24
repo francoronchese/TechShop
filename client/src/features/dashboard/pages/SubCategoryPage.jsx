@@ -49,8 +49,8 @@ export const SubCategoryPage = () => {
         dispatch(setAllSubCategories(data.data));
       }
     } catch (error) {
-      toast.error("Connection error. Please try again later.");
-      console.log(error);
+      toast.error("Error loading sub-categories");
+      console.error("Fetch Error:", error);
     }
   }, [dispatch]);
 

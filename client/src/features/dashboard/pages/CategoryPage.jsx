@@ -41,8 +41,8 @@ export const CategoryPage = () => {
         dispatch(setAllCategories(data.data));
       }
     } catch (error) {
-      toast.error("Connection error. Please try again later.");
-      console.log(error);
+      toast.error("Error loading categories");
+      console.error("Fetch Error:", error);
     } finally {
       setLoading(false);
     }
