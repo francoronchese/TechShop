@@ -1,72 +1,24 @@
-import { useEffect, useState, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { Button, CategoryCard, ProductCard, PageLoader } from "@components";
-import SummaryApi, { baseURL } from "@config/summaryApi";
-import toast from "react-hot-toast";
-import { setAllCategories } from "@store/slices/categorySlice";
-import { setAllProducts } from "@store/slices/productSlice";
+
+// Import RTK Query hooks
+import {
+  useGetProductsQuery,
+  useGetCategoriesQuery,
+} from "@store/api/apiSlice";
 
 const HomePage = () => {
-  // Get category and product data from Redux store
-  const { allCategories } = useSelector((state) => state.category);
-  const { allProducts } = useSelector((state) => state.product);
-  // Send actions to update Redux store
-  const dispatch = useDispatch();
+  // RTK Query: Handles fetching and loading states for products and categories
+  const { data: productsData, isLoading: loadingProducts } =
+    useGetProductsQuery({ page: 1 });
 
-  const [loading, setLoading] = useState(false);
+  const { data: allCategories = [], isLoading: loadingCategories } =
+    useGetCategoriesQuery();
 
-  // Get the first 12 items directly from the API result
-  const newArrivals = allProducts ? allProducts.slice(0, 12) : [];
-
-  // Fetch all products from backend and update Redux store
-  // useCallback memoizes this function to prevent unnecessary re-renders
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `${baseURL}${SummaryApi.getAllProducts.url}`,
-      );
-      const data = await response.json();
-
-      if (data.success) {
-        // Set Redux store with all products data
-        dispatch(setAllProducts(data.data));
-      }
-    } catch (error) {
-      toast.error("Error loading products");
-      console.error("Fetch Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatch]);
-
-  // Fetch all categories from backend and update Redux store
-  // useCallback memoizes this function to prevent unnecessary re-renders
-  const fetchCategories = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(baseURL + SummaryApi.getAllCategories.url);
-      const data = await res.json();
-
-      if (data.success) {
-        // Set Redux store with all categories data
-        dispatch(setAllCategories(data.data));
-      }
-    } catch (error) {
-      toast.error("Error loading categories");
-      console.error("Fetch Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatch]);
-
-  // Load categories and products on component mount
-  useEffect(() => {
-    fetchCategories();
-    fetchProducts();
-  }, [fetchCategories, fetchProducts]);
+  // Get the first 12 items for the New Arrivals section
+  const allProducts = productsData?.data || [];
+  const newArrivals = allProducts.slice(0, 12);
 
   return (
     <div>
@@ -95,8 +47,8 @@ const HomePage = () => {
           Shop by Category
         </h2>
 
-        {/* Show loader while fetching or map categories from Redux */}
-        {loading ? (
+        {/* Display loader while categories are fetching or render the category grid */}
+        {loadingCategories ? (
           <div className="flex justify-center py-10">
             <PageLoader />
           </div>
@@ -120,7 +72,7 @@ const HomePage = () => {
           </div>
         )}
       </section>
-      
+
       {/* New Arrivals Section */}
       <section className="max-w-7xl mx-auto py-10">
         <div className="flex items-center justify-between mb-8">
@@ -133,11 +85,18 @@ const HomePage = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 min-[485px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {newArrivals.map((product) => (
-            <ProductCard key={product._id} product={product} />
-          ))}
-        </div>
+        {/* Display loader while products are fetching or render the product grid */}
+        {loadingProducts ? (
+          <div className="flex justify-center py-10">
+            <PageLoader />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 min-[485px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {newArrivals.map((product) => (
+              <ProductCard key={product._id} product={product} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Why Choose Us Section */}
@@ -147,8 +106,8 @@ const HomePage = () => {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className=" p-6 text-center">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4  bg-orange-100 rounded-full">
+          <div className="p-6 text-center">
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full">
               <span className="text-3xl">🚚</span>
             </div>
             <h3 className="mb-2 font-bold text-xl">Free Shipping</h3>
@@ -156,7 +115,7 @@ const HomePage = () => {
           </div>
 
           <div className="p-6 text-center">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4  bg-orange-100 rounded-full">
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full">
               <span className="text-3xl">🔒</span>
             </div>
             <h3 className="mb-2 font-bold text-xl">Secure Payment</h3>
@@ -164,7 +123,7 @@ const HomePage = () => {
           </div>
 
           <div className="p-6 text-center">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4  bg-orange-100 rounded-full">
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full">
               <span className="text-3xl">💯</span>
             </div>
             <h3 className="mb-2 font-bold text-xl">Quality Guarantee</h3>

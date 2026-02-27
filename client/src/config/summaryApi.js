@@ -74,7 +74,7 @@ const SummaryApi = {
     url: "/api/sub-category/create",
     method: "POST",
   },
-  getSubCategory: {
+  getAllSubCategories: {
     url: "/api/sub-category/get",
     method: "GET",
   },

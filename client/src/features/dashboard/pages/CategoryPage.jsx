@@ -1,74 +1,52 @@
-import { useState, useEffect, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
 import toast from "react-hot-toast";
-import SummaryApi, { baseURL } from "@config/summaryApi";
-import { setAllCategories } from "@store/slices/categorySlice";
 import imageToBase64 from "@utils/imageToBase64";
 import uploadToCloudinary from "@helpers/cloudinaryUpload";
+
+// Import RTK Query hooks
+import {
+  useGetCategoriesQuery,
+  useSaveCategoryMutation,
+  useDeleteCategoryMutation,
+} from "@store/api/apiSlice";
+
+// Components
 import CategoryHeader from "../components/category/CategoryHeader";
 import CategoryForm from "../components/category/CategoryForm";
 import CategoryList from "../components/category/CategoryList";
 import { PageLoader } from "@components";
 
 export const CategoryPage = () => {
-  // Get category data from Redux store
-  const { allCategories } = useSelector((state) => state.category);
-  // Send actions to update Redux store
-  const dispatch = useDispatch();
+  // RTK Query: Handles fetching, caching and loading state for categories
+  const {
+    data: allCategories = [],
+    isLoading: loadingList,
+    isError: errorList,
+  } = useGetCategoriesQuery();
 
-  const [loading, setLoading] = useState(false);
+  // RTK Query: Mutation hooks
+  const [saveCategory, { isLoading: isSaving }] = useSaveCategoryMutation();
+  const [deleteCategory] = useDeleteCategoryMutation();
+
+  // UI state to toggle between the list view and the creation/edit form
   const [isCreating, setIsCreating] = useState(false);
+  // Stores the ID of the category being edited, an empty string indicates a new record creation
+  const [editId, setEditId] = useState("");
+  // Local state for form inputs before it's sent to the server
   const [formData, setFormData] = useState({
     name: "",
     image: "",
   });
-  // State to store the ID of the category being edited
-  const [editId, setEditId] = useState("");
-  // Temporary base64 image for preview before Cloudinary upload
-  const [categoryImage, setCategoryImage] = useState("");
-
-  // Fetch all categories from backend and update Redux store
-  // useCallback memoizes this function to prevent infinite loops in useEffect
-  const fetchCategories = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(baseURL + SummaryApi.getAllCategories.url);
-
-      const data = await res.json();
-
-      if (data.success) {
-        // Set Redux store with all categories data
-        dispatch(setAllCategories(data.data));
-      }
-    } catch (error) {
-      toast.error("Error loading categories");
-      console.error("Fetch Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatch]);
-
-  // Load categories on component mount
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
 
   // Handle input changes in category form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
   // Resets form data and other states to initial values
   const handleReset = () => {
-    setFormData({
-      name: "",
-      image: "",
-    });
-    setCategoryImage("");
+    setFormData({ name: "", image: "" });
     setIsCreating(false);
     setEditId("");
   };
@@ -87,91 +65,62 @@ export const CategoryPage = () => {
 
   // Handle category image selection and convert to base64 for preview
   const handlePhotoUpload = async (e) => {
-    // Get first file from input (user can only select one image)
     const file = e.target.files[0];
     if (!file) return;
 
     try {
       const base64 = await imageToBase64(file);
-      setCategoryImage(base64);
       // Update form data for immediate preview display
       setFormData((prev) => ({ ...prev, image: base64 }));
     } catch (error) {
       toast.error("Failed to process image");
-      console.log(error);
+      console.error(error);
     }
   };
 
-  // Submit category data to backend using either CREATE or UPDATE ENDPOINT
+  // Submit category data to backend using RTK Query mutation
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     try {
-      let imageUrl = formData.image || "";
-      if (categoryImage) {
-        imageUrl = await uploadToCloudinary(
-          categoryImage,
-          import.meta.env.VITE_CLOUDINARY_PRESET_CATEGORIES,
-        );
-      }
+      // Determine if the image needs a Cloudinary upload (new base64) or not (existing URL)
+      const categoryImage = formData.image.startsWith("data:")
+        ? await uploadToCloudinary(
+            formData.image,
+            import.meta.env.VITE_CLOUDINARY_PRESET_CATEGORIES,
+          )
+        : formData.image;
 
-      // Determine the API configuration based on the presence of editId
-      const apiConfig = editId
-        ? SummaryApi.updateCategory
-        : SummaryApi.createCategory;
+      const payload = {
+        name: formData.name,
+        image: categoryImage,
+        ...(editId && { _id: editId }), // The _id is conditionally added only when editing an existing item
+      };
 
-      const res = await fetch(baseURL + apiConfig.url, {
-        method: apiConfig.method,
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          _id: editId, // Pass ID for updates (ignored by create if empty)
-          name: formData.name,
-          image: imageUrl, // Cloudinary URL
-        }),
-      });
+      // Executes mutation and unwraps the result to handle it in the try/catch block
+      const response = await saveCategory(payload).unwrap();
 
-      const data = await res.json();
-
-      // Display backend response messages
-      if (data.error) {
-        toast.error(data.message);
-      } else if (data.success) {
-        toast.success(data.message);
-        fetchCategories();
+      if (response.success) {
+        toast.success(response.message);
         handleReset();
       }
     } catch (error) {
-      toast.error("Connection error. Please try again later.");
-      console.log(error);
-    } finally {
-      setLoading(false);
+      // Extracts the specific error message defined in the backend controller
+      toast.error(error.data?.message || "Error saving category");
     }
   };
 
-  // Permanently delete category and refresh global state
+  // Delete category using RTK Query mutation
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(baseURL + SummaryApi.deleteCategory.url, {
-        method: SummaryApi.deleteCategory.method,
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ _id: id }),
-      });
-
-      const data = await res.json();
-
-      // Display backend response messages
-      if (data.error) {
-        toast.error(data.message);
-      } else if (data.success) {
-        toast.success(data.message);
-        fetchCategories();
+      // .unwrap() allows the use of standard try/catch logic with RTK Query
+      const response = await deleteCategory({ _id: id }).unwrap();
+      if (response.success) {
+        toast.success(response.message);
       }
     } catch (error) {
-      toast.error("Connection error");
-      console.log(error);
+      // Catches validation messages (e.g., if category has linked sub-categories)
+      toast.error(error.data?.message || "Error deleting category");
     }
   };
 
@@ -183,7 +132,7 @@ export const CategoryPage = () => {
         onCreate={() => setIsCreating(true)}
         onCancel={handleReset}
         onSave={handleSubmit}
-        loading={loading}
+        loading={isSaving}
       />
 
       {/* Conditional view: Category creation form or List grid */}
@@ -194,9 +143,13 @@ export const CategoryPage = () => {
           onPhotoUpload={handlePhotoUpload}
         />
       ) : /* Show loader while fetching the categories list */
-      loading ? (
+      loadingList ? (
         <div className="py-20">
           <PageLoader />
+        </div>
+      ) : errorList ? (
+        <div className="py-20 text-center text-red-500">
+          Error loading data. Please check your connection.
         </div>
       ) : (
         <CategoryList

@@ -5,6 +5,7 @@ import {
   Image as ImageIcon,
   ShoppingBag,
 } from "lucide-react";
+import {Button} from '@components'
 
 const ProductList = ({ items, onEdit, onDelete }) => {
   return (
@@ -80,19 +81,23 @@ const ProductList = ({ items, onEdit, onDelete }) => {
             </div>
 
             {/* Edit and Delete buttons */}
-            <div className="flex gap-2 mt-4">
-              <button
+            <div className="flex flex-col min-[540px]:flex-row gap-2 mt-4">
+              <Button
                 onClick={() => onEdit(item)}
-                className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                className="flex-1 justify-center bg-blue-600 text-white text-sm"
+                icon={Pencil}
+                iconSize={14}
               >
-                <Pencil size={14} /> Edit
-              </button>
-              <button
+                Edit
+              </Button>
+              <Button
                 onClick={() => onDelete(item._id)}
-                className="flex-1 flex items-center justify-center gap-1 py-2 bg-white text-red-600 border border-red-500 hover:bg-red-50 rounded-lg text-sm font-medium transition-colors cursor-pointer"
+                className="flex-1 justify-center bg-white text-red-600 border border-red-500 hover:bg-red-100 text-sm"
+                icon={Trash2}
+                iconSize={14}
               >
-                <Trash2 size={14} /> Delete
-              </button>
+                Delete
+              </Button>
             </div>
           </div>
         </div>

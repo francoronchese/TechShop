@@ -1,70 +1,44 @@
-import { useState, useEffect, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
 import toast from "react-hot-toast";
-import SummaryApi, { baseURL } from "@config/summaryApi";
-import { setAllCategories } from "@store/slices/categorySlice";
-import { setAllSubCategories } from "@store/slices/subCategorySlice";
+
+// Import RTK Query hooks for both sub-categories and parent categories
+import {
+  useGetSubCategoriesQuery,
+  useSaveSubCategoryMutation,
+  useDeleteSubCategoryMutation,
+  useGetCategoriesQuery,
+} from "@store/api/apiSlice";
+
+// Components
 import SubCategoryHeader from "../components/subCategory/SubCategoryHeader";
 import SubCategoryForm from "../components/subCategory/SubCategoryForm";
 import SubCategoryList from "../components/subCategory/SubCategoryList";
 import { PageLoader } from "@components";
 
 export const SubCategoryPage = () => {
-  // Get sub-category and category data from Redux store
-  const { allCategories } = useSelector((state) => state.category);
-  const { allSubCategories } = useSelector((state) => state.subCategory);
-  // Send actions to update Redux store
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+  // RTK Query: Fetches parent categories for the selection form
+  const { data: allCategories = [] } = useGetCategoriesQuery();
+  // RTK Query: Handles fetching, caching and loading state for sub-categories
+  const {
+    data: allSubCategories = [],
+    isLoading: loadingList,
+    isError: errorList,
+  } = useGetSubCategoriesQuery();
+
+  // RTK Query: Mutation hooks
+  const [saveSubCategory, { isLoading: isSaving }] =
+    useSaveSubCategoryMutation();
+  const [deleteSubCategory] = useDeleteSubCategoryMutation();
+
+  // UI state to toggle between the list view and the creation/edit form
   const [isCreating, setIsCreating] = useState(false);
-  // State to store the ID of the sub-category being edited
+  // Stores the ID of the sub-category being edited, an empty string indicates a new record creation
   const [editId, setEditId] = useState("");
+  // Local state for form inputs before it's sent to the server
   const [formData, setFormData] = useState({
     name: "",
     categories: [],
   });
-
-  // Fetch all parent categories from backend and update Redux store
-  // useCallback memoizes this function to prevent infinite loops in useEffect
-  const fetchCategories = useCallback(async () => {
-    try {
-      const res = await fetch(baseURL + SummaryApi.getAllCategories.url);
-      const data = await res.json();
-      if (data.success) {
-        dispatch(setAllCategories(data.data));
-      }
-    } catch (error) {
-      toast.error("Connection error. Please try again later.");
-      console.log(error);
-    }
-  }, [dispatch]);
-
-  // Fetch all sub-categories from backend and update Redux store
-  // Memoized to ensure stable reference for the useEffect dependency array
-  const fetchSubCategories = useCallback(async () => {
-    try {
-      const res = await fetch(baseURL + SummaryApi.getSubCategory.url);
-      const data = await res.json();
-      if (data.success) {
-        dispatch(setAllSubCategories(data.data));
-      }
-    } catch (error) {
-      toast.error("Error loading sub-categories");
-      console.error("Fetch Error:", error);
-    }
-  }, [dispatch]);
-
-  // Load initial data on component mount
-  useEffect(() => {
-    const loadInitialData = async () => {
-      setLoading(true);
-      // Wait for both requests to complete
-      await Promise.all([fetchCategories(), fetchSubCategories()]);
-      setLoading(false);
-    };
-
-    loadInitialData();
-  }, [fetchCategories, fetchSubCategories]);
 
   // Handle input changes in sub-category form fields
   const handleChange = (e) => {
@@ -73,10 +47,9 @@ export const SubCategoryPage = () => {
   };
 
   // Toggles the selection of a category ID within the formData state.
-  // If the ID exists, it is removed; otherwise, it is added to the array.
+  // If the ID exists, it is removed. Otherwise, it is added to the array
   const handleToggle = (id) => {
     const current = formData.categories;
-
     // Determine new state by checking current inclusion
     const categories = current.includes(id)
       ? current.filter((c) => c !== id) // Remove ID if already selected
@@ -88,19 +61,16 @@ export const SubCategoryPage = () => {
 
   // Resets form data and other states to initial values
   const handleReset = () => {
-    setFormData({
-      name: "",
-      categories: [],
-    });
+    setFormData({ name: "", categories: [] });
     setIsCreating(false);
     setEditId("");
   };
 
-  // Load existing sub-category data into form and switch to form view
+  // Load sub-category data into form for editing
   const handleEdit = (subCategory) => {
     setFormData({
       name: subCategory.name,
-      // Convert populated category objects into an array of IDs for the checkboxes
+      // Map populated category objects to their IDs for the form checkboxes
       categories: subCategory.categories.map((cat) => cat._id),
     });
     // Set the ID for the handleSubmit logic to trigger an update
@@ -109,68 +79,40 @@ export const SubCategoryPage = () => {
     setIsCreating(true);
   };
 
-  // Submit sub-category data to backend using either CREATE or UPDATE ENDPOINT
+  // Submit sub-category data to backend using RTK Query mutation
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     try {
-      // Determine the API configuration based on the presence of editId
-      const apiConfig = editId
-        ? SummaryApi.updateSubCategory
-        : SummaryApi.createSubCategory;
+      const payload = {
+        name: formData.name,
+        categories: formData.categories,
+        ...(editId && { _id: editId }), // The _id is conditionally added only when editing an existing item
+      };
 
-      const res = await fetch(baseURL + apiConfig.url, {
-        method: apiConfig.method,
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          _id: editId, // Pass ID for updates (ignored by create if empty)
-          name: formData.name,
-          categories: formData.categories,
-        }),
-      });
+      // Executes mutation and unwraps the result to handle it in the try/catch block
+      const response = await saveSubCategory(payload).unwrap();
 
-      const data = await res.json();
-
-      // Display backend response messages
-      if (data.error) {
-        toast.error(data.message);
-      } else if (data.success) {
-        toast.success(data.message);
-        fetchSubCategories();
+      if (response.success) {
+        toast.success(response.message);
         handleReset();
       }
     } catch (error) {
-      toast.error("Connection error. Please try again later.");
-      console.log(error);
-    } finally {
-      setLoading(false);
+      // Extracts the specific error message defined in the backend controller
+      toast.error(error.data?.message || "Error saving sub-category");
     }
   };
 
-  // Permanently delete sub-category and refresh global state
+  // Delete sub-category using RTK Query mutation
   const handleDelete = async (id) => {
     try {
-      const res = await fetch(baseURL + SummaryApi.deleteSubCategory.url, {
-        method: SummaryApi.deleteSubCategory.method,
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ _id: id }),
-      });
-
-      const data = await res.json();
-
-      // Display backend response messages
-      if (data.error) {
-        toast.error(data.message);
-      } else if (data.success) {
-        toast.success(data.message);
-        fetchSubCategories();
+      // .unwrap() allows the use standard of try/catch logic with RTK Query
+      const response = await deleteSubCategory({ _id: id }).unwrap();
+      if (response.success) {
+        toast.success(response.message);
       }
     } catch (error) {
-      toast.error("Connection error");
-      console.log(error);
+      toast.error(error.data?.message || "Error deleting sub-category");
     }
   };
 
@@ -182,7 +124,7 @@ export const SubCategoryPage = () => {
         onCreate={() => setIsCreating(true)}
         onCancel={handleReset}
         onSave={handleSubmit}
-        loading={loading}
+        loading={isSaving}
       />
 
       {/* Conditional view: Sub-category creation form or List grid */}
@@ -194,9 +136,13 @@ export const SubCategoryPage = () => {
           allCategories={allCategories}
         />
       ) : /* Show loader while fetching the sub-categories list */
-      loading ? (
+      loadingList ? (
         <div className="py-20">
           <PageLoader />
+        </div>
+      ) : errorList ? (
+        <div className="py-20 text-center text-red-500">
+          Error loading data. Please check your connection.
         </div>
       ) : (
         <SubCategoryList

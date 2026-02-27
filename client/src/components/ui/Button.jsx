@@ -4,11 +4,13 @@ export const Button = ({
   className,
   icon: Icon,
   iconSize,
+  disabled,
 }) => {
   return (
     <button
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 px-5 py-2 font-semibold rounded-lg transition-colors cursor-pointer ${className}`}
+      disabled={disabled}
+      className={`inline-flex items-center gap-1 px-4 py-2 font-semibold rounded-lg transition-colors cursor-pointer ${className}`}
     >
       {Icon && <Icon size={iconSize} />}
       {children}

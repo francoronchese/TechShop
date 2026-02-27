@@ -1,43 +1,56 @@
-import { useState, useEffect, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import SummaryApi, { baseURL } from "@config/summaryApi";
-import { setAllCategories } from "@store/slices/categorySlice";
-import { setAllSubCategories } from "@store/slices/subCategorySlice";
-import { setAllProducts } from "@store/slices/productSlice";
 import imageToBase64 from "@utils/imageToBase64";
 import uploadToCloudinary from "@helpers/cloudinaryUpload";
+
+// Import RTK Query hooks
+import {
+  useGetProductsQuery,
+  useSaveProductMutation,
+  useDeleteProductMutation,
+  useGetCategoriesQuery,
+  useGetSubCategoriesQuery,
+} from "@store/api/apiSlice";
+
+// Components
 import ProductHeader from "../components/product/ProductHeader";
 import ProductForm from "../components/product/ProductForm";
 import ProductList from "../components/product/ProductList";
-import { PageLoader } from "@components";
+import { PageLoader, Button } from "@components";
 
 export const ProductPage = () => {
-  // Get data from Redux store
-  const { allProducts } = useSelector((state) => state.product);
-  const { allCategories } = useSelector((state) => state.category);
-  const { allSubCategories } = useSelector((state) => state.subCategory);
-
-  // Send actions to update Redux store
-  const dispatch = useDispatch();
-
   // URL Search Params for pagination persistence
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page")) || 1;
 
-  // Pagination State
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
-
-  const [loading, setLoading] = useState(false);
+  // UI state to toggle between the list view and the creation/edit form
   const [isCreating, setIsCreating] = useState(false);
-
   // Search State
   const [searchProduct, setSearchProduct] = useState("");
-
-  // State to store the ID of the product being edited
+  // Stores the ID of the product being edited
   const [editId, setEditId] = useState("");
+
+  // RTK Query: Fetches products with pagination and search parameters
+  const {
+    data: productsData,
+    isLoading: loadingList,
+    isFetching,
+    isError: errorList,
+  } = useGetProductsQuery({ page, search: searchProduct });
+
+  // RTK Query: Fetches parent categories and sub-categories for the selection form
+  const { data: allCategories = [] } = useGetCategoriesQuery();
+  const { data: allSubCategories = [] } = useGetSubCategoriesQuery();
+
+  // RTK Query: Mutation hooks
+  const [saveProduct, { isLoading: isSaving }] = useSaveProductMutation();
+  const [deleteProduct] = useDeleteProductMutation();
+
+  // Access to the products list
+  const allProducts = productsData?.data || [];
+
+  // Local state for form inputs before it's sent to the server
   const [formData, setFormData] = useState({
     name: "",
     image: [],
@@ -59,63 +72,7 @@ export const ProductPage = () => {
     }
   }, [searchParams, setSearchParams]);
 
-  // Fetch all products from backend and update Redux store
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `${baseURL}${SummaryApi.getAllProducts.url}?page=${page}&search=${searchProduct}`,
-      );
-      const data = await response.json();
-
-      if (data.success) {
-        // Set Redux store with all products data
-        dispatch(setAllProducts(data.data));
-        // Update pagination metadata - Ensure at least 1 page is shown
-        setTotalPages(data.totalPages || 1);
-        setTotalCount(data.totalCount || 0);
-      }
-    } catch (error) {
-      toast.error("Error loading products");
-      console.error("Fetch Error:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatch, page, searchProduct]);
-
-  // Fetch all categories
-  const fetchCategories = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `${baseURL}${SummaryApi.getAllCategories.url}`,
-      );
-      const data = await response.json();
-      if (data.success) {
-        dispatch(setAllCategories(data.data));
-      }
-    } catch (error) {
-      toast.error("Error loading categories");
-      console.error("Fetch Error:", error);
-    }
-  }, [dispatch]);
-
-  // Fetch all subcategories
-  const fetchSubCategories = useCallback(async () => {
-    try {
-      const response = await fetch(
-        `${baseURL}${SummaryApi.getSubCategory.url}`,
-      );
-      const data = await response.json();
-      if (data.success) {
-        dispatch(setAllSubCategories(data.data));
-      }
-    } catch (error) {
-      toast.error("Error loading subCategories");
-      console.error("Fetch Error:", error);
-    }
-  }, [dispatch]);
-
-  // Filter subcategories based on the categories selected in the form.
+  // Filter subcategories based on the categories selected in the form
   const filteredSubCategories = allSubCategories.filter((sub) => {
     if (!formData.categories || formData.categories.length === 0) return false;
     const selectedCategoryIds = new Set(formData.categories.map(String));
@@ -124,37 +81,10 @@ export const ProductPage = () => {
     );
   });
 
-  // Load categories and subcategories only once on component mount
-  useEffect(() => {
-    fetchCategories();
-    fetchSubCategories();
-  }, [fetchCategories, fetchSubCategories]);
-
-  // Load products whenever the page or fetchProducts function changes
-  useEffect(() => {
-    setLoading(true);
-
-    // Start a timer to wait for the user to stop typing
-    const searchTimer = setTimeout(() => {
-      fetchProducts();
-    }, 300);
-
-    // If the user types again before 300ms, cancel the previous timer
-    return () => clearTimeout(searchTimer);
-  }, [fetchProducts]);
-
-  // Update URL search params when changing page
-  const handlePageChange = (newPage) => {
-    setSearchParams({ page: newPage });
-  };
-
   // Handle input changes in product form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
   // Blocks any input that is not a digit or a decimal point
@@ -168,14 +98,8 @@ export const ProductPage = () => {
       "Home",
       "End",
     ];
-
-    if (allowedControlKeys.includes(e.key)) {
-      return;
-    }
-
-    if (!/^[0-9.]$/.test(e.key)) {
-      e.preventDefault();
-    }
+    if (allowedControlKeys.includes(e.key)) return;
+    if (!/^[0-9.]$/.test(e.key)) e.preventDefault();
   };
 
   // Toggles (adds/removes) an ID in the specified formData array field
@@ -239,6 +163,7 @@ export const ProductPage = () => {
         ...prev,
         image: [...prev.image, ...base64Images],
       }));
+
       toast.success(`${files.length} image(s) added`);
     } catch (error) {
       toast.error("Failed to process images");
@@ -255,80 +180,48 @@ export const ProductPage = () => {
     setProductImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Submit product data to backend using either CREATE or UPDATE ENDPOINT
+  // Submit product data to backend using RTK Query mutation
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
     try {
-      let uploadedImages = [];
+      // Determine which images need Cloudinary upload (new base64 vs existing URLs)
+      const uploadedImages = await Promise.all(
+        productImages.map((img) =>
+          img.startsWith("data:")
+            ? uploadToCloudinary(
+                img,
+                import.meta.env.VITE_CLOUDINARY_PRESET_PRODUCTS,
+              )
+            : img,
+        ),
+      );
 
-      if (productImages.length > 0) {
-        uploadedImages = await Promise.all(
-          productImages.map((img) =>
-            uploadToCloudinary(
-              img,
-              import.meta.env.VITE_CLOUDINARY_PRESET_PRODUCTS,
-            ),
-          ),
-        );
-      } else {
-        uploadedImages = formData.image;
-      }
+      const payload = {
+        ...formData,
+        image: uploadedImages,
+        ...(editId && { _id: editId }), // The _id is conditionally added only when editing
+      };
 
-      const apiConfig = editId
-        ? SummaryApi.updateProduct
-        : SummaryApi.createProduct;
-
-      const response = await fetch(baseURL + apiConfig.url, {
-        method: apiConfig.method,
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          ...formData,
-          image: uploadedImages,
-          _id: editId,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.error) {
-        toast.error(data.message);
-      } else if (data.success) {
-        toast.success(data.message);
-        fetchProducts();
+      const response = await saveProduct(payload).unwrap();
+      if (response.success) {
+        toast.success(response.message);
         handleReset();
       }
     } catch (error) {
-      toast.error("Connection error. Please try again later.");
-      console.error(error);
-    } finally {
-      setLoading(false);
+      toast.error(error.data?.message || "Error saving product");
     }
   };
 
-  // Permanently delete product and refresh global state
+  // Delete product using RTK Query mutation
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(baseURL + SummaryApi.deleteProduct.url, {
-        method: SummaryApi.deleteProduct.method,
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ _id: id }),
-      });
-
-      const data = await response.json();
-
-      if (data.error) {
-        toast.error(data.message);
-      } else if (data.success) {
-        toast.success(data.message);
-        fetchProducts();
+      const response = await deleteProduct({ _id: id }).unwrap();
+      if (response.success) {
+        toast.success(response.message);
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Connection error. Please try again later.");
+      toast.error(error.data?.message || "Error deleting product");
     }
   };
 
@@ -340,7 +233,7 @@ export const ProductPage = () => {
         onCreate={() => setIsCreating(true)}
         onCancel={handleReset}
         onSave={handleSubmit}
-        loading={loading}
+        loading={isSaving}
       />
 
       {/* Conditional view: Product creation form or List grid */}
@@ -372,50 +265,57 @@ export const ProductPage = () => {
             />
           </div>
 
-          {/* Search Results Logic*/}
-          {loading ? (
-            <PageLoader />
+          {/* Search Results Logic */}
+          {loadingList || isFetching ? (
+            <div className="py-20">
+              <PageLoader />
+            </div>
+          ) : errorList ? (
+            <div className="py-20 text-center text-red-500">
+              Error loading data. Please check your connection.
+            </div>
           ) : allProducts.length > 0 ? (
-            <ProductList
-              items={allProducts}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
+            <>
+              <ProductList
+                items={allProducts}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+
+              {/* Pagination UI */}
+              <div className="flex justify-between items-center mt-6 pt-4 border-t border-slate-300">
+                <Button
+                  onClick={() => setSearchParams({ page: page - 1 })}
+                  disabled={page <= 1}
+                  className="bg-white border border-slate-400 text-slate-600 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-400 shadow-sm text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Prev
+                </Button>
+
+                <span className="text-sm font-medium text-slate-500">
+                  <span className="hidden sm:inline">
+                    Page {page} of {productsData?.totalPages || 1} (Total:{" "}
+                    {productsData?.totalCount || 0})
+                  </span>
+                  <span className="sm:hidden">
+                    {page} / {productsData?.totalPages || 1}
+                  </span>
+                </span>
+
+                <Button
+                  onClick={() => setSearchParams({ page: page + 1 })}
+                  disabled={page >= (productsData?.totalPages || 1)}
+                  className="bg-white border border-slate-400 text-slate-600 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-400 shadow-sm text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </Button>
+              </div>
+            </>
           ) : (
-            <div className="text-center py-20">
-              <p className="text-slate-400">
-                No products found matching your search.
-              </p>
+            <div className="text-center py-20 text-slate-400">
+              No products found matching your search.
             </div>
           )}
-
-          {/* Pagination UI */}
-          <div className="flex justify-between items-center mt-6 pt-4 border-t border-slate-300">
-            <button
-              className="px-4 py-1.5 bg-white border border-slate-400 text-sm font-semibold text-slate-600 rounded-lg hover:bg-slate-50 hover:text-blue-600 hover:border-blue-400 transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={() => handlePageChange(page - 1)}
-              disabled={page <= 1}
-            >
-              Prev
-            </button>
-
-            <span className="text-sm font-medium text-slate-500">
-              <span className="sm:hidden">
-                {page} / {totalPages || 1}
-              </span>
-              <span className="hidden sm:inline">
-                Page {page} of {totalPages || 1} (Total: {totalCount || 0})
-              </span>
-            </span>
-
-            <button
-              className="px-4 py-1.5 bg-white border border-slate-400 text-sm font-semibold text-slate-600 rounded-lg hover:bg-slate-50 hover:text-blue-600 hover:border-blue-400 transition-all shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={() => handlePageChange(page + 1)}
-              disabled={page >= totalPages || totalPages === 0}
-            >
-              Next
-            </button>
-          </div>
         </>
       )}
     </div>

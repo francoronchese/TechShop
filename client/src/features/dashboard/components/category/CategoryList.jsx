@@ -3,7 +3,7 @@ import { Button } from "@components";
 
 const CategoryList = ({ items, onEdit, onDelete }) => {
   return (
-    <div className="grid grid-cols-1 min-[480px]:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+    <div className="grid grid-cols-1 min-[485px]:grid-cols-2 md:grid-cols-3 gap-4 mt-6">
       {/* Map through all existing categories to display card view */}
       {items.map((item) => (
         <div
@@ -31,20 +31,20 @@ const CategoryList = ({ items, onEdit, onDelete }) => {
               {item.name}
             </h3>
 
-            <div className="flex flex-col min-[600px]:flex-row gap-2">
+            <div className="flex flex-col min-[540px]:flex-row gap-2">
               <Button
                 onClick={() => onEdit(item)}
-                className="flex-1 justify-center bg-blue-600 text-white hover:shadow-md"
+                className="flex-1 justify-center px-4 bg-blue-600 text-white text-sm hover:shadow-md"
                 icon={Pencil}
-                iconSize={16}
+                iconSize={14}
               >
                 Edit
               </Button>
               <Button
                 onClick={() => onDelete(item._id)}
-                className="flex-1 justify-center  bg-white text-red-600 border border-red-500 hover:bg-red-100 hover:shadow-md"
+                className="flex-1 justify-center px-4 bg-white text-red-600 border border-red-500 hover:bg-red-100 text-sm hover:shadow-md"
                 icon={Trash2}
-                iconSize={16}
+                iconSize={14}
               >
                 Delete
               </Button>
