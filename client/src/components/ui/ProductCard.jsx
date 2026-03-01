@@ -1,8 +1,24 @@
-import { ShoppingCart, Package } from "lucide-react";
+import { ShoppingCart, Package, Plus, Minus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToCart,
+  incrementQuantity,
+  decrementQuantity,
+} from "../../store/slices/cartSlice";
+import { Button } from "./Button";
 
 export const ProductCard = ({ product }) => {
+  // Get data from Redux store
   const navigate = useNavigate();
+  // Send actions to update Redux store
+  const dispatch = useDispatch();
+
+  // Get quantity from the global cart items array
+  const cartItem = useSelector((state) =>
+    state.cart.items.find((item) => item._id === product._id),
+  );
+  const quantity = cartItem?.quantity || 0;
 
   const handleCardClick = () => {
     navigate(`/product/${product._id}`);
@@ -10,8 +26,18 @@ export const ProductCard = ({ product }) => {
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    // Logic for cart will be implemented here later
-    console.log("Added to cart:", product.name);
+    // Dispatch the full product object to the cart array
+    dispatch(addToCart(product));
+  };
+
+  const handleIncrement = (e) => {
+    e.stopPropagation();
+    dispatch(incrementQuantity(product._id));
+  };
+
+  const handleDecrement = (e) => {
+    e.stopPropagation();
+    dispatch(decrementQuantity(product._id));
   };
 
   return (
@@ -78,14 +104,39 @@ export const ProductCard = ({ product }) => {
           </div>
         </div>
 
-        {/* Add To Cart Button */}
+        {/* Cart Controls */}
         <div className="mt-4">
-          <button
-            onClick={handleAddToCart}
-            className="w-full flex items-center justify-center gap-2 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium transition-colors cursor-pointer hover:bg-orange-600"
-          >
-            <ShoppingCart size={14} /> Add to Cart
-          </button>
+          {quantity === 0 ? (
+            <Button
+              onClick={handleAddToCart}
+              icon={ShoppingCart}
+              iconSize={14}
+              className="w-full flex justify-center gap-2 bg-orange-500 text-white  hover:bg-orange-600"
+            >
+              Add to Cart
+            </Button>
+          ) : (
+            <div className="flex items-center justify-between gap-2">
+              <button
+                onClick={handleDecrement}
+                className="flex items-center justify-center w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors text-gray-600 cursor-pointer"
+              >
+                <Minus size={18} />
+              </button>
+
+              <span className="flex-1 text-center font-bold text-lg text-slate-800">
+                {quantity}
+              </span>
+
+              <button
+                onClick={handleIncrement}
+                disabled={quantity >= (product.stock || 0)}
+                className="flex items-center justify-center w-10 h-10 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Plus size={18} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

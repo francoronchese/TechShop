@@ -4,21 +4,26 @@ import { useSelector, useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { Search, SquareUserRound, Menu, X, LogOut } from "lucide-react";
 import { Logo, ShoppingCartIcon, Loader } from "@components";
+import {ShoppingCart} from "@components/ui/ShoppingCart";
 import SummaryApi, { baseURL } from "@config/summaryApi";
 import { endUserSession } from "@store/slices/userSlice";
 
 const Header = () => {
   const [loading, setLoading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
+  
   // Get user state from Redux store
   const userState = useSelector((state) => state.user);
   // Send actions to update Redux store
   const dispatch = useDispatch();
 
+  // Toggle cart visibility
+  const handleToggleCart = () => setIsCartOpen(!isCartOpen);
+
   const handleLogout = async () => {
     setLoading(true);
-
     try {
       const res = await fetch(baseURL + SummaryApi.logout.url, {
         method: SummaryApi.logout.method,
@@ -32,17 +37,13 @@ const Header = () => {
         toast.error(data.message);
       } else if (data.success) {
         toast.success(data.message);
-
         // Clear user from Redux store
         dispatch(endUserSession());
-
         // Clear localStorage authentication flag
         // isLoggedIn: Used by ProtectedRoutes & PublicRoutes
         localStorage.removeItem("isLoggedIn");
-
         // Close mobile menu if open
         setIsMobileMenuOpen(false);
-
         // Redirect to home page
         navigate("/");
       }
@@ -80,8 +81,8 @@ const Header = () => {
         {/* Nav container */}
         <nav className="col-start-2 col-end-3 md:col-start-3 md:col-end-4 row-start-1">
           <div className="flex gap-2 justify-end items-center h-9">
-            {/* Shopping cart Allways Visible*/}
-            <ShoppingCartIcon />
+            {/* Shopping cart */}
+            <ShoppingCartIcon onClick={handleToggleCart} />
 
             {/* MOBILE VIEW - Hamburger Menu Button */}
             <button
@@ -117,7 +118,7 @@ const Header = () => {
                 </button>
               </>
             ) : (
-              // Display register and login for unauthenticated users
+                // Display register and login for unauthenticated users
               <>
                 <Link
                   to="/login"
@@ -136,6 +137,9 @@ const Header = () => {
           </div>
         </nav>
       </div>
+
+      {/* ShoppingCart Overlay - Hidden by default */}
+      <ShoppingCart isOpen={isCartOpen} onClose={handleToggleCart} />
     </header>
   );
 };
