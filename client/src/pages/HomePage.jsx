@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useMemo } from "react";
 import { ChevronRight } from "lucide-react";
 import { Button, CategoryCard, ProductCard, PageLoader } from "@components";
 
@@ -16,9 +17,27 @@ const HomePage = () => {
   const { data: allCategories = [], isLoading: loadingCategories } =
     useGetCategoriesQuery();
 
-  // Get the first 12 items for the New Arrivals section
-  const allProducts = productsData?.data || [];
+  // Memoize the product list to prevent re-creating the array on every render
+  const allProducts = useMemo(() => productsData?.data || [], [productsData]);
+
+  // Get the first 12 products for the New Arrivals section
   const newArrivals = allProducts.slice(0, 12);
+
+  // Map category counts by iterating through all products
+  const productCountByCategory = useMemo(() => {
+    const counts = {};
+
+    allProducts.forEach((product) => {
+      product.categories?.forEach((category) => {
+        const categoryId = category._id;
+        if (categoryId) {
+          counts[categoryId] = (counts[categoryId] || 0) + 1;
+        }
+      });
+    });
+
+    return counts;
+  }, [allProducts]);
 
   return (
     <div>
@@ -61,7 +80,7 @@ const HomePage = () => {
                   id={category._id}
                   name={category.name}
                   image={category.image}
-                  productCount={0}
+                  productCount={productCountByCategory[category._id]}
                 />
               ))
             ) : (
