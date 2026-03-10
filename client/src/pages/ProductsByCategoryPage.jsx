@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import {
   useGetProductsQuery,
   useGetCategoriesQuery,
@@ -7,7 +8,6 @@ import {
 } from "@store/api/apiSlice";
 import { ProductCard, PageLoader, Button } from "@components";
 import {
-  ChevronDown,
   ChevronRight,
   Filter,
   X,
@@ -23,13 +23,14 @@ const SORT_OPTIONS = [
   { value: "discount", label: "Discount: High to Low" },
 ];
 
-const AllProductsPage = () => {
+const ProductsByCategoryPage = () => {
+  const { categoryId } = useParams();
+
   // URL Search Params for pagination persistence
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page")) || 1;
 
   // Active Filter State
-  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [selectedSubCategoryId, setSelectedSubCategoryId] = useState(null);
   const [sortBy, setSortBy] = useState("default");
   const [priceRange, setPriceRange] = useState([0, 5000]);
@@ -37,18 +38,15 @@ const AllProductsPage = () => {
   // Sidebar visibility state for mobile
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  // Expanded category in the filter sidebar (stores category _id or null)
-  const [expandedCategoryId, setExpandedCategoryId] = useState(null);
-
-  // RTK Query: fetch products with backend filters and pagination
+  // RTK Query: fetch products filtered by this category
   const {
     data: productsData,
-    isLoading: loadingList, // Initial load
-    isFetching, // Subsequent loads (pagination)
+    isLoading: loadingList,
+    isFetching,
     isError: errorList,
   } = useGetProductsQuery({
     page,
-    categoryId: selectedCategoryId,
+    categoryId,
     subCategoryId: selectedSubCategoryId,
     sortBy,
   });
@@ -62,10 +60,29 @@ const AllProductsPage = () => {
     }
   }, [searchParams, setSearchParams]);
 
+  // Reset filters when category changes
+  useEffect(() => {
+    setSelectedSubCategoryId(null);
+    setSortBy("default");
+    setSearchParams({ page: 1 });
+  }, [categoryId, setSearchParams]);
+
+  // Find the current category object from the list
+  const category = allCategories.find((cat) => cat._id === categoryId);
+
+  // Get subcategories that belong to this specific category
+  const categorySubCategories = useMemo(
+    () =>
+      allSubCategories.filter((sub) =>
+        sub.categories?.some((cat) => String(cat._id) === String(categoryId)),
+      ),
+    [allSubCategories, categoryId],
+  );
+
   // Memoized product list derived from RTK Query response
   const allProducts = useMemo(() => productsData?.data || [], [productsData]);
 
-  // Store last valid price range from backend to avoid resetting while fetching
+  // Store last valid price range from backend
   const priceMin = productsData?.priceRange?.minPrice;
   const priceMax = productsData?.priceRange?.maxPrice;
 
@@ -73,15 +90,6 @@ const AllProductsPage = () => {
   useEffect(() => {
     setPriceRange([priceMin, priceMax]);
   }, [priceMin, priceMax]);
-
-  // Get subcategories that belong to a specific category
-  const getSubsByCategoryId = useCallback(
-    (catId) =>
-      allSubCategories.filter((sub) =>
-        sub.categories?.some((cat) => String(cat._id) === String(catId)),
-      ),
-    [allSubCategories],
-  );
 
   // Apply client-side price filter on top of backend-filtered products
   const filteredProducts = useMemo(() => {
@@ -92,40 +100,18 @@ const AllProductsPage = () => {
 
   // Check if any filter is actively applied
   const hasActiveFilters =
-    selectedCategoryId ||
     selectedSubCategoryId ||
     sortBy !== "default" ||
     priceRange[0] !== priceMin ||
     priceRange[1] !== priceMax;
 
-  // Reset all filters to their default values and go back to first page
+  // Reset all filters to their default values
   const clearFilters = useCallback(() => {
-    setSelectedCategoryId(null);
     setSelectedSubCategoryId(null);
     setSortBy("default");
     setPriceRange([priceMin, priceMax]);
-    setExpandedCategoryId(null);
     setSearchParams({ page: 1 });
   }, [priceMin, priceMax, setSearchParams]);
-
-  // Handle category button click: expand/collapse and select/deselect
-  const handleCategoryClick = useCallback(
-    (catId) => {
-      if (expandedCategoryId === catId) {
-        // Collapse and deselect if already active
-        setExpandedCategoryId(null);
-        setSelectedCategoryId(null);
-        setSelectedSubCategoryId(null);
-      } else {
-        setExpandedCategoryId(catId);
-        setSelectedCategoryId(catId);
-        setSelectedSubCategoryId(null);
-      }
-      // Reset to first page when category changes
-      setSearchParams({ page: 1 });
-    },
-    [expandedCategoryId, setSearchParams],
-  );
 
   // Sidebar memoized as JSX to prevent re-creation on every render
   // Only re-renders when filter state or data actually changes
@@ -188,65 +174,35 @@ const AllProductsPage = () => {
           </div>
         </div>
 
-        {/* Categories Filter with collapsible subcategories */}
-        <div className="mb-5 pb-5 border-b border-slate-200">
-          <h3 className="mb-3 text-sm font-bold text-gray-800">Categories</h3>
-          <div className="flex flex-col gap-1">
-            {allCategories.map((cat) => {
-              const isExpanded = expandedCategoryId === cat._id;
-              const isSelected = selectedCategoryId === cat._id;
-              const relevantSubs = getSubsByCategoryId(cat._id);
-
-              return (
-                <div key={cat._id}>
-                  <button
-                    onClick={() => handleCategoryClick(cat._id)}
-                    className={`w-full flex items-center justify-between text-left text-sm py-2 px-3 rounded-lg transition-colors cursor-pointer ${
-                      isSelected
-                        ? "bg-orange-500 text-white font-medium"
-                        : "text-slate-700 hover:bg-slate-200"
-                    }`}
-                  >
-                    <span>{cat.name}</span>
-                    {relevantSubs.length > 0 &&
-                      (isExpanded ? (
-                        <ChevronDown size={14} />
-                      ) : (
-                        <ChevronRight size={14} />
-                      ))}
-                  </button>
-
-                  {/* Collapsible subcategory list */}
-                  {isExpanded && relevantSubs.length > 0 && (
-                    <div className="ml-3 mt-1 mb-1 border-l-2 border-slate-200 pl-3 flex flex-col gap-0.5">
-                      {relevantSubs.map((sub) => (
-                        <button
-                          key={sub._id}
-                          onClick={() => {
-                            setSelectedSubCategoryId(
-                              selectedSubCategoryId === sub._id
-                                ? null
-                                : sub._id,
-                            );
-                            // Reset to first page when subcategory changes
-                            setSearchParams({ page: 1 });
-                          }}
-                          className={`text-left text-xs py-1.5 px-2 rounded-lg transition-colors cursor-pointer ${
-                            selectedSubCategoryId === sub._id
-                              ? "text-orange-500 font-semibold bg-orange-100"
-                              : "text-slate-600 hover:bg-slate-200"
-                          }`}
-                        >
-                          {sub.name}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+        {/* Subcategories Filter */}
+        {categorySubCategories.length > 0 && (
+          <div className="mb-5 pb-5 border-b border-slate-200">
+            <h3 className="mb-3 text-sm font-bold text-gray-800">
+              Subcategories
+            </h3>
+            <div className="flex flex-col gap-1">
+              {categorySubCategories.map((sub) => (
+                <button
+                  key={sub._id}
+                  onClick={() => {
+                    setSelectedSubCategoryId(
+                      selectedSubCategoryId === sub._id ? null : sub._id,
+                    );
+                    // Reset to first page when subcategory changes
+                    setSearchParams({ page: 1 });
+                  }}
+                  className={`w-full text-left text-sm py-2 px-3 rounded-lg transition-colors cursor-pointer ${
+                    selectedSubCategoryId === sub._id
+                      ? "bg-orange-500 text-white font-medium"
+                      : "text-slate-700 hover:bg-slate-200"
+                  }`}
+                >
+                  {sub.name}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Sort By Filter */}
         <div>
@@ -273,83 +229,52 @@ const AllProductsPage = () => {
       priceMin,
       priceMax,
       priceRange,
-      allCategories,
-      selectedCategoryId,
+      categorySubCategories,
       selectedSubCategoryId,
-      expandedCategoryId,
       sortBy,
       hasActiveFilters,
       clearFilters,
-      getSubsByCategoryId,
-      handleCategoryClick,
       setSearchParams,
     ],
   );
 
   return (
     <section className="max-w-7xl mx-auto">
-      {/* Page header with dynamic breadcrumb and mobile filter toggle */}
-      <div className="mb-8 mt-4">
-        {/* Dynamic breadcrumb: Home > All Products > Category > SubCategory */}
+      {/* Page header with breadcrumb and category title */}
+      <div className="mb-6 mt-4">
         <div className="flex items-center gap-2 text-sm text-slate-500 mb-1">
           <Link to="/" className="hover:text-orange-500 transition-colors">
             Home
           </Link>
           <ChevronRight size={14} />
-          <span
-            className={
-              selectedCategoryId
-                ? "hover:text-orange-500 transition-colors cursor-pointer"
-                : "text-slate-700 font-medium"
-            }
-            onClick={() => selectedCategoryId && clearFilters()}
+          <Link
+            to="/products"
+            className="hover:text-orange-500 transition-colors"
           >
             All Products
-          </span>
-          {selectedCategoryId && (
-            <>
-              <ChevronRight size={14} />
-              <span
-                className={
-                  selectedSubCategoryId
-                    ? "hover:text-orange-500 transition-colors cursor-pointer"
-                    : "text-slate-700 font-medium"
-                }
-                onClick={() =>
-                  selectedSubCategoryId && setSelectedSubCategoryId(null)
-                }
-              >
-                {allCategories.find((c) => c._id === selectedCategoryId)?.name}
-              </span>
-            </>
-          )}
-          {selectedSubCategoryId && (
-            <>
-              <ChevronRight size={14} />
-              <span className="text-slate-700 font-medium">
-                {
-                  allSubCategories.find((sub) => sub._id === selectedSubCategoryId)
-                    ?.name
-                }
-              </span>
-            </>
-          )}
+          </Link>
+          <ChevronRight size={14} />
+          <span className="text-slate-700 font-medium">{category?.name}</span>
         </div>
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">
-            {selectedCategoryId
-              ? allCategories.find((cat) => cat._id === selectedCategoryId)?.name
-              : "Explore Collection"}
-          </h1>
-          <Button
-            onClick={() => setIsSidebarOpen(true)}
-            icon={SlidersHorizontal}
-            iconSize={18}
-            className="md:hidden bg-orange-500 text-white hover:bg-orange-600"
-          >
-            Filters
-          </Button>
-        </div>
+        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">
+          {category?.name}
+        </h1>
+      </div>
+
+      {/* Mobile filter toggle button */}
+      <div className="flex items-center justify-between mb-6 md:hidden">
+        <p className="text-sm text-slate-500">
+          {productsData?.totalCount || 0} product
+          {productsData?.totalCount !== 1 ? "s" : ""} found
+        </p>
+        <Button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          icon={SlidersHorizontal}
+          iconSize={18}
+          className="bg-orange-500 text-white hover:bg-orange-600"
+        >
+          Filters
+        </Button>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6">
@@ -365,27 +290,8 @@ const AllProductsPage = () => {
           {/* Active filter tags */}
           {hasActiveFilters && (
             <div className="flex flex-wrap gap-2 mb-5">
-              {selectedCategoryId && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full">
-                  {
-                    allCategories.find((cat) => cat._id === selectedCategoryId)
-                      ?.name
-                  }
-                  <button
-                    onClick={() => {
-                      setSelectedCategoryId(null);
-                      setSelectedSubCategoryId(null);
-                      setExpandedCategoryId(null);
-                      setSearchParams({ page: 1 });
-                    }}
-                    className="cursor-pointer"
-                  >
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
               {selectedSubCategoryId && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full">
                   {
                     allSubCategories.find(
                       (sub) => sub._id === selectedSubCategoryId,
@@ -419,9 +325,9 @@ const AllProductsPage = () => {
             </div>
           )}
 
-          {/* Products count */}
+          {/* Products count - desktop only */}
           {!loadingList && !isFetching && (
-            <p className="text-sm text-slate-500 mb-4">
+            <p className="hidden md:block text-sm text-slate-500 mb-4">
               {productsData?.totalCount || 0} product
               {productsData?.totalCount !== 1 ? "s" : ""} found
             </p>
@@ -482,4 +388,4 @@ const AllProductsPage = () => {
   );
 };
 
-export default AllProductsPage;
+export default ProductsByCategoryPage;

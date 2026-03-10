@@ -4,6 +4,7 @@ import Header from "@layouts/Header";
 import Footer from "@layouts/Footer";
 import HomePage from "@pages/HomePage";
 import AllProductsPage from "@pages/AllProductsPage";
+import ProductsByCategoryPage from "@pages/ProductsByCategoryPage";
 import {
   LoginPage,
   SignUpPage,
@@ -35,8 +36,12 @@ function App() {
         <Routes>
           {/* Public Routes without auth check */}
           <Route path="/" element={<HomePage />} />
-          <Route path="/products" element={<AllProductsPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/products" element={<AllProductsPage />} />
+          <Route
+            path="/category/:categoryId"
+            element={<ProductsByCategoryPage />}
+          />
 
           {/* Public Routes with auth check */}
           <Route element={<PublicRoutes />}>
