@@ -142,5 +142,3 @@ export const ProductCard = ({ product }) => {
     </div>
   );
 };
-
-export default ProductCard;

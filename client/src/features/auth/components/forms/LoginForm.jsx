@@ -1,18 +1,18 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import toast from 'react-hot-toast';
-import { Input, InputPassword, Loader } from '@components';
-import SummaryApi, { baseURL } from '@config/summaryApi';
-import { ButtonForm } from '@features/auth';
-import { setUserDetails } from '@store/slices/userSlice';
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import toast from "react-hot-toast";
+import { Input, InputPassword, Loader } from "@components";
+import SummaryApi, { baseURL } from "@config/summaryApi";
+import { ButtonForm } from "@features/auth";
+import { setUserDetails } from "@store/slices/userSlice";
 
 const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
   const navigate = useNavigate();
   // Send actions to update Redux store
@@ -32,12 +32,12 @@ const LoginForm = () => {
     try {
       const res = await fetch(baseURL + SummaryApi.login.url, {
         method: SummaryApi.login.method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
         }),
-        credentials: 'include', // Essential for cookie-based authentication
+        credentials: "include", // Essential for cookie-based authentication
       });
 
       const data = await res.json();
@@ -47,38 +47,44 @@ const LoginForm = () => {
         toast.error(data.message);
       } else if (data.success) {
         toast.success(data.message);
-
-        // Update Redux store with authenticated user data
-        dispatch(
-          setUserDetails({
-            _id: data.data.user.id,
-            name: data.data.user.name,
-            email: data.data.user.email,
-            avatar: '',
-            mobile: null,
-            role: 'User',
-            status: 'Active',
-            addresses: [],
-            shopping_cart_items: [],
-            orders: [],
-          })
-        );
-
         // Store authentication flag in localStorage for page refresh persistence
         // Used in: ProtectedRoutes & PublicRoutes
-        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem("isLoggedIn", "true");
+
+        // Fetch user data immediately after login
+        const userRes = await fetch(baseURL + SummaryApi.userDetails.url, {
+          credentials: "include",
+        });
+        const userData = await userRes.json();
+
+        if (userData.success && userData.data) {
+          dispatch(
+            setUserDetails({
+              _id: userData.data._id,
+              name: userData.data.name,
+              email: userData.data.email,
+              avatar: userData.data.avatar || "",
+              mobile: userData.data.mobile || null,
+              role: userData.data.role || "User",
+              status: userData.data.status || "Active",
+              addresses: userData.data.addresses || [],
+              shopping_cart_items: userData.data.shopping_cart_items || [],
+              orders: userData.data.orders || [],
+            }),
+          );
+        }
 
         // Clear form
         setFormData({
-          email: '',
-          password: '',
+          email: "",
+          password: "",
         });
         // Redirect to home page after successful login
-        navigate('/');
+        navigate("/");
       }
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Connection error. Please try again later.');
+      console.error("Error:", error);
+      toast.error("Connection error. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -87,41 +93,41 @@ const LoginForm = () => {
   const isFormValid = formData.email && formData.password;
 
   return (
-    <form onSubmit={handleSubmit} className='flex flex-col gap-2'>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2">
       <Input
-        label='Email:'
-        name='email'
+        label="Email:"
+        name="email"
         value={formData.email}
         onChange={handleChange}
-        placeholder='Enter email'
+        placeholder="Enter email"
       />
 
       <InputPassword
-        label='Password'
-        name='password'
+        label="Password"
+        name="password"
         value={formData.password}
         onChange={handleChange}
-        placeholder='Enter password'
+        placeholder="Enter password"
         showPassword={showPassword}
         onToggleShowPassword={() => setShowPassword(!showPassword)}
       />
 
       <Link
-        to='/forgot-password'
-        className='ml-auto text-sm text-gray-500 italic hover:underline hover:text-orange-600'
+        to="/forgot-password"
+        className="ml-auto text-sm text-gray-500 italic hover:underline hover:text-orange-600"
       >
         Forgot password?
       </Link>
 
-      <ButtonForm disabled={!isFormValid} loading={loading} maxWidth={'150px'}>
-        {loading ? <Loader /> : 'Login'}
+      <ButtonForm disabled={!isFormValid} loading={loading} maxWidth={"150px"}>
+        {loading ? <Loader /> : "Login"}
       </ButtonForm>
 
-      <p className='text-sm text-gray-500 italic'>
-        Don't have an account?{' '}
+      <p className="text-sm text-gray-500 italic">
+        Don't have an account?{" "}
         <Link
-          to='/sign-up'
-          className='text-orange-500 hover:text-orange-600 hover:underline font-semibold'
+          to="/sign-up"
+          className="text-orange-500 hover:text-orange-600 hover:underline font-semibold"
         >
           Sign up
         </Link>

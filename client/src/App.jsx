@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import Header from "@layouts/Header";
 import Footer from "@layouts/Footer";
 import HomePage from "@pages/HomePage";
+import AllProductsPage from "@pages/AllProductsPage";
 import {
   LoginPage,
   SignUpPage,
@@ -34,6 +35,7 @@ function App() {
         <Routes>
           {/* Public Routes without auth check */}
           <Route path="/" element={<HomePage />} />
+          <Route path="/products" element={<AllProductsPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           {/* Public Routes with auth check */}

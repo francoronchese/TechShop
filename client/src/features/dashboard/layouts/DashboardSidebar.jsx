@@ -49,7 +49,7 @@ export const DashboardSidebar = () => {
             `flex items-center gap-3 px-4 py-3 rounded-lg ${
               isActive
                 ? 'bg-orange-500 text-white font-medium'
-                : 'text-gray-700 hover:bg-gray-100'
+                : 'text-slate-700 hover:bg-slate-200'
             }`
           }
         >

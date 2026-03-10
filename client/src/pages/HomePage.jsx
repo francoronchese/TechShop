@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMemo } from "react";
 import { ChevronRight } from "lucide-react";
 import { Button, CategoryCard, ProductCard, PageLoader } from "@components";
@@ -10,6 +10,8 @@ import {
 } from "@store/api/apiSlice";
 
 const HomePage = () => {
+  const navigate = useNavigate();
+
   // RTK Query: Handles fetching and loading states for products and categories
   const { data: productsData, isLoading: loadingProducts } =
     useGetProductsQuery({ page: 1 });
@@ -48,12 +50,15 @@ const HomePage = () => {
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Welcome to TechShop
             </h1>
-            <p className="text-lg md:text-xl mb-6 max-w-2xl opacity-90">
+            <p className="max-w-2xl mb-6 md:text-xl opacity-90">
               The ultimate collection of next-generation technology. Elevate
               your setup with top-tier equipment designed for peak performance
               and reliability.
             </p>
-            <Button className="bg-white text-orange-600 px-8 py-3 hover:bg-gray-100 shadow-sm transition-all">
+            <Button
+              onClick={() => navigate("/products")}
+              className="px-6 text-lg bg-white text-orange-600 hover:bg-gray-100 shadow-sm hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.7)] duration-300 ease-in-out tracking-wide cursor-pointer"
+            >
               Shop Now
             </Button>
           </div>
@@ -62,7 +67,7 @@ const HomePage = () => {
 
       {/* Categories Section */}
       <section className="py-12 max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-gray-800 mb-8">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-8">
           Shop by Category
         </h2>
 
@@ -95,12 +100,12 @@ const HomePage = () => {
       {/* New Arrivals Section */}
       <section className="max-w-7xl mx-auto py-10">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold text-gray-800">New Arrivals</h2>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800">New Arrivals</h2>
           <Link
             to="/products"
-            className="flex items-center gap-1 text-orange-600 font-bold"
+            className="flex items-center gap-1 text-orange-600 font-bold hover:scale-105 duration-300 ease-in-out"
           >
-            View All <ChevronRight size={20} />
+            View All <ChevronRight size={22} />
           </Link>
         </div>
 
@@ -120,7 +125,7 @@ const HomePage = () => {
 
       {/* Why Choose Us Section */}
       <section className="max-w-7xl mx-auto py-12">
-        <h2 className="mb-8 text-3xl text-center font-bold text-gray-800">
+        <h2 className="mb-8 text-3xl md:text-4xl text-center font-extrabold text-gray-800">
           Why Choose TechShop?
         </h2>
 

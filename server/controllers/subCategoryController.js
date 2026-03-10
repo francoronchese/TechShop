@@ -106,7 +106,7 @@ export const deleteSubCategory = asyncHandler(async (req, res) => {
 
   // Check if sub-category has linked products
   const productCount = await ProductModel.countDocuments({
-    subCategories: { $in: [_id] },
+    sub_categories: { $in: [_id] },
   });
 
   // Prevent deletion if the sub-category is still associated with products

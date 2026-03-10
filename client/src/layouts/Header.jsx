@@ -99,7 +99,7 @@ const Header = () => {
                 <SquareUserRound
                   onClick={() => navigate("/dashboard")}
                   size="36px"
-                  strokeWidth="1.25"
+                  strokeWidth="1.45"
                   className="cursor-pointer hidden md:block"
                 />
                 <button

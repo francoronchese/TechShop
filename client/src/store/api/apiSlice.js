@@ -5,6 +5,7 @@ export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: baseURL,
+    credentials: "include",
   }),
   // Tags used to control the automated re-fetching logic
   tagTypes: ["Product", "Category", "SubCategory"],
@@ -13,11 +14,14 @@ export const apiSlice = createApi({
     // GET: Fetches products with optional pagination and search filters
     getProducts: builder.query({
       // Destructure page and search from the argument object
-      query: ({ page, search }) => ({
+      query: ({ page, search, categoryId, subCategoryId, sortBy }) => ({
         url: SummaryApi.getAllProducts.url,
         params: {
           page: page || 1,
           search: search || "",
+          ...(categoryId && { categoryId }),
+          ...(subCategoryId && { subCategoryId }),
+          ...(sortBy && { sortBy }),
         },
       }),
       // transformResponse is omitted to keep pagination metadata (totalPages, totalCount) accessible in the component

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import ProductModel from "../models/ProductModel.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
@@ -69,29 +70,66 @@ export const createProduct = asyncHandler(async (req, res) => {
 
 // GET ALL PRODUCTS CONTROLLER
 export const getAllProducts = asyncHandler(async (req, res) => {
-  // Get pagination and search values from query or set defaults
+  // Get pagination, search and filter values from query or set defaults
   // page: current page number, limit: items per page, search: term to filter by name
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 12;
   const skip = (page - 1) * limit;
   const search = req.query.search || "";
+  const { categoryId, subCategoryId, sortBy } = req.query;
 
-  // Create query filter for search if a term is provided
-  const query = search ? { name: { $regex: search, $options: "i" } } : {};
+  // Query filter
+  const query = {};
+  // Filter by name if search term is provided
+  if (search) query.name = { $regex: search, $options: "i" };
+  // Filter by category if provided
+  // ObjectId conversion is required because aggregate does not auto-cast strings like find() does
+  if (categoryId)
+    query.categories = { $in: [new mongoose.Types.ObjectId(categoryId)] };
+  // Filter by sub-category if provided
+  if (subCategoryId)
+    query.sub_categories = {
+      $in: [new mongoose.Types.ObjectId(subCategoryId)],
+    };
+
+  // Map frontend sort values to MongoDB sort objects
+  const sortOptions = {
+    "price-asc": { price: 1 },
+    "price-desc": { price: -1 },
+    "name-asc": { name: 1 },
+    discount: { discount: -1 },
+    default: { createdAt: -1 },
+  };
+  const sort = sortOptions[sortBy] || { createdAt: -1 };
 
   // Fetch products and total count in parallel for performance
   // populate() is used to include full category and sub-category objects
-  const [data, count] = await Promise.all([
+  const [data, count, priceResult] = await Promise.all([
     ProductModel.find(query)
-      .sort({ createdAt: -1 })
+      .sort(sort)
       .skip(skip)
       .limit(limit)
       .populate("categories sub_categories"),
     ProductModel.countDocuments(query),
+    // Aggregate all matching products into a single group to extract the minimum and maximum price values
+    ProductModel.aggregate([
+      { $match: query },
+      {
+        $group: {
+          _id: null, // Group all results into a single document
+          minPrice: { $min: "$price" }, // Get the lowest price
+          maxPrice: { $max: "$price" }, // Get the highest price
+        },
+      },
+    ]),
   ]);
 
   // Calculate total pages based on count and limit
   const totalPages = Math.ceil(count / limit);
+
+  // priceResult[0] accesses the single grouped document from the aggregate result array
+  // Falls back to default range if no products match the filters
+  const priceRange = priceResult[0] || { minPrice: 0, maxPrice: 5000 };
 
   // Return success response with products data and pagination metadata
   const response = {
@@ -101,6 +139,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
     data: data,
     totalCount: count,
     totalPages: totalPages,
+    priceRange: priceRange,
     // Helper objects for frontend navigation
     previous:
       page > 1 && page <= totalPages
@@ -157,70 +196,6 @@ export const getProduct = asyncHandler(async (req, res) => {
     data: product,
   });
 });
-
-// GET PRODUCTS BY CATEGORY AND SUB-CATEGORY
-export const getProductsByCategoryAndSubCategory = asyncHandler(
-  async (req, res) => {
-    const { categoryId, subCategoryId } = req.query;
-
-    // Get pagination values from query or set defaults
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-
-    // Validate required IDs for filtering
-    if (!categoryId || !subCategoryId) {
-      return res.status(400).json({
-        message: "Provide categoryId and subCategoryId",
-        error: true,
-        success: false,
-      });
-    }
-
-    // Create query filter for categories and sub categories
-    const query = {
-      categories: { $in: [categoryId] },
-      sub_categories: { $in: [subCategoryId] },
-    };
-
-    // Fetch filtered products and count in parallel for performance
-    const [data, count] = await Promise.all([
-      ProductModel.find(query)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .populate("categories sub_categories"),
-      ProductModel.countDocuments(query),
-    ]);
-
-    // Calculate total pages for filtered results
-    const totalPages = Math.ceil(count / limit);
-
-    // Return success response with filtered data and pagination
-    return res.json({
-      message: "Products retrieved successfully",
-      error: false,
-      success: true,
-      data: data,
-      totalCount: count,
-      totalPages: totalPages,
-      previous:
-        page > 1 && page <= totalPages
-          ? {
-              page: page - 1,
-              limit,
-            }
-          : null,
-      next:
-        page < totalPages && page >= 1
-          ? {
-              page: page + 1,
-              limit,
-            }
-          : null,
-    });
-  },
-);
 
 // UPDATE PRODUCT CONTROLLER
 export const updateProduct = asyncHandler(async (req, res) => {

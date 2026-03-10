@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import imageToBase64 from "@utils/imageToBase64";
 import uploadToCloudinary from "@helpers/cloudinaryUpload";
 
-// Import RTK Query hooks
+// RTK Query hooks
 import {
   useGetProductsQuery,
   useSaveProductMutation,
@@ -34,8 +34,8 @@ export const ProductPage = () => {
   // RTK Query: Fetches products with pagination and search parameters
   const {
     data: productsData,
-    isLoading: loadingList,
-    isFetching,
+    isLoading: loadingList, // Initial load
+    isFetching, // Subsequent loads (pagination)
     isError: errorList,
   } = useGetProductsQuery({ page, search: searchProduct });
 

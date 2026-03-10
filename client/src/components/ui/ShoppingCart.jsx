@@ -4,6 +4,7 @@ import {
   incrementQuantity,
   decrementQuantity,
   removeFromCart,
+  clearCart,
 } from "@store/slices/cartSlice";
 
 export const ShoppingCart = ({ isOpen, onClose }) => {
@@ -46,6 +47,7 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
               <X className="w-5 h-5 text-slate-500" />
             </button>
           </div>
+          <span className="mx-3 -mt-1 border border-slate-200"></span>
 
           {/* Scrollable list of cart items */}
           <div className="flex-1  overflow-y-auto p-6 space-y-6">
@@ -83,7 +85,7 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
                       </h4>
                       <button
                         onClick={() => dispatch(removeFromCart(item._id))}
-                        className="text-slate-400 hover:text-red-500 p-1 transition-colors"
+                        className="text-slate-400 hover:text-red-500 p-1 transition-colors cursor-pointer"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -99,7 +101,7 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
                         <button
                           onClick={() => dispatch(decrementQuantity(item._id))}
                           className="flex items-center justify-center w-8 h-full  text-slate-600
-                         hover:text-white hover:bg-orange-500 transition-colors"
+                         hover:text-white hover:bg-orange-500 transition-colors cursor-pointer"
                         >
                           <Minus size={14} />
                         </button>
@@ -109,7 +111,7 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
                         <button
                           onClick={() => dispatch(incrementQuantity(item._id))}
                           className="flex items-center justify-center w-8 h-full  text-slate-600
-                         hover:text-white hover:bg-orange-500 transition-colors"
+                         hover:text-white hover:bg-orange-500 transition-colors cursor-pointer"
                         >
                           <Plus size={14} />
                         </button>
@@ -135,8 +137,15 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
                   ${total.toFixed(2)}
                 </span>
               </div>
-              <button className="w-full py-4 font-bold text-white bg-orange-600 hover:bg-orange-700 rounded-xl  transition-all shadow-lg shadow-orange-200  uppercase tracking-wider">
+              <button className="w-full py-4 font-bold uppercase text-white bg-orange-600 hover:bg-orange-700 rounded-xl transition-all shadow-md shadow-orange-200 tracking-wider cursor-pointer">
                 Proceed to Checkout
+              </button>
+              <button
+                onClick={() => dispatch(clearCart())}
+                className="w-full mt-3 py-3 flex items-center justify-center gap-2 text-xs font-bold uppercase text-slate-500 bg-white border-2 border-slate-300 hover:border-slate-400 hover:text-slate-700 rounded-xl transition-all shadow-md shadow-grey-200 tracking-widest cursor-pointer"
+              >
+                <Trash2 size={16} />
+                Empty Shopping Cart
               </button>
               <p className="text-center text-[10px] text-slate-400 mt-4 uppercase font-bold tracking-widest">
                 Shipping and taxes calculated at checkout
