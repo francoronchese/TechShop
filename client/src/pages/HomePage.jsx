@@ -25,21 +25,8 @@ const HomePage = () => {
   // Get the first 12 products for the New Arrivals section
   const newArrivals = allProducts.slice(0, 12);
 
-  // Map category counts by iterating through all products
-  const productCountByCategory = useMemo(() => {
-    const counts = {};
-
-    allProducts.forEach((product) => {
-      product.categories?.forEach((category) => {
-        const categoryId = category._id;
-        if (categoryId) {
-          counts[categoryId] = (counts[categoryId] || 0) + 1;
-        }
-      });
-    });
-
-    return counts;
-  }, [allProducts]);
+  // Product count per category returned by the backend (used in CategoryCard)
+  const productCountByCategory = productsData?.categoryCount || {};
 
   return (
     <div>
@@ -100,7 +87,9 @@ const HomePage = () => {
       {/* New Arrivals Section */}
       <section className="max-w-7xl mx-auto py-10">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800">New Arrivals</h2>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800">
+            New Arrivals
+          </h2>
           <Link
             to="/products"
             className="flex items-center gap-1 text-orange-600 font-bold hover:scale-105 duration-300 ease-in-out"

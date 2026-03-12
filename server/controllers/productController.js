@@ -110,7 +110,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
 
   // Fetch products and total count in parallel for performance
   // populate() is used to include full category and sub-category objects
-  const [data, count, priceResult] = await Promise.all([
+  const [data, count, priceResult, categoryCountResult] = await Promise.all([
     ProductModel.find(query)
       .sort(sort)
       .skip(skip)
@@ -128,6 +128,10 @@ export const getAllProducts = asyncHandler(async (req, res) => {
         },
       },
     ]),
+    // Aggregate all products (for Category Card) to get total count per category
+    ProductModel.aggregate([
+      { $group: { _id: "$categories", count: { $sum: 1 } } },
+    ]),
   ]);
 
   // Calculate total pages based on count and limit
@@ -136,6 +140,12 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   // priceResult[0] accesses the single grouped document from the aggregate result array
   // Falls back to default range if no products match the filters
   const priceRange = priceResult[0] || { minPrice: 0, maxPrice: 5000 };
+  
+  // Convert array of { _id, count } to { categoryId: count } object
+  const categoryCount = categoryCountResult.reduce((acc, item) => {
+    acc[item._id] = item.count;
+    return acc;
+  }, {});
 
   // Return success response with products data and pagination metadata
   const response = {
@@ -146,6 +156,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
     totalCount: count,
     totalPages: totalPages,
     priceRange: priceRange,
+    categoryCount: categoryCount,
     // Helper objects for frontend navigation
     previous:
       page > 1 && page <= totalPages
