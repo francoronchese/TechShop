@@ -73,6 +73,11 @@ const ProductsByCategoryPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryId]);
 
+  // Scroll to top when filters or page change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [page, categoryId, selectedSubCategoryId, priceMinParam, priceMaxParam]);
+
   // Find the current category object from the list
   const category = allCategories.find((cat) => cat._id === categoryId);
 

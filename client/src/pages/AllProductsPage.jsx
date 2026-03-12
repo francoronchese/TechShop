@@ -75,6 +75,17 @@ const AllProductsPage = () => {
     }
   }, [searchParams, setSearchParams]);
 
+  // Scroll to top when filters or page change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [
+    page,
+    selectedCategoryId,
+    selectedSubCategoryId,
+    priceMinParam,
+    priceMaxParam,
+  ]);
+
   // Sync expandedCategoryId with selectedCategoryId from URL on mount
   useEffect(() => {
     if (selectedCategoryId) {
@@ -218,7 +229,8 @@ const AllProductsPage = () => {
               value={sliderRange[0]}
               onChange={(e) => {
                 const val = parseInt(e.target.value);
-                if (val <= sliderRange[1]) setSliderRange([val, sliderRange[1]]);
+                if (val <= sliderRange[1])
+                  setSliderRange([val, sliderRange[1]]);
               }}
               onMouseUp={commitPriceRange}
               onTouchEnd={commitPriceRange}
@@ -232,7 +244,8 @@ const AllProductsPage = () => {
               value={sliderRange[1]}
               onChange={(e) => {
                 const val = parseInt(e.target.value);
-                if (val >= sliderRange[0]) setSliderRange([sliderRange[0], val]);
+                if (val >= sliderRange[0])
+                  setSliderRange([sliderRange[0], val]);
               }}
               onMouseUp={commitPriceRange}
               onTouchEnd={commitPriceRange}
@@ -278,7 +291,9 @@ const AllProductsPage = () => {
                           onClick={() =>
                             updateParam(
                               "subCategoryId",
-                              selectedSubCategoryId === sub._id ? null : sub._id,
+                              selectedSubCategoryId === sub._id
+                                ? null
+                                : sub._id,
                             )
                           }
                           className={`text-left text-xs py-1.5 px-2 rounded-lg transition-colors cursor-pointer ${
@@ -373,7 +388,11 @@ const AllProductsPage = () => {
             <>
               <ChevronRight size={14} />
               <span className="text-slate-700 font-medium">
-                {allSubCategories.find((sub) => sub._id === selectedSubCategoryId)?.name}
+                {
+                  allSubCategories.find(
+                    (sub) => sub._id === selectedSubCategoryId,
+                  )?.name
+                }
               </span>
             </>
           )}
@@ -381,7 +400,8 @@ const AllProductsPage = () => {
         <div className="flex items-center justify-between">
           <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">
             {selectedCategoryId
-              ? allCategories.find((cat) => cat._id === selectedCategoryId)?.name
+              ? allCategories.find((cat) => cat._id === selectedCategoryId)
+                  ?.name
               : "Explore Collection"}
           </h1>
           <Button
@@ -410,7 +430,10 @@ const AllProductsPage = () => {
             <div className="flex flex-wrap gap-2 mb-5">
               {selectedCategoryId && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full">
-                  {allCategories.find((cat) => cat._id === selectedCategoryId)?.name}
+                  {
+                    allCategories.find((cat) => cat._id === selectedCategoryId)
+                      ?.name
+                  }
                   <button
                     onClick={() => {
                       setExpandedCategoryId(null);
@@ -430,7 +453,11 @@ const AllProductsPage = () => {
               )}
               {selectedSubCategoryId && (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
-                  {allSubCategories.find((sub) => sub._id === selectedSubCategoryId)?.name}
+                  {
+                    allSubCategories.find(
+                      (sub) => sub._id === selectedSubCategoryId,
+                    )?.name
+                  }
                   <button
                     onClick={() => updateParam("subCategoryId", null)}
                     className="cursor-pointer"
