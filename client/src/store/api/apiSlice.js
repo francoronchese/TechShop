@@ -14,7 +14,15 @@ export const apiSlice = createApi({
     // GET: Fetches products with optional pagination and search filters
     getProducts: builder.query({
       // Destructure page and search from the argument object
-      query: ({ page, search, categoryId, subCategoryId, sortBy }) => ({
+      query: ({
+        page,
+        search,
+        categoryId,
+        subCategoryId,
+        sortBy,
+        priceMin,
+        priceMax,
+      }) => ({
         url: SummaryApi.getAllProducts.url,
         params: {
           page: page || 1,
@@ -22,6 +30,8 @@ export const apiSlice = createApi({
           ...(categoryId && { categoryId }),
           ...(subCategoryId && { subCategoryId }),
           ...(sortBy && { sortBy }),
+          ...(priceMin && { priceMin }),
+          ...(priceMax && { priceMax }),
         },
       }),
       // transformResponse is omitted to keep pagination metadata (totalPages, totalCount) accessible in the component

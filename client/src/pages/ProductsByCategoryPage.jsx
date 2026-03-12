@@ -1,18 +1,12 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
+import { useParams, useSearchParams, Link } from "react-router-dom";
 import {
   useGetProductsQuery,
   useGetCategoriesQuery,
   useGetSubCategoriesQuery,
 } from "@store/api/apiSlice";
 import { ProductCard, PageLoader, Button } from "@components";
-import {
-  ChevronRight,
-  Filter,
-  X,
-  SlidersHorizontal,
-} from "lucide-react";
+import { ChevronRight, Filter, X, SlidersHorizontal } from "lucide-react";
 
 // Sort options available to the user
 const SORT_OPTIONS = [
@@ -30,10 +24,14 @@ const ProductsByCategoryPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page")) || 1;
 
-  // Active Filter State
-  const [selectedSubCategoryId, setSelectedSubCategoryId] = useState(null);
-  const [sortBy, setSortBy] = useState("default");
-  const [priceRange, setPriceRange] = useState([0, 5000]);
+  // Read filters from URL so they persist across page changes
+  const selectedSubCategoryId = searchParams.get("subCategoryId") || null;
+  const sortBy = searchParams.get("sortBy") || "default";
+  const priceMinParam = searchParams.get("priceMin");
+  const priceMaxParam = searchParams.get("priceMax");
+
+  // Tracks slider position while dragging, sent to URL only on release
+  const [sliderRange, setSliderRange] = useState([0, 5000]);
 
   // Sidebar visibility state for mobile
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -49,23 +47,31 @@ const ProductsByCategoryPage = () => {
     categoryId,
     subCategoryId: selectedSubCategoryId,
     sortBy,
+    priceMin: priceMinParam,
+    priceMax: priceMaxParam,
   });
   const { data: allCategories = [] } = useGetCategoriesQuery();
   const { data: allSubCategories = [] } = useGetSubCategoriesQuery();
 
-  // Sync URL on mount if 'page' param is missing
+  // Add page=1 to URL on mount if missing, without losing other params
   useEffect(() => {
     if (!searchParams.get("page")) {
-      setSearchParams({ page: 1 }, { replace: true });
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.set("page", "1");
+          return next;
+        },
+        { replace: true },
+      );
     }
   }, [searchParams, setSearchParams]);
 
   // Reset filters when category changes
   useEffect(() => {
-    setSelectedSubCategoryId(null);
-    setSortBy("default");
     setSearchParams({ page: 1 });
-  }, [categoryId, setSearchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoryId]);
 
   // Find the current category object from the list
   const category = allCategories.find((cat) => cat._id === categoryId);
@@ -86,32 +92,53 @@ const ProductsByCategoryPage = () => {
   const priceMin = productsData?.priceRange?.minPrice;
   const priceMax = productsData?.priceRange?.maxPrice;
 
-  // Sync price range slider when backend returns new price range
+  // Sync sliderRange when backend returns a new price range (only if no price filter is active)
   useEffect(() => {
-    setPriceRange([priceMin, priceMax]);
-  }, [priceMin, priceMax]);
-
-  // Apply client-side price filter on top of backend-filtered products
-  const filteredProducts = useMemo(() => {
-    return allProducts.filter(
-      (prod) => prod.price >= priceRange[0] && prod.price <= priceRange[1],
-    );
-  }, [allProducts, priceRange]);
+    if (priceMin && priceMax && !priceMinParam && !priceMaxParam) {
+      setSliderRange([priceMin, priceMax]);
+    }
+  }, [priceMin, priceMax, priceMinParam, priceMaxParam]);
 
   // Check if any filter is actively applied
   const hasActiveFilters =
     selectedSubCategoryId ||
     sortBy !== "default" ||
-    priceRange[0] !== priceMin ||
-    priceRange[1] !== priceMax;
+    priceMinParam ||
+    priceMaxParam;
+
+  // Updates a single param while preserving the rest, resets to page 1
+  const updateParam = useCallback(
+    (key, value) => {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        if (value === null || value === undefined) {
+          next.delete(key); // remove the param if value is null
+        } else {
+          next.set(key, value); // set or update the param
+        }
+        next.set("page", "1"); // always reset to page 1 on filter change
+        return next;
+      });
+    },
+    [setSearchParams],
+  );
 
   // Reset all filters to their default values
   const clearFilters = useCallback(() => {
-    setSelectedSubCategoryId(null);
-    setSortBy("default");
-    setPriceRange([priceMin, priceMax]);
+    setSliderRange([priceMin, priceMax]);
     setSearchParams({ page: 1 });
   }, [priceMin, priceMax, setSearchParams]);
+
+  // Save final slider values to URL on mouse/touch release to trigger backend fetch
+  const commitPriceRange = useCallback(() => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("priceMin", String(sliderRange[0]));
+      next.set("priceMax", String(sliderRange[1]));
+      next.set("page", "1");
+      return next;
+    });
+  }, [sliderRange, setSearchParams]);
 
   // Sidebar memoized as JSX to prevent re-creation on every render
   // Only re-renders when filter state or data actually changes
@@ -141,10 +168,10 @@ const ProductsByCategoryPage = () => {
             {/* Display current min and max values */}
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-orange-600">
-                ${priceRange[0]}
+                ${sliderRange[0]}
               </span>
               <span className="text-sm font-semibold text-orange-600">
-                ${priceRange[1]}
+                ${sliderRange[1]}
               </span>
             </div>
             {/* Min price slider */}
@@ -152,11 +179,14 @@ const ProductsByCategoryPage = () => {
               type="range"
               min={priceMin}
               max={priceMax}
-              value={priceRange[0]}
+              value={sliderRange[0]}
               onChange={(e) => {
                 const val = parseInt(e.target.value);
-                if (val <= priceRange[1]) setPriceRange([val, priceRange[1]]);
+                if (val <= sliderRange[1])
+                  setSliderRange([val, sliderRange[1]]);
               }}
+              onMouseUp={commitPriceRange}
+              onTouchEnd={commitPriceRange}
               className="w-full h-2 bg-orange-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-orange-500 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer"
             />
             {/* Max price slider */}
@@ -164,11 +194,14 @@ const ProductsByCategoryPage = () => {
               type="range"
               min={priceMin}
               max={priceMax}
-              value={priceRange[1]}
+              value={sliderRange[1]}
               onChange={(e) => {
                 const val = parseInt(e.target.value);
-                if (val >= priceRange[0]) setPriceRange([priceRange[0], val]);
+                if (val >= sliderRange[0])
+                  setSliderRange([sliderRange[0], val]);
               }}
+              onMouseUp={commitPriceRange}
+              onTouchEnd={commitPriceRange}
               className="w-full h-2 bg-orange-200 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:bg-orange-500 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:cursor-pointer"
             />
           </div>
@@ -185,11 +218,10 @@ const ProductsByCategoryPage = () => {
                 <button
                   key={sub._id}
                   onClick={() => {
-                    setSelectedSubCategoryId(
+                    updateParam(
+                      "subCategoryId",
                       selectedSubCategoryId === sub._id ? null : sub._id,
                     );
-                    // Reset to first page when subcategory changes
-                    setSearchParams({ page: 1 });
                   }}
                   className={`w-full text-left text-sm py-2 px-3 rounded-lg transition-colors cursor-pointer ${
                     selectedSubCategoryId === sub._id
@@ -209,11 +241,7 @@ const ProductsByCategoryPage = () => {
           <h3 className="mb-3 text-sm font-bold text-gray-800">Sort By</h3>
           <select
             value={sortBy}
-            onChange={(e) => {
-              setSortBy(e.target.value);
-              // Reset to first page when sort changes
-              setSearchParams({ page: 1 });
-            }}
+            onChange={(e) => updateParam("sortBy", e.target.value)}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 outline-none focus:border-orange-500 transition-all cursor-pointer"
           >
             {SORT_OPTIONS.map((opt) => (
@@ -228,13 +256,14 @@ const ProductsByCategoryPage = () => {
     [
       priceMin,
       priceMax,
-      priceRange,
+      sliderRange,
       categorySubCategories,
       selectedSubCategoryId,
       sortBy,
       hasActiveFilters,
       clearFilters,
-      setSearchParams,
+      updateParam,
+      commitPriceRange,
     ],
   );
 
@@ -298,10 +327,7 @@ const ProductsByCategoryPage = () => {
                     )?.name
                   }
                   <button
-                    onClick={() => {
-                      setSelectedSubCategoryId(null);
-                      setSearchParams({ page: 1 });
-                    }}
+                    onClick={() => updateParam("subCategoryId", null)}
                     className="cursor-pointer"
                   >
                     <X size={12} />
@@ -312,9 +338,26 @@ const ProductsByCategoryPage = () => {
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full">
                   {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}
                   <button
+                    onClick={() => updateParam("sortBy", null)}
+                    className="cursor-pointer"
+                  >
+                    <X size={12} />
+                  </button>
+                </span>
+              )}
+              {(priceMinParam || priceMaxParam) && (
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                  ${priceMinParam} - ${priceMaxParam}
+                  <button
                     onClick={() => {
-                      setSortBy("default");
-                      setSearchParams({ page: 1 });
+                      setSliderRange([priceMin ?? 0, priceMax ?? 5000]);
+                      setSearchParams((prev) => {
+                        const next = new URLSearchParams(prev);
+                        next.delete("priceMin"); // remove price filters from URL
+                        next.delete("priceMax");
+                        next.set("page", "1");
+                        return next;
+                      });
                     }}
                     className="cursor-pointer"
                   >
@@ -342,10 +385,10 @@ const ProductsByCategoryPage = () => {
             <div className="py-20 text-center text-red-500 font-medium">
               Error loading data. Please check your connection.
             </div>
-          ) : filteredProducts.length > 0 ? (
+          ) : allProducts.length > 0 ? (
             <>
               <div className="grid grid-cols-1 min-[485px]:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map((product) => (
+                {allProducts.map((product) => (
                   <ProductCard key={product._id} product={product} />
                 ))}
               </div>
@@ -353,7 +396,13 @@ const ProductsByCategoryPage = () => {
               {/* Pagination UI */}
               <div className="flex justify-between items-center mt-10 pt-6 border-t border-slate-300">
                 <Button
-                  onClick={() => setSearchParams({ page: page - 1 })}
+                  onClick={() =>
+                    setSearchParams((prev) => {
+                      const next = new URLSearchParams(prev);
+                      next.set("page", String(page - 1)); // decrease page while keeping other params
+                      return next;
+                    })
+                  }
                   disabled={page <= 1}
                   className="bg-white border border-slate-400 text-slate-600 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-400 shadow-sm text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -369,7 +418,13 @@ const ProductsByCategoryPage = () => {
                   </span>
                 </span>
                 <Button
-                  onClick={() => setSearchParams({ page: page + 1 })}
+                  onClick={() =>
+                    setSearchParams((prev) => {
+                      const next = new URLSearchParams(prev);
+                      next.set("page", String(page + 1)); // increase page while keeping other params
+                      return next;
+                    })
+                  }
                   disabled={page >= (productsData?.totalPages || 1)}
                   className="bg-white border border-slate-400 text-slate-600 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-400 shadow-sm text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >

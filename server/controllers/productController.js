@@ -76,7 +76,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   const limit = parseInt(req.query.limit) || 12;
   const skip = (page - 1) * limit;
   const search = req.query.search || "";
-  const { categoryId, subCategoryId, sortBy } = req.query;
+  const { categoryId, subCategoryId, sortBy, priceMin, priceMax } = req.query;
 
   // Query filter
   const query = {};
@@ -91,6 +91,12 @@ export const getAllProducts = asyncHandler(async (req, res) => {
     query.sub_categories = {
       $in: [new mongoose.Types.ObjectId(subCategoryId)],
     };
+  // Filter by price range if provided
+  if (priceMin || priceMax) {
+    query.price = {};
+    if (priceMin) query.price.$gte = parseFloat(priceMin);
+    if (priceMax) query.price.$lte = parseFloat(priceMax);
+  }
 
   // Map frontend sort values to MongoDB sort objects
   const sortOptions = {
