@@ -5,6 +5,7 @@ import Footer from "@layouts/Footer";
 import HomePage from "@pages/HomePage";
 import AllProductsPage from "@pages/AllProductsPage";
 import ProductsByCategoryPage from "@pages/ProductsByCategoryPage";
+import SingleProductPage from "@pages/SingleProductPage";
 import {
   LoginPage,
   SignUpPage,
@@ -42,6 +43,7 @@ function App() {
             path="/category/:categoryId"
             element={<ProductsByCategoryPage />}
           />
+          <Route path="/product/:id" element={<SingleProductPage />} />
 
           {/* Public Routes with auth check */}
           <Route element={<PublicRoutes />}>
