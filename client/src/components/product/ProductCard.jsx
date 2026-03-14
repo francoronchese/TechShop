@@ -6,7 +6,7 @@ import {
   incrementQuantity,
   decrementQuantity,
 } from "../../store/slices/cartSlice";
-import { Button } from "./Button";
+import { Button } from "../ui/Button";
 
 export const ProductCard = ({ product }) => {
   // Get data from Redux store

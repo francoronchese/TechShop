@@ -3,8 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { Search, SquareUserRound, Menu, X, LogOut } from "lucide-react";
-import { Logo, ShoppingCartIcon, Loader } from "@components";
-import {ShoppingCart} from "@components/ui/ShoppingCart";
+import { Logo, ShoppingCartIcon, ShoppingCart, Loader } from "@components";
 import SummaryApi, { baseURL } from "@config/summaryApi";
 import { endUserSession } from "@store/slices/userSlice";
 
@@ -13,7 +12,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const navigate = useNavigate();
-  
+
   // Get user state from Redux store
   const userState = useSelector((state) => state.user);
   // Send actions to update Redux store
@@ -118,7 +117,7 @@ const Header = () => {
                 </button>
               </>
             ) : (
-                // Display register and login for unauthenticated users
+              // Display register and login for unauthenticated users
               <>
                 <Link
                   to="/login"
