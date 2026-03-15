@@ -1,5 +1,6 @@
 import { Router } from "express";
 import auth from "../middlewares/authMiddleware.js";
+import isAdmin from "../middlewares/isAdminMiddleware.js";
 import {
   createSubCategory,
   getSubCategories,
@@ -12,8 +13,8 @@ const subCategoryRouter = Router();
 // Public routes
 subCategoryRouter.get("/get", getSubCategories);
 // Protected routes (Admin only)
-subCategoryRouter.post("/create", auth, createSubCategory);
-subCategoryRouter.put("/update", auth, updateSubCategory);
-subCategoryRouter.delete("/delete", auth, deleteSubCategory);
+subCategoryRouter.post("/create", auth, isAdmin, createSubCategory);
+subCategoryRouter.put("/update", auth, isAdmin, updateSubCategory);
+subCategoryRouter.delete("/delete", auth, isAdmin, deleteSubCategory);
 
 export default subCategoryRouter;

@@ -1,7 +1,7 @@
-import asyncHandler from '../utils/asyncHandler.js';
-import CategoryModel from '../models/CategoryModel.js';
-import SubCategoryModel from '../models/SubCategoryModel.js';
-import ProductModel from '../models/ProductModel.js';
+import asyncHandler from "../utils/asyncHandler.js";
+import CategoryModel from "../models/CategoryModel.js";
+import SubCategoryModel from "../models/SubCategoryModel.js";
+import ProductModel from "../models/ProductModel.js";
 
 // CREATE CATEGORY CONTROLLER
 export const createCategory = asyncHandler(async (req, res) => {
@@ -10,7 +10,7 @@ export const createCategory = asyncHandler(async (req, res) => {
   // Validate required fields for category creation
   if (!name || !image) {
     return res.status(400).json({
-      message: 'Provide name and image',
+      message: "Provide name and image",
       error: true,
       success: false,
     });
@@ -20,7 +20,7 @@ export const createCategory = asyncHandler(async (req, res) => {
   const existingCategory = await CategoryModel.findOne({ name });
   if (existingCategory) {
     return res.status(400).json({
-      message: 'Category name already exists',
+      message: "Category name already exists",
       error: true,
       success: false,
     });
@@ -36,7 +36,7 @@ export const createCategory = asyncHandler(async (req, res) => {
 
   // Return success response with the created category data
   return res.json({
-    message: 'Category created successfully',
+    message: "Category created successfully",
     error: false,
     success: true,
     data: newCategory,
@@ -50,7 +50,7 @@ export const getAllCategories = asyncHandler(async (req, res) => {
 
   // Return success response with categories data
   return res.json({
-    message: 'Categories retrieved successfully',
+    message: "Categories retrieved successfully",
     error: false,
     success: true,
     data: data,
@@ -64,27 +64,27 @@ export const updateCategory = asyncHandler(async (req, res) => {
   // Validate required ID for update
   if (!_id) {
     return res.status(400).json({
-      message: 'Provide category ID',
+      message: "Provide category ID",
       error: true,
       success: false,
     });
   }
-  
+
   // Check if the new name is already taken by another category (excluding current ID)
-    if (name) {
-      const existingCategory = await CategoryModel.findOne({
-        name,
-        _id: { $ne: _id },
+  if (name) {
+    const existingCategory = await CategoryModel.findOne({
+      name,
+      _id: { $ne: _id },
+    });
+
+    if (existingCategory) {
+      return res.status(400).json({
+        message: "Category name already exists",
+        error: true,
+        success: false,
       });
-  
-      if (existingCategory) {
-        return res.status(400).json({
-          message: 'Category name already exists',
-          error: true,
-          success: false,
-        });
-      }
     }
+  }
 
   // Update category in database
   const updatedCategory = await CategoryModel.findByIdAndUpdate(
@@ -93,12 +93,12 @@ export const updateCategory = asyncHandler(async (req, res) => {
       name,
       image,
     },
-    { new: true } // Return the updated document instead of the old one
+    { new: true }, // Return the updated document instead of the old one
   );
 
   // Return success response with updated data
   return res.json({
-    message: 'Category updated successfully',
+    message: "Category updated successfully",
     error: false,
     success: true,
     data: updatedCategory,
@@ -112,7 +112,7 @@ export const deleteCategory = asyncHandler(async (req, res) => {
   // Validate required ID for deletion
   if (!_id) {
     return res.status(400).json({
-      message: 'Provide category ID',
+      message: "Provide category ID",
       error: true,
       success: false,
     });
@@ -128,7 +128,7 @@ export const deleteCategory = asyncHandler(async (req, res) => {
   // Prevent deletion if the category is still associated with other data
   if (subCategoryCount > 0 || productCount > 0) {
     return res.status(400).json({
-      message: 'Cannot delete: Category has active subcategories or products',
+      message: "Cannot delete: Category has active subcategories or products",
       error: true,
       success: false,
     });
@@ -139,7 +139,7 @@ export const deleteCategory = asyncHandler(async (req, res) => {
 
   // Success response
   return res.json({
-    message: 'Category deleted successfully',
+    message: "Category deleted successfully",
     error: false,
     success: true,
   });
