@@ -17,7 +17,7 @@ import {
 import ProductHeader from "../components/product/ProductHeader";
 import ProductForm from "../components/product/ProductForm";
 import ProductList from "../components/product/ProductList";
-import { PageLoader, Button } from "@components";
+import { PageLoader, PaginationControls } from "@components";
 
 export const ProductPage = () => {
   // URL Search Params for pagination persistence
@@ -34,8 +34,8 @@ export const ProductPage = () => {
   // RTK Query: Fetches products with pagination and search parameters
   const {
     data: productsData,
-    isLoading: loadingList, // Initial load
-    isFetching, // Subsequent loads (pagination)
+    isLoading: loadingList,
+    isFetching,
     isError: errorList,
   } = useGetProductsQuery({ page, search: searchProduct });
 
@@ -156,14 +156,11 @@ export const ProductPage = () => {
       const base64Images = await Promise.all(
         files.map((file) => imageToBase64(file)),
       );
-
       setProductImages((prev) => [...prev, ...base64Images]);
-
       setFormData((prev) => ({
         ...prev,
         image: [...prev.image, ...base64Images],
       }));
-
       toast.success(`${files.length} image(s) added`);
     } catch (error) {
       toast.error("Failed to process images");
@@ -281,35 +278,13 @@ export const ProductPage = () => {
                 onEdit={handleEdit}
                 onDelete={handleDelete}
               />
-
-              {/* Pagination UI */}
-              <div className="flex justify-between items-center mt-6 pt-4 border-t border-slate-300">
-                <Button
-                  onClick={() => setSearchParams({ page: page - 1 })}
-                  disabled={page <= 1}
-                  className="bg-white border border-slate-400 text-slate-600 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-400 shadow-sm text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Prev
-                </Button>
-
-                <span className="text-sm font-medium text-slate-500">
-                  <span className="hidden sm:inline">
-                    Page {page} of {productsData?.totalPages || 1} (Total:{" "}
-                    {productsData?.totalCount || 0})
-                  </span>
-                  <span className="sm:hidden">
-                    {page} / {productsData?.totalPages || 1}
-                  </span>
-                </span>
-
-                <Button
-                  onClick={() => setSearchParams({ page: page + 1 })}
-                  disabled={page >= (productsData?.totalPages || 1)}
-                  className="bg-white border border-slate-400 text-slate-600 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-400 shadow-sm text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Next
-                </Button>
-              </div>
+              <PaginationControls
+                page={page}
+                totalPages={productsData?.totalPages || 1}
+                totalCount={productsData?.totalCount || 0}
+                onPrev={() => setSearchParams({ page: page - 1 })}
+                onNext={() => setSearchParams({ page: page + 1 })}
+              />
             </>
           ) : (
             <div className="text-center py-20 text-slate-400">

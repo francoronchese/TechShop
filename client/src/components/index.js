@@ -10,6 +10,12 @@ export { PageLoader } from "./ui/PageLoader.jsx";
 export { CategoryCard } from "./product/CategoryCard.jsx";
 export { ProductCard } from "./product/ProductCard.jsx";
 
+// Product pages components
+export { ProductGrid } from "./product/ProductGrid.jsx";
+export { PaginationControls } from "./product/PaginationControls.jsx";
+export { AllProductsFilterSidebar } from "./product/all-products/AllProductsFilterSidebar.jsx";
+export { CategoryFilterSidebar } from "./product/category/CategoryFilterSidebar.jsx";
+
 // Single product components
 export { ProductInfoBlock } from "./product/single-product/ProductInfoBlock.jsx";
 export { ProductPurchaseBlock } from "./product/single-product/ProductPurchaseBlock.jsx";

@@ -62,7 +62,7 @@ const ProductForm = ({
             value={formData.description}
             onChange={onChange}
             rows="4"
-            className="p-3 border border-slate-200 rounded-lg text-sm resize-none focus:border-orange-500 outline-none transition-all"
+            className="p-3 border border-slate-200 rounded-lg text-sm focus:border-orange-500 outline-none transition-all"
             placeholder="Product details..."
           />
         </div>
