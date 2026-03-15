@@ -114,7 +114,7 @@ const LoginForm = () => {
 
       <Link
         to="/forgot-password"
-        className="ml-auto text-sm text-gray-500 italic hover:underline hover:text-orange-600"
+        className="ml-auto text-sm text-slate-500 italic hover:underline hover:text-orange-600"
       >
         Forgot password?
       </Link>
@@ -123,7 +123,7 @@ const LoginForm = () => {
         {loading ? <Loader /> : "Login"}
       </ButtonForm>
 
-      <p className="text-sm text-gray-500 italic">
+      <p className="text-sm text-slate-500 italic">
         Don't have an account?{" "}
         <Link
           to="/sign-up"

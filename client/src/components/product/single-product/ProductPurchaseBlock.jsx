@@ -94,7 +94,7 @@ export const ProductPurchaseBlock = ({ product }) => {
         <div className="flex items-center justify-between gap-2">
           <button
             onClick={handleDecrement}
-            className="flex items-center justify-center w-10 h-10 bg-slate-200 hover:bg-slate-300 rounded-lg transition-colors text-slate-600 cursor-pointer"
+            className="flex items-center justify-center w-10 h-10 bg-slate-300 hover:bg-slate-400 rounded-lg transition-colors text-slate-600 cursor-pointer"
           >
             <Minus size={18} />
           </button>

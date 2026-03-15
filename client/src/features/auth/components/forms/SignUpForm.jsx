@@ -132,7 +132,7 @@ const SignUpForm = ({ profileImage = '' }) => {
         {loading ? <Loader /> : 'Sign Up'}
       </ButtonForm>
 
-      <p className='text-sm text-gray-500 italic'>
+      <p className='text-sm text-slate-500 italic'>
         Already have an account?{' '}
         <Link
           to='/login'

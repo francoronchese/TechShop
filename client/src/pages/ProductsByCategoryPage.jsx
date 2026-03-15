@@ -258,14 +258,6 @@ const ProductsByCategoryPage = () => {
             </div>
           )}
 
-          {/* Products count - desktop only */}
-          {!loadingList && !isFetching && (
-            <p className="hidden md:block text-sm text-slate-500 mb-4">
-              {productsData?.totalCount || 0} product
-              {productsData?.totalCount !== 1 ? "s" : ""} found
-            </p>
-          )}
-
           <ProductGrid
             products={allProducts}
             isLoading={loadingList}

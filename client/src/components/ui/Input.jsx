@@ -23,7 +23,7 @@ export const Input = ({
         placeholder={placeholder}
         required
         readOnly={readOnly}
-        className={`p-2 bg-slate-100 rounded-lg outline-none border border-slate-200 ${
+        className={`p-2 bg-slate-100 rounded-lg outline-none border border-slate-300 ${
           readOnly
             ? // Hide text cursor (caret) for readonly inputs to prevent user interaction
               'text-gray-500 outline-none cursor-not-allowed caret-transparent'

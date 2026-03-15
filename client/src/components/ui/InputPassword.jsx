@@ -14,7 +14,7 @@ export const InputPassword = ({
       <label className='font-semibold text-orange-500' htmlFor={name}>
         {label}{' '}
       </label>
-      <div className='flex p-2 bg-slate-100 rounded-lg border border-slate-200'>
+      <div className='flex p-2 bg-slate-100 rounded-lg border border-slate-300'>
         <input
           type={showPassword ? 'text' : 'password'}
           name={name}

@@ -44,7 +44,7 @@ const ForgotPasswordForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <legend className='text-2xl font-bold mb-2'>Forgot Password</legend>
+      <legend className='text-2xl font-bold mb-2 text-slate-900'>Forgot Password</legend>
 
       <Input
         label='Email:'
@@ -58,7 +58,7 @@ const ForgotPasswordForm = () => {
         {loading ? <Loader /> : 'Reset Password'}
       </ButtonForm>
 
-      <p className='text-sm text-gray-500 italic'>
+      <p className='text-sm text-slate-500 italic'>
         Already have an account?{' '}
         <Link
           to='/login'

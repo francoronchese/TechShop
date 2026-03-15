@@ -85,7 +85,7 @@ const OtpVerificationForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <legend className='text-2xl font-bold mb-2'>Verify OTP</legend>
+      <legend className='text-2xl font-bold mb-2 text-slate-900'>Verify OTP</legend>
 
       <p className='text-gray-600 mb-4'>
         Enter the 6-digit OTP sent to your email
@@ -104,7 +104,7 @@ const OtpVerificationForm = () => {
             // Handle backspace navigation between inputs
             onKeyDown={(e) => handleKeyDown(index, e)}
             maxLength={1}
-            className='p-2 bg-slate-100 text-center text-xl font-bold outline-none rounded focus:border-orange-500 focus:ring-2 focus:ring-orange-500'
+            className='p-2 bg-slate-100 text-center text-xl font-bold outline-none border border-slate-300 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-500'
           />
         ))}
       </div>

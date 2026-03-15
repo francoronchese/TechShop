@@ -412,10 +412,11 @@ export const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
     });
   }
 
-  // Clear OTP fields after successful verification
+  // Clear OTP fields and mark password reset as verified
   await UserModel.findByIdAndUpdate(user._id, {
     forgot_password_otp: '',
     forgot_password_expiry: null,
+    reset_password_verified: true, // Allow password reset after OTP verification
   });
 
   // Return success response
@@ -449,6 +450,15 @@ export const resetPassword = asyncHandler(async (req, res) => {
       success: false,
     });
   }
+  
+  // Check if OTP was verified before allowing password reset
+  if (!user.reset_password_verified) {
+    return res.status(400).json({
+      message: 'OTP verification required. Please verify your OTP first',
+      error: true,
+      success: false,
+    });
+  }
 
   // Validate new password and confirm password match
   if (newPassword !== confirmPassword) {
@@ -462,9 +472,10 @@ export const resetPassword = asyncHandler(async (req, res) => {
   // Hash new password for security
   const hashPassword = await bcryptjs.hash(newPassword, 14);
 
-  // Update user password
+  // Update user password and clear reset verification flag
   await UserModel.findByIdAndUpdate(user._id, {
     password: hashPassword,
+    reset_password_verified: false, // Clear flag after successful password reset
   });
 
   // Return success response

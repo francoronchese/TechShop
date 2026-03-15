@@ -83,7 +83,7 @@ const ResetPasswordForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className='flex flex-col gap-2'>
-      <legend className='text-2xl font-bold mb-2'>Reset Your Password</legend>
+      <legend className='text-2xl font-bold mb-2 text-slate-900'>Reset Your Password</legend>
 
       <Input
         label='Email:'

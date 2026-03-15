@@ -26,7 +26,7 @@ export const AllProductsFilterSidebar = ({
   updateParam,
   commitPriceRange,
 }) => (
-  <div className="p-5 border border-slate-200 rounded-xl bg-white shadow-sm">
+  <div className="p-5 border border-slate-300 rounded-xl bg-white shadow-sm">
     {/* Sidebar header with title and clear filters button */}
     <div className="flex items-center justify-between mb-5">
       <h2 className="flex items-center gap-2 text-lg font-bold text-gray-900">
@@ -44,7 +44,7 @@ export const AllProductsFilterSidebar = ({
     </div>
 
     {/* Price Range Filter */}
-    <div className="mb-5 pb-5 border-b border-slate-200">
+    <div className="mb-5 pb-5 border-b border-slate-300">
       <h3 className="mb-3 text-sm font-bold text-gray-800">Price Range</h3>
       <div className="space-y-3">
         {/* Display current min and max values */}
@@ -84,7 +84,7 @@ export const AllProductsFilterSidebar = ({
     </div>
 
     {/* Categories Filter with collapsible subcategories */}
-    <div className="mb-5 pb-5 border-b border-slate-200">
+    <div className="mb-5 pb-5 border-b border-slate-300">
       <h3 className="mb-3 text-sm font-bold text-gray-800">Categories</h3>
       <div className="flex flex-col gap-1">
         {allCategories.map((cat) => {

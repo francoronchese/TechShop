@@ -58,7 +58,7 @@ const Header = () => {
   const isLoggedIn = userState._id !== "";
 
   return (
-    <header className="w-full sticky top-0 z-40 bg-white shadow-md p-6">
+    <header className="w-full sticky top-0 z-40 p-6 bg-white shadow-md">
       <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 grid-rows-[auto_auto] md:grid-rows-1 items-center gap-4 md:gap-0">
         {/* Logo */}
         <Link to="/" className="col-start-1 col-end-2">
