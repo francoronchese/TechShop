@@ -17,6 +17,7 @@ export const apiSlice = createApi({
       query: ({
         page,
         search,
+        limit,
         categoryId,
         subCategoryId,
         sortBy,
@@ -27,6 +28,7 @@ export const apiSlice = createApi({
         params: {
           page: page || 1,
           search: search || "",
+          ...(limit && { limit }),
           ...(categoryId && { categoryId }),
           ...(subCategoryId && { subCategoryId }),
           ...(sortBy && { sortBy }),

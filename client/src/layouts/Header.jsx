@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import { Search, SquareUserRound, Menu, X, LogOut } from "lucide-react";
-import { Logo, ShoppingCartIcon, ShoppingCart, Loader } from "@components";
+import { SquareUserRound, Menu, X, LogOut } from "lucide-react";
+import { Logo, ShoppingCartIcon, ShoppingCart, Loader, SearchBar } from "@components";
 import SummaryApi, { baseURL } from "@config/summaryApi";
 import { endUserSession } from "@store/slices/userSlice";
 
@@ -11,8 +11,8 @@ const Header = () => {
   const [loading, setLoading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   // Get user state from Redux store
   const userState = useSelector((state) => state.user);
   // Send actions to update Redux store
@@ -66,15 +66,8 @@ const Header = () => {
         </Link>
 
         {/* Search Bar */}
-        <div className="flex w-full col-start-1 col-end-3 md:col-start-2 md:col-end-3 row-start-2 md:row-start-1">
-          <input
-            type="text"
-            placeholder="Search product here..."
-            className="w-full pl-2 border border-gray-300 outline-none rounded-l-full"
-          />
-          <div className="flex items-center justify-center w-[50px] h-8 bg-orange-500 text-white rounded-r-full cursor-pointer">
-            <Search />
-          </div>
+        <div className="col-start-1 col-end-3 md:col-start-2 md:col-end-3 row-start-2 md:row-start-1">
+          <SearchBar />
         </div>
 
         {/* Nav container */}

@@ -33,6 +33,7 @@ const AllProductsPage = () => {
   const sortBy = searchParams.get("sortBy") || "default";
   const priceMinParam = searchParams.get("priceMin");
   const priceMaxParam = searchParams.get("priceMax");
+  const search = searchParams.get("search") || "";
 
   // Tracks slider position while dragging, sent to URL only on release
   const [sliderRange, setSliderRange] = useState([0, 5000]);
@@ -51,6 +52,7 @@ const AllProductsPage = () => {
     isError: errorList,
   } = useGetProductsQuery({
     page,
+    search,
     categoryId: selectedCategoryId,
     subCategoryId: selectedSubCategoryId,
     sortBy,
