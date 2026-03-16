@@ -1,6 +1,7 @@
 import UserModel from '../models/UserModel.js';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import sendEmail from '../services/sendEmail.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import verifyEmailTemplate from '../utils/verifyEmailTemplate.js';
@@ -339,9 +340,9 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     });
   }
 
-  // Generate 6-digit One Time Password for password reset
+  // Generate cryptographically secure 6-digit OTP
   // OTP range: 100000 to 999999
-  const otp = Math.floor(Math.random() * 900000 + 100000).toString();
+  const otp = crypto.randomInt(100000, 999999).toString();
   const expiry = new Date(Date.now() + 15 * 60 * 1000); //15min
 
   // Store OTP and expiration in database
