@@ -6,6 +6,7 @@ import { SquareUserRound, Menu, X, LogOut } from "lucide-react";
 import { Logo, ShoppingCartIcon, ShoppingCart, Loader, SearchBar } from "@components";
 import SummaryApi, { baseURL } from "@config/summaryApi";
 import { endUserSession } from "@store/slices/userSlice";
+import MobileMenu from "@layouts/MobileMenu";
 
 const Header = () => {
   const [loading, setLoading] = useState(false);
@@ -120,7 +121,7 @@ const Header = () => {
                 </Link>
                 <Link
                   to="/sign-up"
-                  className="hidden md:block px-3 py-1 font-semibold bg-gray-700 text-white rounded-sm hover:bg-gray-800 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider"
+                  className="hidden md:block px-3 py-1 font-semibold bg-slate-700 text-white rounded-sm hover:bg-slate-800 hover:scale-105 transition-all duration-300 ease-in-out tracking-wider"
                 >
                   Register
                 </Link>
@@ -129,6 +130,15 @@ const Header = () => {
           </div>
         </nav>
       </div>
+
+      {/* Mobile Menu */}
+        <MobileMenu
+          isOpen={isMobileMenuOpen}
+          isLoggedIn={isLoggedIn}
+          loading={loading}
+          onLogout={handleLogout}
+          onClose={() => setIsMobileMenuOpen(false)}
+        />
 
       {/* ShoppingCart Overlay - Hidden by default */}
       <ShoppingCart isOpen={isCartOpen} onClose={handleToggleCart} />
