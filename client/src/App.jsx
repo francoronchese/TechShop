@@ -6,6 +6,7 @@ import HomePage from "@pages/HomePage";
 import AllProductsPage from "@pages/AllProductsPage";
 import ProductsByCategoryPage from "@pages/ProductsByCategoryPage";
 import SingleProductPage from "@pages/SingleProductPage";
+import NotFoundPage from "@pages/NotFoundPage";
 import {
   LoginPage,
   SignUpPage,
@@ -76,7 +77,7 @@ function App() {
           </Route>
 
           {/* 404 Error */}
-          <Route path="*" element={<h2>404</h2>} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </main>
       <Footer />
