@@ -35,6 +35,31 @@ export const createProduct = asyncHandler(async (req, res) => {
     });
   }
 
+  // Validate numeric fields
+  if (price <= 0) {
+    return res.status(400).json({
+      message: "Price must be greater than 0",
+      error: true,
+      success: false,
+    });
+  }
+
+  if (discount < 0 || discount > 100) {
+    return res.status(400).json({
+      message: "Discount must be between 0 and 100",
+      error: true,
+      success: false,
+    });
+  }
+
+  if (stock < 0) {
+    return res.status(400).json({
+      message: "Stock must be greater than or equal to 0",
+      error: true,
+      success: false,
+    });
+  }
+
   // Check if product already exists
   const existingProduct = await ProductModel.findOne({ name });
   if (existingProduct) {
@@ -140,7 +165,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
   // priceResult[0] accesses the single grouped document from the aggregate result array
   // Falls back to default range if no products match the filters
   const priceRange = priceResult[0] || { minPrice: 0, maxPrice: 5000 };
-  
+
   // Convert array of { _id, count } to { categoryId: count } object
   const categoryCount = categoryCountResult.reduce((acc, item) => {
     acc[item._id] = item.count;
@@ -251,6 +276,31 @@ export const updateProduct = asyncHandler(async (req, res) => {
         success: false,
       });
     }
+  }
+
+  // Validate numeric fields
+  if (price && price <= 0) {
+    return res.status(400).json({
+      message: "Price must be greater than 0",
+      error: true,
+      success: false,
+    });
+  }
+
+  if (discount && (discount < 0 || discount > 100)) {
+    return res.status(400).json({
+      message: "Discount must be between 0 and 100",
+      error: true,
+      success: false,
+    });
+  }
+
+  if (stock && stock < 0) {
+    return res.status(400).json({
+      message: "Stock must be greater than or equal to 0",
+      error: true,
+      success: false,
+    });
   }
 
   // Create update product object
