@@ -66,6 +66,10 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    reset_password_expiry: {
+      type: Date,
+      default: null,
+    },
     reset_password_verified: {
       type: Boolean,
       default: false,

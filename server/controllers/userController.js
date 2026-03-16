@@ -418,6 +418,7 @@ export const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
     forgot_password_otp: '',
     forgot_password_expiry: null,
     reset_password_verified: true, // Allow password reset after OTP verification
+    reset_password_expiry: new Date(Date.now() + 15 * 60 * 1000), // 15 min
   });
 
   // Return success response
@@ -460,6 +461,15 @@ export const resetPassword = asyncHandler(async (req, res) => {
       success: false,
     });
   }
+  
+  // Check if reset password session has expired
+  if (user.reset_password_expiry < new Date()) {
+    return res.status(400).json({
+      message: 'Reset session expired. Please request a new OTP',
+      error: true,
+      success: false,
+    });
+  }
 
   // Validate new password and confirm password match
   if (newPassword !== confirmPassword) {
@@ -477,6 +487,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
   await UserModel.findByIdAndUpdate(user._id, {
     password: hashPassword,
     reset_password_verified: false, // Clear flag after successful password reset
+    reset_password_expiry: null, // Clear expiry after successful reset
   });
 
   // Return success response
