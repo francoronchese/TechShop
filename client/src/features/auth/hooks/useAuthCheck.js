@@ -109,15 +109,19 @@ export const useAuthCheck = () => {
             dispatch(endUserSession());
           }
         } else {
-          // Refresh token invalid or expired
+          // Refresh token invalid or expired - clear session
           await serverLogout();
           dispatch(endUserSession());
         }
       } catch (error) {
-        // Network error during token refresh - clear session for security
-        console.error('Token refresh error:', error);
-        await serverLogout();
-        dispatch(endUserSession());
+        // TypeError indicates a network failure, keep session alive
+        // Any other error indicates an auth problem, clear session
+        if (error instanceof TypeError) {
+          console.error('Network error during token refresh, keeping session:', error);
+        } else {
+          await serverLogout();
+          dispatch(endUserSession());
+        }
       }
     };
 
