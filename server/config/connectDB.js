@@ -9,11 +9,13 @@ dotenv.config({
 
 const { DB_PROTOCOL, DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, DB_OPTIONS } =
   process.env;
-const MONGODB_URI = `${DB_PROTOCOL}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}?${DB_OPTIONS}`;
 
-if (!MONGODB_URI) {
-  throw new Error('Please provide MONGODB_URI in the .env file');
+// Validate required env variables before building the URI
+if (!DB_PROTOCOL || !DB_USER || !DB_PASSWORD || !DB_HOST || !DB_NAME) {
+  throw new Error('Missing required database environment variables');
 }
+
+const MONGODB_URI = `${DB_PROTOCOL}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}?${DB_OPTIONS}`;
 
 const connectDB = async () => {
   try {
