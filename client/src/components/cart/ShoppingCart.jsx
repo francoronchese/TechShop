@@ -1,104 +1,21 @@
-import { useSelector, useDispatch } from "react-redux";
 import { ShoppingCart as CartIcon, Trash2, Plus, Minus, X } from "lucide-react";
-import { setCart, clearCartState } from "@store/slices/cartSlice";
-import {
-  useUpdateCartQuantityMutation,
-  useRemoveFromCartMutation,
-  useClearCartMutation,
-} from "@store/api/apiSlice";
+import useCartActions from "@hooks/useCartActions";
 
 export const ShoppingCart = ({ isOpen, onClose }) => {
-  const dispatch = useDispatch();
-
-  // Get user state from Redux store
-  const userState = useSelector((state) => state.user);
-  const isLoggedIn = userState._id !== "";
-
-  // Access items from the global cart state
-  const cartItems = useSelector((state) => state.cart.items);
-
-  // RTK Query mutations for backend cart operations
-  const [updateQuantity] = useUpdateCartQuantityMutation();
-  const [removeFromCart] = useRemoveFromCartMutation();
-  const [clearCartMutation] = useClearCartMutation();
+  // Get cart actions and items from custom hook
+  const {
+    cartItems,
+    handleIncrement,
+    handleDecrement,
+    handleRemove,
+    handleClearCart,
+  } = useCartActions();
 
   // Calculate the total price of all items
   const total = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
-
-  const handleIncrement = async (item) => {
-    if (isLoggedIn) {
-      // Increment quantity in backend cart and update Redux
-      await updateQuantity({ productId: item._id, type: "increment" }).unwrap();
-      dispatch(setCart(cartItems.map((i) =>
-        i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
-      )));
-    } else {
-      // Update localStorage cart for non-authenticated users
-      const updatedCart = cartItems.map((i) =>
-        i._id === item._id && i.quantity < i.stock
-          ? { ...i, quantity: i.quantity + 1 }
-          : i
-      );
-      localStorage.setItem("cartItems", JSON.stringify(updatedCart));
-      dispatch(setCart(updatedCart));
-    }
-  };
-
-  const handleDecrement = async (item) => {
-    if (isLoggedIn) {
-      if (item.quantity === 1) {
-        // Remove item from backend cart and update Redux
-        await removeFromCart({ productId: item._id }).unwrap();
-        dispatch(setCart(cartItems.filter((i) => i._id !== item._id)));
-      } else {
-        // Decrement quantity in backend cart and update Redux
-        await updateQuantity({ productId: item._id, type: "decrement" }).unwrap();
-        dispatch(setCart(cartItems.map((i) =>
-          i._id === item._id ? { ...i, quantity: i.quantity - 1 } : i
-        )));
-      }
-    } else {
-      // Update localStorage cart for non-authenticated users
-      if (item.quantity === 1) {
-        const updatedCart = cartItems.filter((i) => i._id !== item._id);
-        localStorage.setItem("cartItems", JSON.stringify(updatedCart));
-        dispatch(setCart(updatedCart));
-      } else {
-        const updatedCart = cartItems.map((i) =>
-          i._id === item._id ? { ...i, quantity: i.quantity - 1 } : i
-        );
-        localStorage.setItem("cartItems", JSON.stringify(updatedCart));
-        dispatch(setCart(updatedCart));
-      }
-    }
-  };
-
-  const handleRemove = async (item) => {
-    if (isLoggedIn) {
-      // Remove item from backend cart and update Redux
-      await removeFromCart({ productId: item._id }).unwrap();
-      dispatch(setCart(cartItems.filter((i) => i._id !== item._id)));
-    } else {
-      // Remove item from localStorage cart for non-authenticated users
-      const updatedCart = cartItems.filter((i) => i._id !== item._id);
-      localStorage.setItem("cartItems", JSON.stringify(updatedCart));
-      dispatch(setCart(updatedCart));
-    }
-  };
-
-  const handleClearCart = async () => {
-    if (isLoggedIn) {
-      // Clear backend cart and update Redux
-      await clearCartMutation().unwrap();
-      dispatch(clearCartState());
-    } else {
-      // Clear localStorage cart for non-authenticated users
-      dispatch(clearCartState());
-    }
-  };
 
   return (
     <div

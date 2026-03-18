@@ -7,7 +7,7 @@ export { ResetPasswordPage } from './pages/ResetPasswordPage.jsx';
 export { VerifyEmailPage } from './pages/VerifyEmailPage.jsx';
 
 // Form Button
-export { ButtonForm } from './components/buttons/ButtonForm.jsx';
+export { ButtonForm } from './components/ui/ButtonForm.jsx';
 
 // Hooks
 export { useAuthCheck } from './hooks/useAuthCheck.js';
