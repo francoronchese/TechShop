@@ -108,6 +108,32 @@ const SummaryApi = {
     url: "/api/product/delete",
     method: "DELETE",
   },
+
+  // CART ENDPOINTS
+  getCart: {
+    url: "/api/cart/get",
+    method: "GET",
+  },
+  addToCart: {
+    url: "/api/cart/add",
+    method: "POST",
+  },
+  updateCartQuantity: {
+    url: "/api/cart/update-quantity",
+    method: "PUT",
+  },
+  removeFromCart: {
+    url: "/api/cart/remove",
+    method: "DELETE",
+  },
+  clearCart: {
+    url: "/api/cart/clear",
+    method: "DELETE",
+  },
+  mergeCart: {
+    url: "/api/cart/merge",
+    method: "POST",
+  },
 };
 
 export default SummaryApi;

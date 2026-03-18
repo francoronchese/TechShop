@@ -6,6 +6,8 @@ import { Input, InputPassword, Loader } from "@components";
 import SummaryApi, { baseURL } from "@config/summaryApi";
 import { ButtonForm } from "@features/auth";
 import { setUserDetails } from "@store/slices/userSlice";
+import { setCart } from "@store/slices/cartSlice";
+import { useMergeCartMutation } from "@store/api/apiSlice";
 
 const LoginForm = () => {
   const [loading, setLoading] = useState(false);
@@ -17,6 +19,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
   // Send actions to update Redux store
   const dispatch = useDispatch();
+  const [mergeCart] = useMergeCartMutation();
 
   const handleChange = (e) => {
     setFormData({
@@ -73,6 +76,51 @@ const LoginForm = () => {
             }),
           );
         }
+
+        // Get local cart items before merging
+        const localCartItems =
+          JSON.parse(localStorage.getItem("cartItems")) || [];
+
+        if (localCartItems.length > 0) {
+          // Merge local cart with backend cart, summing quantities for duplicate products
+          const mergeRes = await mergeCart({
+            items: localCartItems.map((item) => ({
+              productId: item._id,
+              quantity: item.quantity,
+            })),
+          }).unwrap();
+
+          if (mergeRes.success && mergeRes.data) {
+            // Fetch updated user data after merge to get synced shopping_cart_items
+            const updatedUserRes = await fetch(
+              baseURL + SummaryApi.userDetails.url,
+              {
+                credentials: "include",
+              },
+            );
+            const updatedUserData = await updatedUserRes.json();
+            if (updatedUserData.success && updatedUserData.data) {
+              // Flatten shopping_cart_items from updated user data into Redux cart
+              const cartItems = updatedUserData.data.shopping_cart_items.map(
+                (item) => ({
+                  ...item.product,
+                  quantity: item.quantity,
+                }),
+              );
+              dispatch(setCart(cartItems));
+            }
+          }
+        } else {
+          // No local cart items, flatten shopping_cart_items from user data into Redux cart
+          const cartItems = userData.data.shopping_cart_items.map((item) => ({
+            ...item.product,
+            quantity: item.quantity,
+          }));
+          dispatch(setCart(cartItems));
+        }
+
+        // Clear local cart after merge
+        localStorage.removeItem("cartItems");
 
         // Clear form
         setFormData({

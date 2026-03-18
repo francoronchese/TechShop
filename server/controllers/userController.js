@@ -1,13 +1,13 @@
-import UserModel from '../models/UserModel.js';
-import bcryptjs from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import crypto from 'crypto';
-import sendEmail from '../services/sendEmail.js';
-import asyncHandler from '../utils/asyncHandler.js';
-import verifyEmailTemplate from '../utils/verifyEmailTemplate.js';
-import generateAccessToken from '../utils/generateAccessToken.js';
-import generateRefreshToken from '../utils/generateRefreshToken.js';
-import forgotPasswordTemplate from '../utils/forgotPasswordTemplate.js';
+import UserModel from "../models/UserModel.js";
+import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import sendEmail from "../services/sendEmail.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import verifyEmailTemplate from "../utils/verifyEmailTemplate.js";
+import generateAccessToken from "../utils/generateAccessToken.js";
+import generateRefreshToken from "../utils/generateRefreshToken.js";
+import forgotPasswordTemplate from "../utils/forgotPasswordTemplate.js";
 
 //REGISTER CONTROLLERS
 export const registerUser = asyncHandler(async (req, res) => {
@@ -16,7 +16,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   // Validate required fields for register
   if (!name || !email || !password || !confirmPassword) {
     return res.status(400).json({
-      message: 'Provide name, email and password',
+      message: "Provide name, email and password",
       error: true,
       success: false,
     });
@@ -26,7 +26,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   const emailRegex = /^(\w+[/./-]?){1,}@[a-z]+[/.]\w{2,}$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({
-      message: 'Please provide a valid email address',
+      message: "Please provide a valid email address",
       error: true,
       success: false,
     });
@@ -35,7 +35,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   // Validate password length (min 8 characters)
   if (password.length < 8) {
     return res.status(400).json({
-      message: 'Password must be at least 8 characters long',
+      message: "Password must be at least 8 characters long",
       error: true,
       success: false,
     });
@@ -44,7 +44,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   //Validate password and confirm password match
   if (password !== confirmPassword) {
     return res.status(400).json({
-      message: 'Passwords do not match',
+      message: "Passwords do not match",
       error: true,
       success: false,
     });
@@ -54,7 +54,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   const existingUser = await UserModel.findOne({ email });
   if (existingUser) {
     return res.status(409).json({
-      message: 'Email already registered',
+      message: "Email already registered",
       error: true,
       success: false,
     });
@@ -79,7 +79,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   // Send verification email
   const verifyEmail = await sendEmail({
     sendTo: email,
-    subject: 'Verify email from TechShop',
+    subject: "Verify email from TechShop",
     html: verifyEmailTemplate({
       name,
       url: verifyEmailUrl,
@@ -88,7 +88,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
   // Return success response with user data
   return res.json({
-    message: 'User registered successfully',
+    message: "User registered successfully",
     error: false,
     success: true,
     data: newUser,
@@ -107,7 +107,7 @@ export const verifyEmail = asyncHandler(async (req, res) => {
   // Check if user exists
   if (!user) {
     return res.status(400).json({
-      message: 'Invalid verification link',
+      message: "Invalid verification link",
       error: true,
       success: false,
     });
@@ -116,7 +116,7 @@ export const verifyEmail = asyncHandler(async (req, res) => {
   // Check if email is already verified
   if (user.verify_email) {
     return res.status(400).json({
-      message: 'Email already verified',
+      message: "Email already verified",
       error: true,
       success: false,
     });
@@ -129,7 +129,7 @@ export const verifyEmail = asyncHandler(async (req, res) => {
 
   // Return success response
   return res.json({
-    message: 'Email verified successfully',
+    message: "Email verified successfully",
     error: false,
     success: true,
   });
@@ -142,7 +142,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   // Validate required fields for login
   if (!email || !password) {
     return res.status(400).json({
-      message: 'Provide email and password',
+      message: "Provide email and password",
       error: true,
       success: false,
     });
@@ -154,7 +154,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   // Check if user exists
   if (!user) {
     return res.status(400).json({
-      message: 'Invalid email or password',
+      message: "Invalid email or password",
       error: true,
       success: false,
     });
@@ -164,22 +164,22 @@ export const loginUser = asyncHandler(async (req, res) => {
   if (!user.verify_email) {
     return res.status(400).json({
       message:
-        'Email verification required. Please check your inbox or spam folder for the verification email',
+        "Email verification required. Please check your inbox or spam folder for the verification email",
       error: true,
       success: false,
     });
   }
 
   // Check user account status
-  if (user.status === 'Inactive') {
+  if (user.status === "Inactive") {
     return res.status(400).json({
-      message: 'Account is inactive. Please contact support',
+      message: "Account is inactive. Please contact support",
       error: true,
       success: false,
     });
-  } else if (user.status === 'Suspended') {
+  } else if (user.status === "Suspended") {
     return res.status(400).json({
-      message: 'Account is suspended. Please contact support',
+      message: "Account is suspended. Please contact support",
       error: true,
       success: false,
     });
@@ -190,7 +190,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   if (!checkPassword) {
     return res.status(400).json({
-      message: 'Invalid email or password',
+      message: "Invalid email or password",
       error: true,
       success: false,
     });
@@ -206,21 +206,21 @@ export const loginUser = asyncHandler(async (req, res) => {
   });
 
   // Configure dynamic secure cookie options based on environment
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === "production";
   const cookieOptions = {
     httpOnly: true, // Prevent XSS attacks
     secure: isProduction, // true only in production (HTTPS), false in development (HTTP)
-    sameSite: isProduction ? 'None' : 'Lax', // 'None' for cross-site in production, 'Lax' for local development
+    sameSite: isProduction ? "None" : "Lax", // 'None' for cross-site in production, 'Lax' for local development
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days - persists even after browser closes
   };
 
   // Set tokens as HTTP-only cookies
-  res.cookie('accessToken', accessToken, cookieOptions);
-  res.cookie('refreshToken', refreshToken, cookieOptions);
+  res.cookie("accessToken", accessToken, cookieOptions);
+  res.cookie("refreshToken", refreshToken, cookieOptions);
 
   // Return success response with user data and tokens
   return res.json({
-    message: 'Login successfully',
+    message: "Login successfully",
     error: false,
     success: true,
     data: {
@@ -241,16 +241,16 @@ export const logoutUser = asyncHandler(async (req, res) => {
   const userId = req.userId;
 
   // Clear authentication cookies to log user out
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === "production";
   const cookieOptions = {
     httpOnly: true, // Prevent XSS attacks
     secure: isProduction, // true only in production (HTTPS), false in development (HTTP)
-    sameSite: isProduction ? 'None' : 'Lax', // 'None' for cross-site in production, 'Lax' for local development
+    sameSite: isProduction ? "None" : "Lax", // 'None' for cross-site in production, 'Lax' for local development
   };
 
   // Remove access and refresh tokens from cookies
-  res.clearCookie('accessToken', cookieOptions);
-  res.clearCookie('refreshToken', cookieOptions);
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
 
   // Clear refresh_token from database for security
   await UserModel.findByIdAndUpdate(userId, {
@@ -259,7 +259,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
   // Return success response
   return res.json({
-    message: 'Logout successfully',
+    message: "Logout successfully",
     error: false,
     success: true,
   });
@@ -273,7 +273,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
   // Check if refresh token exists in request
   if (!token) {
     return res.status(401).json({
-      message: 'Refresh token required',
+      message: "Refresh token required",
       error: true,
       success: false,
     });
@@ -292,7 +292,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
   // Check if user exists with matching token
   if (!user) {
     return res.status(401).json({
-      message: 'Invalid refresh token',
+      message: "Invalid refresh token",
       error: true,
       success: false,
     });
@@ -302,20 +302,20 @@ export const refreshToken = asyncHandler(async (req, res) => {
   const newAccessToken = await generateAccessToken(userId);
 
   // Configure dynamic secure cookie options based on environment
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === "production";
   const cookieOptions = {
     httpOnly: true, // Prevent XSS attacks
     secure: isProduction, // true only in production (HTTPS), false in development (HTTP)
-    sameSite: isProduction ? 'None' : 'Lax', // 'None' for cross-site in production, 'Lax' for local development
+    sameSite: isProduction ? "None" : "Lax", // 'None' for cross-site in production, 'Lax' for local development
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days - persists even after browser closes
   };
 
   // Set new access token as HTTP-only cookie
-  res.cookie('accessToken', newAccessToken, cookieOptions);
+  res.cookie("accessToken", newAccessToken, cookieOptions);
 
   // Return success response with new access token
   return res.json({
-    message: 'New access token generated',
+    message: "New access token generated",
     error: false,
     success: true,
     data: {
@@ -334,9 +334,10 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   // Check if user exists
   if (!user) {
     return res.status(400).json({
-      message: 'No account found with this email address',
-      error: true,
-      success: false,
+      message:
+        "If this email is registered, you will receive a password reset OTP",
+      error: false,
+      success: true,
     });
   }
 
@@ -354,7 +355,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   // Send password reset OTP email
   await sendEmail({
     sendTo: email,
-    subject: 'Reset password from TechShop',
+    subject: "Reset password from TechShop",
     html: forgotPasswordTemplate({
       name: user.name,
       otp,
@@ -363,7 +364,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
 
   // Return success response
   return res.json({
-    message: 'Password reset OTP sent to your email',
+    message: "Password reset OTP sent to your email",
     error: false,
     success: true,
   });
@@ -375,7 +376,7 @@ export const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
   // Validate required fields for OTP verification
   if (!email || !otp) {
     return res.status(400).json({
-      message: 'Provide email and OTP',
+      message: "Provide email and OTP",
       error: true,
       success: false,
     });
@@ -387,7 +388,7 @@ export const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
   // Check if user exists
   if (!user) {
     return res.status(400).json({
-      message: 'No account found with this email address',
+      message: "No account found with this email address",
       error: true,
       success: false,
     });
@@ -398,7 +399,7 @@ export const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
 
   if (user.forgot_password_expiry < currentTime) {
     return res.status(400).json({
-      message: 'OTP has expired. Please request a new password reset',
+      message: "OTP has expired. Please request a new password reset",
       error: true,
       success: false,
     });
@@ -407,7 +408,7 @@ export const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
   // Verify OTP matches stored OTP
   if (otp !== user.forgot_password_otp) {
     return res.status(400).json({
-      message: 'Invalid OTP',
+      message: "Invalid OTP",
       error: true,
       success: false,
     });
@@ -415,7 +416,7 @@ export const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
 
   // Clear OTP fields and mark password reset as verified
   await UserModel.findByIdAndUpdate(user._id, {
-    forgot_password_otp: '',
+    forgot_password_otp: "",
     forgot_password_expiry: null,
     reset_password_verified: true, // Allow password reset after OTP verification
     reset_password_expiry: new Date(Date.now() + 15 * 60 * 1000), // 15 min
@@ -423,7 +424,7 @@ export const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
 
   // Return success response
   return res.json({
-    message: 'OTP verified successfully',
+    message: "OTP verified successfully",
     error: false,
     success: true,
   });
@@ -435,7 +436,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
   // Validate required fields for password reset
   if (!email || !newPassword || !confirmPassword) {
     return res.status(400).json({
-      message: 'Provide email, new password and confirm password',
+      message: "Provide email, new password and confirm password",
       error: true,
       success: false,
     });
@@ -447,25 +448,25 @@ export const resetPassword = asyncHandler(async (req, res) => {
   // Check if user exists
   if (!user) {
     return res.status(400).json({
-      message: 'No account found with this email address',
+      message: "No account found with this email address",
       error: true,
       success: false,
     });
   }
-  
+
   // Check if OTP was verified before allowing password reset
   if (!user.reset_password_verified) {
     return res.status(400).json({
-      message: 'OTP verification required. Please verify your OTP first',
+      message: "OTP verification required. Please verify your OTP first",
       error: true,
       success: false,
     });
   }
-  
+
   // Check if reset password session has expired
   if (user.reset_password_expiry < new Date()) {
     return res.status(400).json({
-      message: 'Reset session expired. Please request a new OTP',
+      message: "Reset session expired. Please request a new OTP",
       error: true,
       success: false,
     });
@@ -474,7 +475,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
   // Validate new password and confirm password match
   if (newPassword !== confirmPassword) {
     return res.status(400).json({
-      message: 'Passwords do not match',
+      message: "Passwords do not match",
       error: true,
       success: false,
     });
@@ -492,7 +493,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
 
   // Return success response
   return res.json({
-    message: 'Password updated successfully',
+    message: "Password updated successfully",
     error: false,
     success: true,
   });
@@ -505,14 +506,19 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
   const userId = req.userId;
 
   // Find user by ID, exclude sensitive information
-  const user = await UserModel.findById(userId).select(
-    '-password -refresh_token'
-  );
+  const user = await UserModel.findById(userId)
+    .select("-password -refresh_token")
+    .populate({
+      path: "shopping_cart_items",
+      populate: {
+        path: "product",
+      },
+    });
 
   // Check if user exists
   if (!user) {
     return res.status(404).json({
-      message: 'User not found',
+      message: "User not found",
       error: true,
       success: false,
     });
@@ -520,7 +526,7 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
 
   // Return success response
   return res.json({
-    message: 'User details retrieved successfully',
+    message: "User details retrieved successfully",
     error: false,
     success: true,
     data: user,
@@ -535,9 +541,9 @@ export const updateProfile = asyncHandler(async (req, res) => {
   const { name, avatar, mobile } = req.body;
 
   //Validate name is not empty string
-  if (name === '') {
+  if (name === "") {
     return res.status(400).json({
-      message: 'Name must not be empty',
+      message: "Name must not be empty",
       error: true,
       success: false,
     });
@@ -551,12 +557,12 @@ export const updateProfile = asyncHandler(async (req, res) => {
       avatar,
       mobile,
     },
-    { new: true } // Return the updated document instead of the old one
-  ).select('-password -refresh_token');
+    { new: true }, // Return the updated document instead of the old one
+  ).select("-password -refresh_token");
 
   // Return success response
   return res.json({
-    message: 'Profile updated successfully',
+    message: "Profile updated successfully",
     error: false,
     success: true,
     data: updatedUser,
@@ -574,7 +580,7 @@ export const deleteUser = asyncHandler(async (req, res) => {
   // Check if user exists in database
   if (!user) {
     return res.status(404).json({
-      message: 'User not found',
+      message: "User not found",
       error: true,
       success: false,
     });
@@ -584,20 +590,20 @@ export const deleteUser = asyncHandler(async (req, res) => {
   await UserModel.findByIdAndDelete(userId);
 
   // Clear authentication cookies to log user out immediately
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === "production";
   const cookieOptions = {
     httpOnly: true, // Prevent XSS attacks
     secure: isProduction, // true only in production (HTTPS), false in development (HTTP)
-    sameSite: isProduction ? 'None' : 'Lax', // 'None' for cross-site in production, 'Lax' for local development
+    sameSite: isProduction ? "None" : "Lax", // 'None' for cross-site in production, 'Lax' for local development
   };
 
   // Remove access and refresh tokens from cookies
-  res.clearCookie('accessToken', cookieOptions);
-  res.clearCookie('refreshToken', cookieOptions);
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
 
   // Return success response
   return res.json({
-    message: 'Account permanently deleted successfully',
+    message: "Account permanently deleted successfully",
     error: false,
     success: true,
   });

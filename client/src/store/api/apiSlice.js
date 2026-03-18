@@ -8,7 +8,7 @@ export const apiSlice = createApi({
     credentials: "include",
   }),
   // Tags used to control the automated re-fetching logic
-  tagTypes: ["Product", "Category", "SubCategory"],
+  tagTypes: ["Product", "Category", "SubCategory", 'Cart'],
   endpoints: (builder) => ({
     // PRODUCT ENDPOINTS
     // GET: Fetches products with optional pagination and search filters
@@ -134,6 +134,58 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["SubCategory"],
     }),
+
+    // CART ENDPOINTS
+    // GET: Fetches the cart items for the authenticated user
+    getCart: builder.query({
+      query: () => SummaryApi.getCart.url,
+      transformResponse: (res) => res.data,
+      providesTags: ["Cart"],
+    }),
+    // POST: Adds a product to the cart
+    addToCart: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.addToCart.url,
+        method: SummaryApi.addToCart.method,
+        body,
+      }),
+      invalidatesTags: ["Cart"],
+    }),
+    // PUT: Increments or decrements the quantity of a cart item
+    updateCartQuantity: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.updateCartQuantity.url,
+        method: SummaryApi.updateCartQuantity.method,
+        body,
+      }),
+      invalidatesTags: ["Cart"],
+    }),
+    // DELETE: Removes a product from the cart
+    removeFromCart: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.removeFromCart.url,
+        method: SummaryApi.removeFromCart.method,
+        body,
+      }),
+      invalidatesTags: ["Cart"],
+    }),
+    // DELETE: Clears all items from the cart
+    clearCart: builder.mutation({
+      query: () => ({
+        url: SummaryApi.clearCart.url,
+        method: SummaryApi.clearCart.method,
+      }),
+      invalidatesTags: ["Cart"],
+    }),
+    // POST: Merges local cart with backend cart on login
+    mergeCart: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.mergeCart.url,
+        method: SummaryApi.mergeCart.method,
+        body,
+      }),
+      invalidatesTags: ["Cart"],
+    }),
   }),
 });
 
@@ -151,4 +203,11 @@ export const {
   useGetSubCategoriesQuery,
   useSaveSubCategoryMutation,
   useDeleteSubCategoryMutation,
+  // Cart hooks
+  useGetCartQuery,
+  useAddToCartMutation,
+  useUpdateCartQuantityMutation,
+  useRemoveFromCartMutation,
+  useClearCartMutation,
+  useMergeCartMutation,
 } = apiSlice;

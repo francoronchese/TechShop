@@ -3,9 +3,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import { SquareUserRound, Menu, X, LogOut } from "lucide-react";
-import { Logo, ShoppingCartIcon, ShoppingCart, Loader, SearchBar } from "@components";
+import {
+  Logo,
+  ShoppingCartIcon,
+  ShoppingCart,
+  Loader,
+  SearchBar,
+} from "@components";
 import SummaryApi, { baseURL } from "@config/summaryApi";
 import { endUserSession } from "@store/slices/userSlice";
+import { clearCartState } from "@store/slices/cartSlice";
 import MobileMenu from "@layouts/MobileMenu";
 
 const Header = () => {
@@ -39,6 +46,8 @@ const Header = () => {
         toast.success(data.message);
         // Clear user from Redux store
         dispatch(endUserSession());
+        // Clear cart from Redux store and localStorage
+        dispatch(clearCartState());
         // Clear localStorage authentication flag
         // isLoggedIn: Used by ProtectedRoutes & PublicRoutes
         localStorage.removeItem("isLoggedIn");
@@ -132,13 +141,13 @@ const Header = () => {
       </div>
 
       {/* Mobile Menu */}
-        <MobileMenu
-          isOpen={isMobileMenuOpen}
-          isLoggedIn={isLoggedIn}
-          loading={loading}
-          onLogout={handleLogout}
-          onClose={() => setIsMobileMenuOpen(false)}
-        />
+      <MobileMenu
+        isOpen={isMobileMenuOpen}
+        isLoggedIn={isLoggedIn}
+        loading={loading}
+        onLogout={handleLogout}
+        onClose={() => setIsMobileMenuOpen(false)}
+      />
 
       {/* ShoppingCart Overlay - Hidden by default */}
       <ShoppingCart isOpen={isCartOpen} onClose={handleToggleCart} />

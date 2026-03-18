@@ -1,22 +1,104 @@
 import { useSelector, useDispatch } from "react-redux";
 import { ShoppingCart as CartIcon, Trash2, Plus, Minus, X } from "lucide-react";
+import { setCart, clearCartState } from "@store/slices/cartSlice";
 import {
-  incrementQuantity,
-  decrementQuantity,
-  removeFromCart,
-  clearCart,
-} from "@store/slices/cartSlice";
+  useUpdateCartQuantityMutation,
+  useRemoveFromCartMutation,
+  useClearCartMutation,
+} from "@store/api/apiSlice";
 
 export const ShoppingCart = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
+
+  // Get user state from Redux store
+  const userState = useSelector((state) => state.user);
+  const isLoggedIn = userState._id !== "";
+
   // Access items from the global cart state
-  const { items } = useSelector((state) => state.cart);
+  const cartItems = useSelector((state) => state.cart.items);
+
+  // RTK Query mutations for backend cart operations
+  const [updateQuantity] = useUpdateCartQuantityMutation();
+  const [removeFromCart] = useRemoveFromCartMutation();
+  const [clearCartMutation] = useClearCartMutation();
 
   // Calculate the total price of all items
-  const total = items.reduce(
+  const total = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
+
+  const handleIncrement = async (item) => {
+    if (isLoggedIn) {
+      // Increment quantity in backend cart and update Redux
+      await updateQuantity({ productId: item._id, type: "increment" }).unwrap();
+      dispatch(setCart(cartItems.map((i) =>
+        i._id === item._id ? { ...i, quantity: i.quantity + 1 } : i
+      )));
+    } else {
+      // Update localStorage cart for non-authenticated users
+      const updatedCart = cartItems.map((i) =>
+        i._id === item._id && i.quantity < i.stock
+          ? { ...i, quantity: i.quantity + 1 }
+          : i
+      );
+      localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+      dispatch(setCart(updatedCart));
+    }
+  };
+
+  const handleDecrement = async (item) => {
+    if (isLoggedIn) {
+      if (item.quantity === 1) {
+        // Remove item from backend cart and update Redux
+        await removeFromCart({ productId: item._id }).unwrap();
+        dispatch(setCart(cartItems.filter((i) => i._id !== item._id)));
+      } else {
+        // Decrement quantity in backend cart and update Redux
+        await updateQuantity({ productId: item._id, type: "decrement" }).unwrap();
+        dispatch(setCart(cartItems.map((i) =>
+          i._id === item._id ? { ...i, quantity: i.quantity - 1 } : i
+        )));
+      }
+    } else {
+      // Update localStorage cart for non-authenticated users
+      if (item.quantity === 1) {
+        const updatedCart = cartItems.filter((i) => i._id !== item._id);
+        localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+        dispatch(setCart(updatedCart));
+      } else {
+        const updatedCart = cartItems.map((i) =>
+          i._id === item._id ? { ...i, quantity: i.quantity - 1 } : i
+        );
+        localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+        dispatch(setCart(updatedCart));
+      }
+    }
+  };
+
+  const handleRemove = async (item) => {
+    if (isLoggedIn) {
+      // Remove item from backend cart and update Redux
+      await removeFromCart({ productId: item._id }).unwrap();
+      dispatch(setCart(cartItems.filter((i) => i._id !== item._id)));
+    } else {
+      // Remove item from localStorage cart for non-authenticated users
+      const updatedCart = cartItems.filter((i) => i._id !== item._id);
+      localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+      dispatch(setCart(updatedCart));
+    }
+  };
+
+  const handleClearCart = async () => {
+    if (isLoggedIn) {
+      // Clear backend cart and update Redux
+      await clearCartMutation().unwrap();
+      dispatch(clearCartState());
+    } else {
+      // Clear localStorage cart for non-authenticated users
+      dispatch(clearCartState());
+    }
+  };
 
   return (
     <div
@@ -50,11 +132,10 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
           <span className="mx-3 -mt-1 border border-slate-200"></span>
 
           {/* Scrollable list of cart items */}
-          <div className="flex-1  overflow-y-auto p-6 space-y-6">
-            {items.length === 0 ? (
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {cartItems.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center">
                 <CartIcon className="w-8 h-8 mb-4 text-slate-500" />
-
                 <p className="text-slate-500 font-medium">Your cart is empty</p>
                 <button
                   onClick={onClose}
@@ -64,7 +145,7 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
                 </button>
               </div>
             ) : (
-              items.map((item) => (
+              cartItems.map((item) => (
                 <div key={item._id} className="flex gap-4">
                   {/* Thumbnail container */}
                   <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 border border-slate-200">
@@ -84,7 +165,7 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
                         {item.name}
                       </h4>
                       <button
-                        onClick={() => dispatch(removeFromCart(item._id))}
+                        onClick={() => handleRemove(item)}
                         className="text-slate-400 hover:text-red-500 p-1 transition-colors cursor-pointer"
                       >
                         <Trash2 size={16} />
@@ -99,8 +180,8 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
                       {/* Quantity selector logic tied to cartSlice */}
                       <div className="flex items-center border border-slate-300 rounded-lg overflow-hidden h-8">
                         <button
-                          onClick={() => dispatch(decrementQuantity(item._id))}
-                          className="flex items-center justify-center w-8 h-full  text-slate-600
+                          onClick={() => handleDecrement(item)}
+                          className="flex items-center justify-center w-8 h-full text-slate-600
                          hover:text-white hover:bg-orange-500 transition-colors cursor-pointer"
                         >
                           <Minus size={14} />
@@ -109,8 +190,8 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => dispatch(incrementQuantity(item._id))}
-                          className="flex items-center justify-center w-8 h-full  text-slate-600
+                          onClick={() => handleIncrement(item)}
+                          className="flex items-center justify-center w-8 h-full text-slate-600
                          hover:text-white hover:bg-orange-500 transition-colors cursor-pointer"
                         >
                           <Plus size={14} />
@@ -127,7 +208,7 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
           </div>
 
           {/* Summary and Checkout section */}
-          {items.length > 0 && (
+          {cartItems.length > 0 && (
             <div className="p-6 border-t border-slate-100 bg-slate-100">
               <div className="flex justify-between items-center mb-6">
                 <span className="text-slate-500 font-bold text-sm uppercase tracking-widest">
@@ -141,7 +222,7 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
                 Proceed to Checkout
               </button>
               <button
-                onClick={() => dispatch(clearCart())}
+                onClick={handleClearCart}
                 className="w-full mt-3 py-3 flex items-center justify-center gap-2 text-xs font-bold uppercase text-slate-500 bg-white border-2 border-slate-300 hover:border-slate-400 hover:text-slate-700 rounded-xl transition-all shadow-md shadow-grey-200 tracking-widest cursor-pointer"
               >
                 <Trash2 size={16} />
