@@ -11,7 +11,9 @@ import userRouter from "./routes/userRoutes.js";
 import productRouter from "./routes/productRoutes.js";
 import categoryRouter from "./routes/categoryRoutes.js";
 import subCategoryRouter from "./routes/SubCategoryRoutes.js";
-import cartRouter from './routes/cartRoutes.js';
+import cartRouter from "./routes/cartRoutes.js";
+import addressRouter from "./routes/addressRoutes.js";
+import orderRouter from "./routes/orderRoutes.js";
 
 // Load environment variables based on current environment
 // This ensures correct .env file is loaded (development vs production)
@@ -55,7 +57,9 @@ app.use("/api/user", userRouter);
 app.use("/api/product", productRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/sub-category", subCategoryRouter);
-app.use('/api/cart', cartRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/address", addressRouter);
+app.use("/api/order", orderRouter);
 
 // Error handler
 app.use(errorMiddleware);

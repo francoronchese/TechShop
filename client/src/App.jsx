@@ -7,6 +7,8 @@ import AllProductsPage from "@pages/AllProductsPage";
 import ProductsByCategoryPage from "@pages/ProductsByCategoryPage";
 import SingleProductPage from "@pages/SingleProductPage";
 import NotFoundPage from "@pages/NotFoundPage";
+import CheckoutPage from "@pages/CheckoutPage";
+import OrderSuccessPage from "@pages/OrderSuccessPage";
 import {
   LoginPage,
   SignUpPage,
@@ -60,6 +62,8 @@ function App() {
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoutes />}>
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/order-success" element={<OrderSuccessPage />} />
             {/* Dashboard routes*/}
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route

@@ -134,6 +134,50 @@ const SummaryApi = {
     url: "/api/cart/merge",
     method: "POST",
   },
+
+  // ADDRESS ENDPOINTS
+  addAddress: {
+    url: "/api/address/add",
+    method: "POST",
+  },
+  getAddresses: {
+    url: "/api/address/get",
+    method: "GET",
+  },
+  deleteAddress: {
+    url: "/api/address/delete",
+    method: "DELETE",
+  },
+
+  // ORDER ENDPOINTS
+  createOrder: {
+    url: "/api/order/create",
+    method: "POST",
+  },
+  createCheckoutSession: {
+    url: "/api/order/create-checkout-session",
+    method: "POST",
+  },
+  confirmStripeOrder: {
+    url: "/api/order/confirm-stripe-order",
+    method: "POST",
+  },
+  getOrders: {
+    url: "/api/order/get",
+    method: "GET",
+  },
+  getOrderById: {
+    url: "/api/order/get/:id",
+    method: "GET",
+  },
+  getAllOrders: {
+    url: "/api/order/admin/get",
+    method: "GET",
+  },
+  updateOrderStatus: {
+    url: "/api/order/admin/update-status",
+    method: "PUT",
+  },
 };
 
 export default SummaryApi;

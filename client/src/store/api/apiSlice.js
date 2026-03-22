@@ -8,7 +8,7 @@ export const apiSlice = createApi({
     credentials: "include",
   }),
   // Tags used to control the automated re-fetching logic
-  tagTypes: ["Product", "Category", "SubCategory", 'Cart'],
+  tagTypes: ["Product", "Category", "SubCategory", "Cart", "Address", "Order"],
   endpoints: (builder) => ({
     // PRODUCT ENDPOINTS
     // GET: Fetches products with optional pagination and search filters
@@ -186,6 +186,87 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["Cart"],
     }),
+
+    // ADDRESS ENDPOINTS
+    // GET: Fetches all addresses for the authenticated user
+    getAddresses: builder.query({
+      query: () => SummaryApi.getAddresses.url,
+      transformResponse: (res) => res.data,
+      providesTags: ["Address"],
+    }),
+    // POST: Adds a new address for the authenticated user
+    addAddress: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.addAddress.url,
+        method: SummaryApi.addAddress.method,
+        body,
+      }),
+      invalidatesTags: ["Address"],
+    }),
+    // DELETE: Removes an address by its ID
+    deleteAddress: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.deleteAddress.url,
+        method: SummaryApi.deleteAddress.method,
+        body,
+      }),
+      invalidatesTags: ["Address"],
+    }),
+
+    // ORDER ENDPOINTS
+    // POST: Creates a new order
+    createOrder: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.createOrder.url,
+        method: SummaryApi.createOrder.method,
+        body,
+      }),
+      invalidatesTags: ["Order"],
+    }),
+    // POST: Creates a Stripe checkout session and returns the URL
+    createCheckoutSession: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.createCheckoutSession.url,
+        method: SummaryApi.createCheckoutSession.method,
+        body,
+      }),
+    }),
+    // POST: Confirms a Stripe order after successful payment
+    confirmStripeOrder: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.confirmStripeOrder.url,
+        method: SummaryApi.confirmStripeOrder.method,
+        body,
+      }),
+      invalidatesTags: ["Order", "Cart"],
+    }),
+    // GET: Fetches all orders for the authenticated user
+    getOrders: builder.query({
+      query: () => SummaryApi.getOrders.url,
+      transformResponse: (res) => res.data,
+      providesTags: ["Order"],
+    }),
+    // GET: Fetches a single order by its ID
+    getOrderById: builder.query({
+      query: (id) => SummaryApi.getOrderById.url.replace(":id", id),
+      transformResponse: (res) => res.data,
+      providesTags: (result, error, id) => [{ type: "Order", id }],
+    }),
+    // GET: Fetches all orders (Admin only)
+    getAllOrders: builder.query({
+      query: () => SummaryApi.getAllOrders.url,
+      transformResponse: (res) => res.data,
+      providesTags: ["Order"],
+    }),
+    // PUT: Updates order status (Admin only)
+    updateOrderStatus: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.updateOrderStatus.url,
+        method: SummaryApi.updateOrderStatus.method,
+        body,
+      }),
+      invalidatesTags: ["Order"],
+    }),
   }),
 });
 
@@ -210,4 +291,16 @@ export const {
   useRemoveFromCartMutation,
   useClearCartMutation,
   useMergeCartMutation,
+  // Address hooks
+  useGetAddressesQuery,
+  useAddAddressMutation,
+  useDeleteAddressMutation,
+  // Order hooks
+  useCreateOrderMutation,
+  useCreateCheckoutSessionMutation,
+  useConfirmStripeOrderMutation,
+  useGetOrdersQuery,
+  useGetOrderByIdQuery,
+  useGetAllOrdersQuery,
+  useUpdateOrderStatusMutation,
 } = apiSlice;

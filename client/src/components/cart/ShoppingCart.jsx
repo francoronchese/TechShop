@@ -1,4 +1,5 @@
 import { ShoppingCart as CartIcon, Trash2, Plus, Minus, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import useCartActions from "@hooks/useCartActions";
 
 export const ShoppingCart = ({ isOpen, onClose }) => {
@@ -10,6 +11,8 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
     handleRemove,
     handleClearCart,
   } = useCartActions();
+  
+  const navigate = useNavigate();
 
   // Calculate the total price of all items
   const total = cartItems.reduce(
@@ -135,7 +138,13 @@ export const ShoppingCart = ({ isOpen, onClose }) => {
                   ${total.toFixed(2)}
                 </span>
               </div>
-              <button className="w-full py-4 font-bold uppercase text-white bg-orange-600 hover:bg-orange-700 rounded-xl transition-all shadow-md shadow-orange-200 tracking-wider cursor-pointer">
+              <button
+                onClick={() => {
+                  onClose();
+                  navigate("/checkout");
+                }}
+                className="w-full py-4 font-bold uppercase text-white bg-orange-600 hover:bg-orange-700 rounded-xl transition-all shadow-md shadow-orange-200 tracking-wider cursor-pointer"
+              >
                 Proceed to Checkout
               </button>
               <button

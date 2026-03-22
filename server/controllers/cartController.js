@@ -1,5 +1,5 @@
 import asyncHandler from "../utils/asyncHandler.js";
-import CartProductModel from "../models/CartProductModel.js";
+import CartModel from "../models/CartModel.js";
 import ProductModel from "../models/ProductModel.js";
 import UserModel from "../models/UserModel.js";
 
@@ -9,7 +9,7 @@ export const getCart = asyncHandler(async (req, res) => {
   const userId = req.userId;
 
   // Find all cart items for this user and populate product details
-  const cartItems = await CartProductModel.find({ user: userId }).populate(
+  const cartItems = await CartModel.find({ user: userId }).populate(
     "product",
   );
 
@@ -46,7 +46,7 @@ export const addToCart = asyncHandler(async (req, res) => {
   }
 
   // Check if product is already in the user's cart to prevent duplicates
-  const existingItem = await CartProductModel.findOne({
+  const existingItem = await CartModel.findOne({
     user: userId,
     product: productId,
   });
@@ -59,7 +59,7 @@ export const addToCart = asyncHandler(async (req, res) => {
   }
 
   // Add product to cart
-  const newCartItem = await CartProductModel.create({
+  const newCartItem = await CartModel.create({
     user: userId,
     product: productId,
     quantity: 1,
@@ -93,7 +93,7 @@ export const updateQuantity = asyncHandler(async (req, res) => {
   }
 
   // Find cart item in the database
-  const cartItem = await CartProductModel.findOne({
+  const cartItem = await CartModel.findOne({
     user: userId,
     product: productId,
   });
@@ -107,7 +107,7 @@ export const updateQuantity = asyncHandler(async (req, res) => {
 
   // Remove item from cart if quantity is 1 and type is decrement
   if (type === "decrement" && cartItem.quantity === 1) {
-    await CartProductModel.findByIdAndDelete(cartItem._id);
+    await CartModel.findByIdAndDelete(cartItem._id);
     // Remove cart item reference from user
     await UserModel.findByIdAndUpdate(userId, {
       $pull: { shopping_cart_items: cartItem._id },
@@ -121,7 +121,7 @@ export const updateQuantity = asyncHandler(async (req, res) => {
   }
 
   // Increment or decrement quantity
-  const updatedItem = await CartProductModel.findByIdAndUpdate(
+  const updatedItem = await CartModel.findByIdAndUpdate(
     cartItem._id,
     {
       quantity:
@@ -153,7 +153,7 @@ export const removeFromCart = asyncHandler(async (req, res) => {
   }
 
   // Find and delete cart item from the database
-  const cartItem = await CartProductModel.findOneAndDelete({
+  const cartItem = await CartModel.findOneAndDelete({
     user: userId,
     product: productId,
   });
@@ -184,7 +184,7 @@ export const clearCart = asyncHandler(async (req, res) => {
   const userId = req.userId;
 
   // Delete all cart items for this user from the database
-  await CartProductModel.deleteMany({ user: userId });
+  await CartModel.deleteMany({ user: userId });
 
   // Clear cart item references from user
   await UserModel.findByIdAndUpdate(userId, {
@@ -214,19 +214,19 @@ export const mergeCart = asyncHandler(async (req, res) => {
 
   for (const item of items) {
     // Check if product already exists in the database cart
-    const existingItem = await CartProductModel.findOne({
+    const existingItem = await CartModel.findOne({
       user: userId,
       product: item.productId,
     });
 
     if (existingItem) {
       // Sum quantities if product already exists in backend cart
-      await CartProductModel.findByIdAndUpdate(existingItem._id, {
+      await CartModel.findByIdAndUpdate(existingItem._id, {
         quantity: existingItem.quantity + item.quantity,
       });
     } else {
       // Add new item to cart
-      const newItem = await CartProductModel.create({
+      const newItem = await CartModel.create({
         user: userId,
         product: item.productId,
         quantity: item.quantity,
@@ -239,7 +239,7 @@ export const mergeCart = asyncHandler(async (req, res) => {
   }
 
   // Return updated cart after merge
-  const updatedCart = await CartProductModel.find({ user: userId }).populate(
+  const updatedCart = await CartModel.find({ user: userId }).populate(
     "product",
   );
 
