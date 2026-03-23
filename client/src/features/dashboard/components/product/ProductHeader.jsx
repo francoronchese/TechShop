@@ -5,15 +5,15 @@ const ProductHeader = ({ isCreating, onCreate, onCancel, onSave, loading }) => {
   return (
     <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6'>
       <div>
-        <h2 className='text-gray-800 text-lg font-bold'>Product Management</h2>
-        <p className='text-sm text-gray-600'>Create and manage products</p>
+        <h2 className='text-slate-800 text-lg font-bold'>Product Management</h2>
+        <p className='text-sm text-slate-600'>Create and manage products</p>
       </div>
 
       {isCreating ? (
         <div className='flex flex-col sm:flex-row items-center gap-2'>
           <Button
             onClick={onCancel}
-            className='w-full sm:w-auto justify-center bg-gray-700 text-white hover:bg-gray-800'
+            className='w-full sm:w-auto justify-center bg-slate-700 text-white hover:bg-slate-800'
             icon={X}
             iconSize={20}
           >

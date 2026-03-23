@@ -11,7 +11,7 @@ const ProfileInfoForm = ({
   return (
     <div
       className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${
-        isEditing ? 'text-gray-700' : 'text-gray-600'
+        isEditing ? 'text-slate-700' : 'text-slate-600'
       }`}
     >
       <Input
@@ -41,7 +41,7 @@ const ProfileInfoForm = ({
       <div className='flex items-end'>
         <Button
           onClick={onPasswordChange}
-          className='w-full bg-gray-700 text-white hover:bg-gray-800'
+          className='w-full bg-slate-700 text-white hover:bg-slate-800'
           icon={Key}
           iconSize={20}
         >

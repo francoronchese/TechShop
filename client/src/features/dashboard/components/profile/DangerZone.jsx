@@ -31,13 +31,13 @@ const DangerZone = ({ onDelete }) => {
   return (
     <>
       <div className='p-6 mt-6 bg-white rounded-xl shadow-sm border border-slate-200'>
-        <h2 className='text-gray-800 text-lg font-bold'>Danger Zone</h2>
-        <p className='text-sm text-gray-600'>
+        <h2 className='text-slate-800 text-lg font-bold'>Danger Zone</h2>
+        <p className='text-sm text-slate-600'>
           Irreversible actions on your account
         </p>
         <div className='p-6 mt-6 bg-red-50 border border-red-200 rounded-xl'>
-          <h3 className='mb-2 font-semibold text-gray-800'>Delete account</h3>
-          <p className='mb-4 text-sm text-gray-600'>
+          <h3 className='mb-2 font-semibold text-slate-800'>Delete account</h3>
+          <p className='mb-4 text-sm text-slate-600'>
             Once you delete your account, there's no going back. Please be
             certain.
           </p>
@@ -55,15 +55,15 @@ const DangerZone = ({ onDelete }) => {
         ref={dialogRef}
         className='w-[90%] m-auto max-w-md p-6 rounded-xl border-0 shadow-xl bg-white backdrop:bg-black/50'
       >
-        <h3 className='mb-3 text-lg font-bold text-gray-900'>
+        <h3 className='mb-3 text-lg font-bold text-slate-900'>
           Are you sure you want to permanently delete your account?
         </h3>
-        <p className='mb-6 text-gray-600'>This action cannot be undone.</p>
+        <p className='mb-6 text-slate-600'>This action cannot be undone.</p>
         <div className='flex flex-col min-[350px]:flex-row gap-3 justify-end'>
           {/* Use Button component here too if you want consistency */}
           <Button
             onClick={closeModal}
-            className='justify-center w-full min-[350px]:w-auto bg-gray-200 text-gray-800 hover:bg-gray-300'
+            className='justify-center w-full min-[350px]:w-auto bg-slate-200 text-slate-800 hover:bg-slate-300'
           >
             Cancel
           </Button>

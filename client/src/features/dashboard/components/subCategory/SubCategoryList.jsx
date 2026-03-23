@@ -12,7 +12,7 @@ const SubCategoryList = ({ items, onEdit, onDelete }) => {
         >
           {/* Info Section: Name and Dynamic Chips */}
           <div className="flex flex-col gap-2">
-            <span className="text-gray-700 font-bold">{item.name}</span>
+            <span className="text-slate-700 font-bold">{item.name}</span>
 
             <div className="flex flex-wrap gap-1.5">
               {item.categories.map((category) => (
@@ -48,7 +48,7 @@ const SubCategoryList = ({ items, onEdit, onDelete }) => {
       {items.length === 0 && (
         <div className="col-span-full p-12 text-center bg-slate-50 rounded-xl border-2 border-dashed border-slate-300">
           <FolderOpen className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-          <p className="text-sm text-gray-500">No sub-categories created yet</p>
+          <p className="text-sm text-slate-500">No sub-categories created yet</p>
         </div>
       )}
     </div>

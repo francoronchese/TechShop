@@ -33,11 +33,11 @@ const SubCategoryForm = ({ formData, onChange, onToggle, allCategories }) => {
                 onChange={() => onToggle(category._id)}
                 className="w-4 h-4 cursor-pointer"
               />
-              <span className="text-sm text-gray-600">{category.name}</span>
+              <span className="text-sm text-slate-600">{category.name}</span>
             </label>
           ))}
         </div>
-        <p className="mt-2 text-[11px] text-gray-400 italic">
+        <p className="mt-2 text-[11px] text-slate-400 italic">
           You can select one or more parent categories for this sub-category.
         </p>
       </div>

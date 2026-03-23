@@ -1,23 +1,23 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, 'Provide name'],
+      required: [true, "Provide name"],
     },
     email: {
       type: String,
-      required: [true, 'Provide email'],
+      required: [true, "Provide email"],
       unique: true,
     },
     password: {
       type: String,
-      required: [true, 'Provide password'],
+      required: [true, "Provide password"],
     },
     avatar: {
       type: String,
-      default: '',
+      default: "",
     },
     mobile: {
       type: Number,
@@ -37,25 +37,31 @@ const userSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['Active', 'Inactive', 'Suspended'],
-      default: 'Active',
+      enum: ["Active", "Inactive", "Suspended"],
+      default: "Active",
     },
     addresses: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: 'address',
+        ref: "address",
       },
     ],
     shopping_cart_items: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: 'cartProduct',
+        ref: "cartProduct",
       },
     ],
     orders: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: 'order',
+        ref: "order",
+      },
+    ],
+    favorites: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "product",
       },
     ],
     forgot_password_otp: {
@@ -76,15 +82,15 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['Admin', 'User'],
-      default: 'User',
+      enum: ["Admin", "User"],
+      default: "User",
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-const UserModel = mongoose.model('user', userSchema);
+const UserModel = mongoose.model("user", userSchema);
 
 export default UserModel;

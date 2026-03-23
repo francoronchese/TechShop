@@ -2,16 +2,16 @@ import { Camera } from 'lucide-react';
 
 const ProfileAvatar = ({ formData, user, isEditing, onPhotoUpload }) => {
   return (
-    <div className='flex flex-col min-[450px]:flex-row items-center gap-6 mb-6 min-[450px]:mb-8 pb-4 min-[450px]:pb-8 border-b border-gray-200'>
+    <div className='flex flex-col min-[450px]:flex-row items-center gap-6 mb-6 min-[450px]:mb-8 pb-4 min-[450px]:pb-8 border-b border-slate-200'>
       <div className='relative mt-2'>
         {formData.avatar ? (
           <img
             src={formData.avatar}
             alt='avatar'
-            className='w-25 h-25 border-gray-100 border-4 rounded-full shadow-md'
+            className='w-25 h-25 border-slate-100 border-4 rounded-full shadow-md'
           />
         ) : (
-          <div className='flex items-center justify-center w-25 h-25 text-2xl font-bold bg-teal-500 text-white border-gray-100 border-4 rounded-full shadow-md'>
+          <div className='flex items-center justify-center w-25 h-25 text-2xl font-bold bg-teal-500 text-white border-slate-100 border-4 rounded-full shadow-md'>
             {user.name.charAt(0).toUpperCase()}
           </div>
         )}
@@ -29,10 +29,10 @@ const ProfileAvatar = ({ formData, user, isEditing, onPhotoUpload }) => {
         )}
       </div>
       <div className='text-center min-[450px]:text-left'>
-        <h3 className='mb-1 sm:mb-0 text-sm font-semibold text-gray-800'>
+        <h3 className='mb-1 sm:mb-0 text-sm font-semibold text-slate-800'>
           {user.name}
         </h3>
-        <p className='mb-3 text-xs sm:text-sm text-gray-600'>{user.email}</p>
+        <p className='mb-3 text-xs sm:text-sm text-slate-600'>{user.email}</p>
         {isEditing && (
           <p className='text-xs text-orange-500'>
             Click the camera to change your profile picture

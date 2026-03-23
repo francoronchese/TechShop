@@ -13,6 +13,7 @@ import {
 import SummaryApi, { baseURL } from "@config/summaryApi";
 import { endUserSession } from "@store/slices/userSlice";
 import { clearCartState } from "@store/slices/cartSlice";
+import { clearFavoritesState } from "@store/slices/favoritesSlice";
 import MobileMenu from "@layouts/MobileMenu";
 
 const Header = () => {
@@ -48,6 +49,8 @@ const Header = () => {
         dispatch(endUserSession());
         // Clear cart from Redux store and localStorage
         dispatch(clearCartState());
+        // Clear favorites from Redux store
+        dispatch(clearFavoritesState());
         // Clear localStorage authentication flag
         // isLoggedIn: Used by ProtectedRoutes & PublicRoutes
         localStorage.removeItem("isLoggedIn");

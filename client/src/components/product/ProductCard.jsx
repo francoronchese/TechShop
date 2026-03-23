@@ -1,6 +1,7 @@
-import { ShoppingCart, Package, Plus, Minus } from "lucide-react";
+import { ShoppingCart, Package, Plus, Minus, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useCartActions from "@hooks/useCartActions";
+import useFavoriteActions from "@hooks/useFavoriteActions";
 import { Button } from "../ui/Button";
 
 export const ProductCard = ({ product }) => {
@@ -9,6 +10,9 @@ export const ProductCard = ({ product }) => {
   // Get cart actions and items from custom hook
   const { cartItems, handleAddToCart, handleIncrement, handleDecrement } =
     useCartActions();
+
+  // Get favorite actions from custom hook
+  const { isLoggedIn, isFavorite, handleFavoriteToggle } = useFavoriteActions();
 
   // Get quantity from the global cart items array
   const cartItem = cartItems.find((item) => item._id === product._id);
@@ -24,7 +28,7 @@ export const ProductCard = ({ product }) => {
       className="w-full bg-white border border-slate-300 hover:shadow-lg rounded-2xl overflow-hidden transition-shadow duration-300 cursor-pointer"
     >
       {/* Product Image */}
-      <div className="h-52 bg-gray-200 relative">
+      <div className="relative h-52 bg-gray-200">
         {product.image?.[0] && (
           <img
             src={product.image[0]}
@@ -38,6 +42,26 @@ export const ProductCard = ({ product }) => {
           <span className="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">
             {product.discount}% OFF
           </span>
+        )}
+
+        {/* Favorite button - only shown for logged in users */}
+        {isLoggedIn && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleFavoriteToggle(product);
+            }}
+            className="absolute top-3 right-3 p-1.5 bg-white border border-slate-300 rounded-full shadow-md cursor-pointer transition-transform hover:scale-110"
+          >
+            <Star
+              size={16}
+              className={
+                isFavorite(product._id)
+                  ? "text-yellow-400 fill-yellow-400"
+                  : "text-slate-400"
+              }
+            />
+          </button>
         )}
       </div>
 

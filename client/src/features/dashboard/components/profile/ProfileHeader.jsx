@@ -6,10 +6,10 @@ const ProfileHeader = ({ isEditing, onEdit, onCancel, onSave, loading }) => {
     <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4'>
       {/* Title & Description */}
       <div>
-        <h2 className='text-gray-800 text-lg font-bold'>
+        <h2 className='text-slate-800 text-lg font-bold'>
           Personal Information
         </h2>
-        <p className='text-sm text-gray-600'>Manage your account profile</p>
+        <p className='text-sm text-slate-600'>Manage your account profile</p>
       </div>
 
       {/* Dynamic Buttons Logic */}
@@ -17,7 +17,7 @@ const ProfileHeader = ({ isEditing, onEdit, onCancel, onSave, loading }) => {
         <div className='flex flex-col sm:flex-row items-center gap-2'>
           <Button
             onClick={onCancel}
-            className='w-full sm:w-auto justify-center bg-gray-700 text-white hover:bg-gray-800'
+            className='w-full sm:w-auto justify-center bg-slate-700 text-white hover:bg-slate-800'
             icon={X}
             iconSize={20}
           >

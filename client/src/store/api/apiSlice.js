@@ -8,7 +8,15 @@ export const apiSlice = createApi({
     credentials: "include",
   }),
   // Tags used to control the automated re-fetching logic
-  tagTypes: ["Product", "Category", "SubCategory", "Cart", "Address", "Order"],
+  tagTypes: [
+    "Product",
+    "Category",
+    "SubCategory",
+    "Cart",
+    "Address",
+    "Order",
+    "Favorites",
+  ],
   endpoints: (builder) => ({
     // PRODUCT ENDPOINTS
     // GET: Fetches products with optional pagination and search filters
@@ -267,6 +275,32 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["Order"],
     }),
+
+    // FAVORITES ENDPOINTS
+    // GET: Fetches all favorites for the authenticated user
+    getFavorites: builder.query({
+      query: () => SummaryApi.getFavorites.url,
+      transformResponse: (res) => res.data,
+      providesTags: ["Favorites"],
+    }),
+    // POST: Adds a product to favorites
+    addToFavorites: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.addToFavorites.url,
+        method: SummaryApi.addToFavorites.method,
+        body,
+      }),
+      invalidatesTags: ["Favorites"],
+    }),
+    // DELETE: Removes a product from favorites
+    removeFromFavorites: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.removeFromFavorites.url,
+        method: SummaryApi.removeFromFavorites.method,
+        body,
+      }),
+      invalidatesTags: ["Favorites"],
+    }),
   }),
 });
 
@@ -303,4 +337,8 @@ export const {
   useGetOrderByIdQuery,
   useGetAllOrdersQuery,
   useUpdateOrderStatusMutation,
+  // Favorites hooks
+  useGetFavoritesQuery,
+  useAddToFavoritesMutation,
+  useRemoveFromFavoritesMutation,
 } = apiSlice;

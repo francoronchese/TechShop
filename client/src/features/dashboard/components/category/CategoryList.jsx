@@ -27,7 +27,7 @@ const CategoryList = ({ items, onEdit, onDelete }) => {
 
           {/* Category details and action buttons */}
           <div className="p-4 bg-white border-t border-slate-300/80">
-            <h3 className="text-gray-800 font-bold mb-3 truncate">
+            <h3 className="text-slate-800 font-bold mb-3 truncate">
               {item.name}
             </h3>
 
@@ -57,7 +57,7 @@ const CategoryList = ({ items, onEdit, onDelete }) => {
       {items.length === 0 && (
         <div className="col-span-full p-12 text-center bg-slate-50 rounded-xl border-2 border-dashed border-slate-300">
           <Folder className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-          <p className="text-sm text-gray-500">No categories created yet</p>
+          <p className="text-sm text-slate-500">No categories created yet</p>
         </div>
       )}
     </div>

@@ -7,6 +7,7 @@ import SummaryApi, { baseURL } from "@config/summaryApi";
 import { ButtonForm } from "@features/auth";
 import { setUserDetails } from "@store/slices/userSlice";
 import { setCart } from "@store/slices/cartSlice";
+import { setFavorites } from "@store/slices/favoritesSlice";
 import { useMergeCartMutation } from "@store/api/apiSlice";
 
 const LoginForm = () => {
@@ -108,6 +109,8 @@ const LoginForm = () => {
                 }),
               );
               dispatch(setCart(cartItems));
+              // Load favorites from updated user data into Redux
+              dispatch(setFavorites(updatedUserData.data.favorites || []));
             }
           }
         } else {
@@ -117,6 +120,8 @@ const LoginForm = () => {
             quantity: item.quantity,
           }));
           dispatch(setCart(cartItems));
+          // Load favorites from user data into Redux
+          dispatch(setFavorites(userData.data.favorites || []));
         }
 
         // Clear local cart after merge

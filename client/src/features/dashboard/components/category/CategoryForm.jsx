@@ -40,7 +40,7 @@ const CategoryForm = ({ formData, onChange, onPhotoUpload }) => {
           <div className="flex flex-col justify-center gap-2 flex-1">
             <label
               htmlFor="category-image-upload"
-              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-gray-700 rounded-lg cursor-pointer transition-colors border border-slate-200 font-medium"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg cursor-pointer transition-colors border border-slate-200 font-medium"
             >
               <div className="p-2 bg-orange-500 rounded-full flex items-center justify-center">
                 <Upload className="w-4 h-4 text-white" />
@@ -54,7 +54,7 @@ const CategoryForm = ({ formData, onChange, onPhotoUpload }) => {
               onChange={onPhotoUpload}
               className="hidden"
             />
-            <p className="text-[11px] text-gray-400 italic">
+            <p className="text-[11px] text-slate-400 italic">
               Formats: JPG, PNG, WEBP
             </p>
           </div>

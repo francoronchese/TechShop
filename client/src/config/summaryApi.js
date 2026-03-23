@@ -178,6 +178,20 @@ const SummaryApi = {
     url: "/api/order/admin/update-status",
     method: "PUT",
   },
+
+  // FAVORITES ENDPOINTS
+  addToFavorites: {
+    url: "/api/favorite/add",
+    method: "POST",
+  },
+  getFavorites: {
+    url: "/api/favorite/get",
+    method: "GET",
+  },
+  removeFromFavorites: {
+    url: "/api/favorite/remove",
+    method: "DELETE",
+  },
 };
 
 export default SummaryApi;

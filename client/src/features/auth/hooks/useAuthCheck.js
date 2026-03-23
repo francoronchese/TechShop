@@ -1,8 +1,9 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
+import SummaryApi, { baseURL } from "@config/summaryApi";
 import { endUserSession, setUserDetails } from "@store/slices/userSlice";
 import { setCart, clearCartState } from "@store/slices/cartSlice";
-import SummaryApi, { baseURL } from "@config/summaryApi";
+import { setFavorites, clearFavoritesState } from "@store/slices/favoritesSlice";
 
 // Checks user authentication status on app load
 // Automatically refreshes access token when expired using refresh token
@@ -22,7 +23,16 @@ export const useAuthCheck = () => {
       });
     };
 
+    // Helper function to clear all user session data from Redux
+    const handleLogout = async () => {
+      await serverLogout();
+      dispatch(endUserSession());
+      dispatch(clearCartState());
+      dispatch(clearFavoritesState());
+    };
+
     // Helper function to update Redux store with user data
+    // Extracted to avoid repeating the same mapping in checkAuthStatus and refreshAccessToken
     const setUserState = (userData) => {
       dispatch(
         setUserDetails({
@@ -40,6 +50,18 @@ export const useAuthCheck = () => {
       );
     };
 
+    // Helper function to load cart and favorites from user data into Redux
+    const loadUserData = (userData) => {
+      // Flatten shopping_cart_items from user data into Redux cart
+      const cartItems = userData.shopping_cart_items.map((item) => ({
+        ...item.product,
+        quantity: item.quantity,
+      }));
+      dispatch(setCart(cartItems));
+      // Load favorites from user data into Redux
+      dispatch(setFavorites(userData.favorites || []));
+    };
+
     const checkAuthStatus = async () => {
       try {
         // Attempt to fetch user details using current access token
@@ -53,12 +75,7 @@ export const useAuthCheck = () => {
         // Update Redux store if user is authenticated
         if (data.success && data.data) {
           setUserState(data.data);
-          // Flatten shopping_cart_items from user data into Redux cart
-          const cartItems = data.data.shopping_cart_items.map((item) => ({
-            ...item.product,
-            quantity: item.quantity,
-          }));
-          dispatch(setCart(cartItems));
+          loadUserData(data.data);
         }
         // If access token expired (401), attempt to refresh it
         else if (res.status === 401) {
@@ -67,9 +84,7 @@ export const useAuthCheck = () => {
         // Any other error response from server
         else {
           console.log("Authentication failed: ", data.message);
-          await serverLogout();
-          dispatch(endUserSession());
-          dispatch(clearCartState());
+          await handleLogout();
         }
       } catch (error) {
         // Does not clear session on network errors
@@ -100,23 +115,14 @@ export const useAuthCheck = () => {
           // Store user data in Redux after successful token refresh
           if (userData.success && userData.data) {
             setUserState(userData.data);
-            // Flatten shopping_cart_items from user data into Redux cart
-            const cartItems = userData.data.shopping_cart_items.map((item) => ({
-              ...item.product,
-              quantity: item.quantity,
-            }));
-            dispatch(setCart(cartItems));
+            loadUserData(userData.data);
           } else {
             // New token but user data fetch failed
-            await serverLogout();
-            dispatch(endUserSession());
-            dispatch(clearCartState());
+            await handleLogout();
           }
         } else {
           // Refresh token invalid or expired - clear session
-          await serverLogout();
-          dispatch(endUserSession());
-          dispatch(clearCartState());
+          await handleLogout();
         }
       } catch (error) {
         // TypeError indicates a network failure, keep session alive
@@ -127,9 +133,7 @@ export const useAuthCheck = () => {
             error,
           );
         } else {
-          await serverLogout();
-          dispatch(endUserSession());
-          dispatch(clearCartState());
+          await handleLogout();
         }
       }
     };

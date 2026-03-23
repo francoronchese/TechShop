@@ -11,7 +11,7 @@ import {
 
 const cartRouter = Router();
 
-// All cart routes are protected (require authentication)
+// Protected Routes
 cartRouter.get("/get", auth, getCart);
 cartRouter.post("/add", auth, addToCart);
 cartRouter.put("/update-quantity", auth, updateQuantity);

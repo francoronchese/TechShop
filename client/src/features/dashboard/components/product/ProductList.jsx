@@ -17,7 +17,7 @@ const ProductList = ({ items, onEdit, onDelete }) => {
           className="w-full bg-white border border-slate-300 hover:shadow-lg rounded-2xl overflow-hidden"
         >
           {/* Product image */}
-          <div className="h-52 bg-gray-200 relative">
+          <div className="h-52 bg-slate-200 relative">
             {item.image?.[0] ? (
               <img
                 src={item.image[0]}
@@ -26,7 +26,7 @@ const ProductList = ({ items, onEdit, onDelete }) => {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <ImageIcon className="text-gray-400" />
+                <ImageIcon className="text-slate-400" />
               </div>
             )}
             {/* Discount badge */}
@@ -39,7 +39,7 @@ const ProductList = ({ items, onEdit, onDelete }) => {
 
           {/* Product details and action buttons */}
           <div className="p-4 border-t border-slate-300/80">
-            <h3 className="font-bold text-gray-800 line-clamp-1">
+            <h3 className="font-bold text-slate-800 line-clamp-1">
               {item.name}
             </h3>
 
@@ -75,7 +75,7 @@ const ProductList = ({ items, onEdit, onDelete }) => {
                   </span>
                 )}
               </div>
-              <div className="flex items-center gap-1 text-gray-500 text-xs font-bold">
+              <div className="flex items-center gap-1 text-slate-500 text-xs font-bold">
                 <Package size={14} /> {item.stock || 0}
               </div>
             </div>
@@ -107,7 +107,7 @@ const ProductList = ({ items, onEdit, onDelete }) => {
       {items.length === 0 && (
         <div className="col-span-full p-12 text-center bg-slate-50 rounded-xl border-2 border-dashed border-slate-300">
           <ShoppingBag className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-          <p className="text-sm text-gray-500">No products created yet</p>
+          <p className="text-sm text-slate-500">No products created yet</p>
         </div>
       )}
     </div>

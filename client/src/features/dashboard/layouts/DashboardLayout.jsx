@@ -11,13 +11,13 @@ export const DashboardLayout = () => {
     <div className="max-w-7xl mx-auto w-full">
       <section className="relative grid grid-cols-1 lg:grid-cols-[250px_1fr] lg:grid-rows-[auto_1fr] lg:gap-6">
         <div className="lg:col-start-2 lg:row-start-1">
-          <h1 className="mb-1 font-bold text-xl text-gray-900 ">
+          <h1 className="mb-1 font-bold text-xl text-slate-900 ">
             {isAdmin ? "Admin Control Panel" : "My Dashboard"}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-slate-600">
             {isAdmin
-              ? "Manage users, products, categories and sub-categories"
-              : "Manage your account, orders and preferences"}
+              ? "Store administration and management"
+              : "Manage your account and shopping activity"}
           </p>
         </div>
 

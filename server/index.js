@@ -14,6 +14,7 @@ import subCategoryRouter from "./routes/SubCategoryRoutes.js";
 import cartRouter from "./routes/cartRoutes.js";
 import addressRouter from "./routes/addressRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
+import favoriteRouter from "./routes/favoriteRoutes.js";
 
 // Load environment variables based on current environment
 // This ensures correct .env file is loaded (development vs production)
@@ -60,6 +61,7 @@ app.use("/api/sub-category", subCategoryRouter);
 app.use("/api/cart", cartRouter);
 app.use("/api/address", addressRouter);
 app.use("/api/order", orderRouter);
+app.use("/api/favorite", favoriteRouter);
 
 // Error handler
 app.use(errorMiddleware);

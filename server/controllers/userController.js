@@ -513,7 +513,8 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
       populate: {
         path: "product",
       },
-    });
+    })
+    .populate("favorites");
 
   // Check if user exists
   if (!user) {
