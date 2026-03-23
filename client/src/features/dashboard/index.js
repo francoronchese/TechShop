@@ -4,3 +4,4 @@ export { CategoryPage } from "./pages/CategoryPage.jsx";
 export { SubCategoryPage } from "./pages/SubCategoryPage.jsx";
 export { ProductPage } from "./pages/ProductPage.jsx";
 export { FavoritesPage } from "./pages/FavoritesPage.jsx";
+export { AddressesPage } from './pages/AddressesPage.jsx';

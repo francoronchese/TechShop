@@ -25,6 +25,7 @@ import {
   SubCategoryPage,
   ProductPage,
   FavoritesPage,
+  AddressesPage,
 } from "@features/dashboard";
 import { ProtectedRoutes } from "./routes/ProtectedRoutes";
 import { PublicRoutes } from "./routes/PublicRoutes";
@@ -74,7 +75,7 @@ function App() {
               <Route path="profile" element={<ProfilePage />} />
               {/* <Route path='orders' element={<OrdersPage />} /> */}
               <Route path="favorites" element={<FavoritesPage />} />
-              {/* <Route path='addresses' element={<AddressesPage />} /> */}
+              <Route path="addresses" element={<AddressesPage />} />
               <Route path="categories" element={<CategoryPage />} />
               <Route path="sub-categories" element={<SubCategoryPage />} />
               <Route path="products" element={<ProductPage />} />

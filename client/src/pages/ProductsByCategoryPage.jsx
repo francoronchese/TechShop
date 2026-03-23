@@ -165,7 +165,7 @@ const ProductsByCategoryPage = () => {
           <ChevronRight size={14} />
           <span className="text-slate-700 font-medium">{category?.name}</span>
         </div>
-        <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-800">
           {category?.name}
         </h1>
       </div>

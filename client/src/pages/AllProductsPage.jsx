@@ -228,7 +228,7 @@ const AllProductsPage = () => {
           )}
         </div>
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-800">
             {selectedCategoryId
               ? allCategories.find((cat) => cat._id === selectedCategoryId)?.name
               : "Explore Collection"}

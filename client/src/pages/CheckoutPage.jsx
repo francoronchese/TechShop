@@ -140,7 +140,7 @@ const CheckoutPage = () => {
 
   return (
     <section className="max-w-7xl mx-auto">
-      <h1 className="mb-8 mt-4 text-3xl md:text-4xl font-extrabold text-gray-800">
+      <h1 className="mb-8 mt-4 text-3xl md:text-4xl font-extrabold text-slate-800">
         Checkout
       </h1>
 
@@ -150,7 +150,7 @@ const CheckoutPage = () => {
           {/* Shipping Address Section */}
           <div className="p-6 bg-white border border-slate-200 rounded-xl">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-5">
-              <h2 className="flex items-center gap-2 text-lg font-bold text-gray-900">
+              <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
                 <MapPin size={20} className="text-orange-500" />
                 Shipping Address
               </h2>
