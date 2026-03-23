@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMemo } from "react";
-import { ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button, CategoryCard, ProductCard, PageLoader } from "@components";
 
 // Import RTK Query hooks
@@ -54,7 +54,7 @@ const HomePage = () => {
 
       {/* Categories Section */}
       <section className="py-12 max-w-7xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800 mb-8">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-slate-800 mb-8">
           Shop by Category
         </h2>
 
@@ -76,7 +76,7 @@ const HomePage = () => {
                 />
               ))
             ) : (
-              <div className="col-span-full text-center text-gray-500">
+              <div className="col-span-full text-center text-slate-500">
                 No categories available.
               </div>
             )}
@@ -87,15 +87,17 @@ const HomePage = () => {
       {/* New Arrivals Section */}
       <section className="max-w-7xl mx-auto py-10">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-slate-800">
             New Arrivals
           </h2>
-          <Link
-            to="/products"
-            className="flex items-center gap-1 text-orange-600 font-bold hover:scale-105 duration-300 ease-in-out"
+          <Button
+            onClick={() => navigate("/products")}
+            icon={ArrowRight}
+            iconSize={20}
+            className="bg-orange-500 text-white hover:bg-orange-600 hover:scale-105 duration-300 ease-in-out"
           >
-            View All <ChevronRight size={22} />
-          </Link>
+            View All
+          </Button>
         </div>
 
         {/* Display loader while products are fetching or render the product grid */}
@@ -114,7 +116,7 @@ const HomePage = () => {
 
       {/* Why Choose Us Section */}
       <section className="max-w-7xl mx-auto py-12">
-        <h2 className="mb-8 text-3xl md:text-4xl text-center font-extrabold text-gray-800">
+        <h2 className="mb-8 text-3xl md:text-4xl text-center font-extrabold text-slate-800">
           Why Choose TechShop?
         </h2>
 
@@ -123,24 +125,24 @@ const HomePage = () => {
             <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full">
               <span className="text-3xl">🚚</span>
             </div>
-            <h3 className="mb-2 font-bold text-xl">Free Shipping</h3>
-            <p className="text-gray-600">On orders over $200</p>
+            <h3 className="mb-2 text-slate-800 font-bold text-xl">Free Shipping</h3>
+            <p className="text-slate-600">On orders over $200</p>
           </div>
 
           <div className="p-6 text-center">
             <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full">
               <span className="text-3xl">🔒</span>
             </div>
-            <h3 className="mb-2 font-bold text-xl">Secure Payment</h3>
-            <p className="text-gray-600">100% secure transactions</p>
+            <h3 className="mb-2 text-slate-800 font-bold text-xl">Secure Payment</h3>
+            <p className="text-slate-600">100% secure transactions</p>
           </div>
 
           <div className="p-6 text-center">
             <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-orange-100 rounded-full">
               <span className="text-3xl">💯</span>
             </div>
-            <h3 className="mb-2 font-bold text-xl">Quality Guarantee</h3>
-            <p className="text-gray-600">30-day money back</p>
+            <h3 className="mb-2 text-slate-800 font-bold text-xl">Quality Guarantee</h3>
+            <p className="text-slate-600">30-day money back</p>
           </div>
         </div>
       </section>
