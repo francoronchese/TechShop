@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Plus, Trash2 } from "lucide-react";
+import { MapPin, Plus, Trash2, Check, X } from "lucide-react";
 import toast from "react-hot-toast";
 import {
   useGetAddressesQuery,
@@ -30,19 +30,22 @@ export const AddressesPage = () => {
     setAddressForm({ ...addressForm, [e.target.name]: e.target.value });
   };
 
-  const handleAddAddress = async (e) => {
-    e.preventDefault();
+  const handleReset = () => {
+    setAddressForm({
+      address: "",
+      city: "",
+      state: "",
+      country: "",
+      postal_code: "",
+    });
+    setShowAddressForm(false);
+  };
+
+  const handleAddAddress = async () => {
     try {
       await addAddress(addressForm).unwrap();
       toast.success("Address added successfully");
-      setAddressForm({
-        address: "",
-        city: "",
-        state: "",
-        country: "",
-        postal_code: "",
-      });
-      setShowAddressForm(false);
+      handleReset();
     } catch (error) {
       toast.error(error.data?.message || "Error adding address");
     }
@@ -76,23 +79,43 @@ export const AddressesPage = () => {
               Manage your saved addresses
             </p>
           </div>
-          <Button
-            onClick={() => setShowAddressForm(!showAddressForm)}
-            icon={Plus}
-            iconSize={16}
-            className="w-full sm:w-auto justify-center bg-orange-500 text-white hover:bg-orange-600"
-          >
-            Add New
-          </Button>
+          {/* Dynamic buttons based on form state */}
+          {showAddressForm ? (
+            <div className="flex flex-col sm:flex-row items-center gap-2">
+              <Button
+                onClick={handleReset}
+                className="w-full sm:w-auto justify-center bg-slate-700 text-white hover:bg-slate-800"
+                icon={X}
+                iconSize={20}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleAddAddress}
+                disabled={addingAddress}
+                className={`w-full sm:w-auto justify-center bg-orange-500 text-white hover:bg-orange-600 ${addingAddress ? "opacity-85 px-10" : ""}`}
+                icon={addingAddress ? null : Check}
+                iconSize={20}
+              >
+                {addingAddress ? <Loader /> : "Save"}
+              </Button>
+            </div>
+          ) : (
+            <Button
+              onClick={() => setShowAddressForm(true)}
+              icon={Plus}
+              iconSize={16}
+              className="w-full sm:w-auto justify-center bg-orange-500 text-white hover:bg-orange-600"
+            >
+              Add New
+            </Button>
+          )}
         </div>
 
         {/* New address form */}
         {showAddressForm && (
-          <form
-            onSubmit={handleAddAddress}
-            className="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div className="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label="Address"
                 name="address"
@@ -129,26 +152,11 @@ export const AddressesPage = () => {
                 placeholder="Postal code"
               />
             </div>
-            <div className="flex gap-2">
-              <Button
-                type="submit"
-                disabled={addingAddress}
-                className={`bg-orange-500 text-white hover:bg-orange-600 ${addingAddress ? "opacity-85 px-10" : ""}`}
-              >
-                {addingAddress ? <Loader /> : "Save Address"}
-              </Button>
-              <Button
-                onClick={() => setShowAddressForm(false)}
-                className="bg-slate-200 text-slate-700 hover:bg-slate-300"
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
+          </div>
         )}
 
         {/* Addresses list */}
-        {addresses.length === 0 ? (
+        {addresses.length === 0 && !showAddressForm ? (
           <div className="py-20 flex flex-col items-center justify-center text-center">
             <MapPin className="w-12 h-12 text-slate-300 mb-3" />
             <p className="text-slate-400 text-sm">No saved addresses yet</p>
