@@ -67,6 +67,7 @@ const CheckoutPage = () => {
       price: item.price,
     })),
     total,
+    shippingCost,
     shippingAddress: selectedAddress,
     paymentMethod,
     email: userState.email, // Pre-fill email in Stripe checkout
@@ -148,7 +149,7 @@ const CheckoutPage = () => {
         {/* Left column - Shipping Address + Payment */}
         <div className="flex flex-col gap-6">
           {/* Shipping Address Section */}
-          <div className="p-6 bg-white border border-slate-200 rounded-xl">
+          <div className="p-6 bg-white border border-slate-300 rounded-xl">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-5">
               <h2 className="flex items-center gap-2 text-lg font-bold text-slate-800">
                 <MapPin size={20} className="text-orange-500" />
@@ -267,7 +268,7 @@ const CheckoutPage = () => {
           </div>
 
           {/* Payment Method Section */}
-          <div className="p-6 bg-white border border-slate-200 rounded-xl">
+          <div className="p-6 bg-white border border-slate-300 rounded-xl">
             <h2 className="flex items-center gap-2 text-lg font-bold text-gray-900 mb-5">
               <CreditCard size={20} className="text-orange-500" />
               Payment Method
@@ -355,7 +356,7 @@ const CheckoutPage = () => {
 
         {/* Right column - Order Summary */}
         <div className="lg:sticky lg:top-24 lg:self-start">
-          <div className="p-6 bg-white border border-slate-200 rounded-xl">
+          <div className="p-6 bg-white border border-slate-300 rounded-xl">
             <h2 className="text-lg font-bold text-gray-900 mb-5">
               Order Summary
             </h2>
@@ -389,7 +390,7 @@ const CheckoutPage = () => {
             </div>
 
             {/* Total */}
-            <div className="border-t border-slate-200 pt-4">
+            <div className="border-t border-slate-300 pt-4">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm text-slate-500">Subtotal</span>
                 <span className="text-sm font-semibold text-slate-800">
@@ -402,7 +403,7 @@ const CheckoutPage = () => {
                   {shippingCost === 0 ? "FREE" : "$10.00"}
                 </span>
               </div>
-              <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-200">
+              <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-300">
                 <span className="font-bold text-slate-900">Total</span>
                 <span className="text-xl font-black text-orange-600">
                   ${total.toFixed(2)}

@@ -223,7 +223,7 @@ export const ProductPage = () => {
   };
 
   return (
-    <div className="p-6 mt-6 lg:mt-0 bg-white rounded-xl shadow-sm border border-slate-200">
+    <div className="p-6 mt-6 lg:mt-0 bg-white rounded-xl shadow-sm border border-slate-300">
       {/* Product Management header with action buttons */}
       <ProductHeader
         isCreating={isCreating}

@@ -2,7 +2,7 @@ import { Camera } from 'lucide-react';
 
 const ProfileAvatar = ({ formData, user, isEditing, onPhotoUpload }) => {
   return (
-    <div className='flex flex-col min-[450px]:flex-row items-center gap-6 mb-6 min-[450px]:mb-8 pb-4 min-[450px]:pb-8 border-b border-slate-200'>
+    <div className='flex flex-col min-[450px]:flex-row items-center gap-6 mb-6 min-[450px]:mb-8 pb-4 min-[450px]:pb-8 border-b border-slate-300'>
       <div className='relative mt-2'>
         {formData.avatar ? (
           <img

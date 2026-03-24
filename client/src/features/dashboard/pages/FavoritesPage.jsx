@@ -19,7 +19,7 @@ export const FavoritesPage = () => {
   }, [favorites, page]);
 
   return (
-    <div className="p-6 mt-6 lg:mt-0 bg-white rounded-xl shadow-sm border border-slate-200">
+    <div className="p-6 mt-6 lg:mt-0 bg-white rounded-xl shadow-sm border border-slate-300">
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-slate-800 text-lg font-bold">My Favorites</h2>

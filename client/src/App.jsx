@@ -26,6 +26,8 @@ import {
   ProductPage,
   FavoritesPage,
   AddressesPage,
+  OrdersPage,
+  OrderDetailPage,
 } from "@features/dashboard";
 import { ProtectedRoutes } from "./routes/ProtectedRoutes";
 import { PublicRoutes } from "./routes/PublicRoutes";
@@ -73,7 +75,8 @@ function App() {
                 element={<Navigate to="/dashboard/profile" replace />}
               />
               <Route path="profile" element={<ProfilePage />} />
-              {/* <Route path='orders' element={<OrdersPage />} /> */}
+              <Route path="orders" element={<OrdersPage />} />
+              <Route path="orders/:id" element={<OrderDetailPage />} />
               <Route path="favorites" element={<FavoritesPage />} />
               <Route path="addresses" element={<AddressesPage />} />
               <Route path="categories" element={<CategoryPage />} />

@@ -117,7 +117,7 @@ export const SubCategoryPage = () => {
   };
 
   return (
-    <div className="p-6 mt-6 lg:mt-0 bg-white rounded-xl shadow-sm border border-slate-200">
+    <div className="p-6 mt-6 lg:mt-0 bg-white rounded-xl shadow-sm border border-slate-300">
       {/* Sub-Category Management header with action buttons */}
       <SubCategoryHeader
         isCreating={isCreating}

@@ -11,7 +11,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 export const createOrder = asyncHandler(async (req, res) => {
   // Get userId from authentication middleware
   const userId = req.userId;
-  const { items, total, shippingAddress, paymentMethod } = req.body;
+  const { items, shippingCost, total, shippingAddress, paymentMethod } =
+    req.body;
 
   // Validate required fields
   if (!items || items.length === 0) {
@@ -70,6 +71,7 @@ export const createOrder = asyncHandler(async (req, res) => {
       quantity: item.quantity,
       price: item.price,
     })),
+    shippingCost,
     total,
     shippingAddress,
     paymentMethod,
@@ -256,6 +258,14 @@ export const confirmStripeOrder = asyncHandler(async (req, res) => {
       price: item.price.unit_amount / 100,
     }));
 
+  // Calculate shipping cost from the difference between total and items subtotal
+  const itemsSubtotal = items.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0,
+  );
+  const shippingCost =
+    Math.round((session.amount_total / 100 - itemsSubtotal) * 100) / 100;
+
   // Decrease stock for each product in the order
   for (const item of items) {
     // $inc operator atomically increments or decrements a field, negative value decrements
@@ -272,6 +282,7 @@ export const confirmStripeOrder = asyncHandler(async (req, res) => {
       quantity: item.quantity,
       price: item.price,
     })),
+    shippingCost,
     total: session.amount_total / 100,
     shippingAddress,
     paymentMethod,
@@ -300,6 +311,7 @@ export const confirmStripeOrder = asyncHandler(async (req, res) => {
 });
 
 // GET USER ORDERS CONTROLLER
+// Returns all orders placed by the authenticated user
 export const getOrders = asyncHandler(async (req, res) => {
   // Get userId from authentication middleware
   const userId = req.userId;
@@ -320,6 +332,7 @@ export const getOrders = asyncHandler(async (req, res) => {
 });
 
 // GET ORDER BY ID CONTROLLER
+// Returns a single order by ID, only if it belongs to the authenticated user
 export const getOrderById = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const userId = req.userId;

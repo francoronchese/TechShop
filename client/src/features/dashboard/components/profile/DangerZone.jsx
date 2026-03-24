@@ -30,7 +30,7 @@ const DangerZone = ({ onDelete }) => {
 
   return (
     <>
-      <div className='p-6 mt-6 bg-white rounded-xl shadow-sm border border-slate-200'>
+      <div className='p-6 mt-6 bg-white rounded-xl shadow-sm border border-slate-300'>
         <h2 className='text-slate-800 text-lg font-bold'>Danger Zone</h2>
         <p className='text-sm text-slate-600'>
           Irreversible actions on your account
