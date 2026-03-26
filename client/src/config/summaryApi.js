@@ -178,6 +178,10 @@ const SummaryApi = {
     url: "/api/order/admin/update-status",
     method: "PUT",
   },
+  getOrderByIdAdmin: {
+    url: "/api/order/admin/get/:id",
+    method: "GET",
+  },
 
   // FAVORITES ENDPOINTS
   addToFavorites: {

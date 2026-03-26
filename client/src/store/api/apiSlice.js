@@ -277,6 +277,12 @@ export const apiSlice = createApi({
       // Invalidates both tags so the admin list and the user order list stay in sync
       invalidatesTags: ["AdminOrder", "Order"],
     }),
+    // GET: Fetches a single order by its ID (Admin only)
+    getOrderByIdAdmin: builder.query({
+      query: (id) => SummaryApi.getOrderByIdAdmin.url.replace(":id", id),
+      transformResponse: (res) => res.data,
+      providesTags: (result, error, id) => [{ type: "AdminOrder", id }],
+    }),
 
     // FAVORITES ENDPOINTS
     // GET: Fetches all favorites for the authenticated user
@@ -339,6 +345,7 @@ export const {
   useGetOrderByIdQuery,
   useGetAllOrdersQuery,
   useUpdateOrderStatusMutation,
+  useGetOrderByIdAdminQuery,
   // Favorites hooks
   useGetFavoritesQuery,
   useAddToFavoritesMutation,

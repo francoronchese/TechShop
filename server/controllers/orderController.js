@@ -443,3 +443,37 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
     data: updatedOrder,
   });
 });
+
+// GET ORDER BY ID CONTROLLER (ADMIN ONLY)
+// Returns a single order by ID regardless of the owner
+export const getOrderByIdAdmin = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({
+      message: "Provide order ID",
+      error: true,
+      success: false,
+    });
+  }
+
+  // Admin can access any order regardless of user
+  const order = await OrderModel.findById(id)
+    .populate({ path: "items.product" })
+    .populate("user", "name email");
+
+  if (!order) {
+    return res.status(404).json({
+      message: "Order not found",
+      error: true,
+      success: false,
+    });
+  }
+
+  return res.json({
+    message: "Order retrieved successfully",
+    error: false,
+    success: true,
+    data: order,
+  });
+});

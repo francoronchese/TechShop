@@ -1,6 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { ArrowLeft, MapPin, ShoppingBag } from "lucide-react";
-import { useGetOrderByIdQuery } from "@store/api/apiSlice";
+import {
+  useGetOrderByIdQuery,
+  useGetOrderByIdAdminQuery,
+} from "@store/api/apiSlice";
 import { PageLoader, Button } from "@components";
 
 // Map order status to color classes
@@ -27,9 +31,20 @@ const PAYMENT_STATUS_COLORS = {
 export const OrderDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  // Get user role from Redux store to determine which endpoint to use
+  const isAdmin = useSelector((state) => state.user.role) === "Admin";
 
-  // RTK Query hook to fetch order by ID
-  const { data: order, isLoading } = useGetOrderByIdQuery(id);
+  // Use admin endpoint if user is admin, otherwise use user endpoint
+  const { data: orderUser, isLoading: loadingUser } = useGetOrderByIdQuery(id, {
+    skip: isAdmin,
+  });
+  const { data: orderAdmin, isLoading: loadingAdmin } =
+    useGetOrderByIdAdminQuery(id, {
+      skip: !isAdmin,
+    });
+
+  const order = isAdmin ? orderAdmin : orderUser;
+  const isLoading = isAdmin ? loadingAdmin : loadingUser;
 
   if (isLoading) {
     return (
@@ -63,7 +78,9 @@ export const OrderDetailPage = () => {
             </p>
           </div>
           <Button
-            onClick={() => navigate("/dashboard/orders")}
+            onClick={() =>
+              navigate(isAdmin ? "/dashboard/all-orders" : "/dashboard/orders")
+            }
             icon={ArrowLeft}
             iconSize={16}
             className="w-full sm:w-auto justify-center bg-slate-700 text-white hover:bg-slate-800"
@@ -126,6 +143,19 @@ export const OrderDetailPage = () => {
             </span>
           </div>
         </div>
+
+        {/* Customer info - only shown to ADMIN */}
+        {isAdmin && order.user?.name && (
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-300 mb-6">
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+              Customer
+            </p>
+            <p className="text-sm font-semibold text-slate-800">
+              {order.user.name}
+            </p>
+            <p className="text-sm text-slate-500">{order.user.email}</p>
+          </div>
+        )}
 
         {/* Shipping address */}
         <div className="p-4 bg-slate-50 rounded-xl border border-slate-300 mb-6">

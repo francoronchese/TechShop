@@ -9,6 +9,7 @@ import {
   getOrderById,
   getAllOrders,
   updateOrderStatus,
+  getOrderByIdAdmin,
 } from "../controllers/orderController.js";
 
 const orderRouter = Router();
@@ -23,5 +24,6 @@ orderRouter.get("/get/:id", auth, getOrderById);
 // Protected routes (Admin only)
 orderRouter.get("/admin/get", auth, isAdmin, getAllOrders);
 orderRouter.put("/admin/update-status", auth, isAdmin, updateOrderStatus);
+orderRouter.get("/admin/get/:id", auth, isAdmin, getOrderByIdAdmin);
 
 export default orderRouter;
