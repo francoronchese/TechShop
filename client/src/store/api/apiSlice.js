@@ -15,6 +15,7 @@ export const apiSlice = createApi({
     "Cart",
     "Address",
     "Order",
+    "AdminOrder",
     "Favorites",
   ],
   endpoints: (builder) => ({
@@ -264,7 +265,7 @@ export const apiSlice = createApi({
     getAllOrders: builder.query({
       query: () => SummaryApi.getAllOrders.url,
       transformResponse: (res) => res.data,
-      providesTags: ["Order"],
+      providesTags: ["AdminOrder"],
     }),
     // PUT: Updates order status (Admin only)
     updateOrderStatus: builder.mutation({
@@ -273,7 +274,8 @@ export const apiSlice = createApi({
         method: SummaryApi.updateOrderStatus.method,
         body,
       }),
-      invalidatesTags: ["Order"],
+      // Invalidates both tags so the admin list and the user order list stay in sync
+      invalidatesTags: ["AdminOrder", "Order"],
     }),
 
     // FAVORITES ENDPOINTS

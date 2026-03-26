@@ -7,3 +7,4 @@ export { FavoritesPage } from "./pages/FavoritesPage.jsx";
 export { AddressesPage } from "./pages/AddressesPage.jsx";
 export { OrdersPage } from "./pages/OrdersPage.jsx";
 export { OrderDetailPage } from "./pages/OrderDetailPage.jsx";
+export { AdminOrdersPage } from "./pages/AdminOrdersPage.jsx";

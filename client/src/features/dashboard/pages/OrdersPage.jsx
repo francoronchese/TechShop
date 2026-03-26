@@ -4,7 +4,7 @@ import { useGetOrdersQuery } from "@store/api/apiSlice";
 import { useNavigate } from "react-router-dom";
 import { PageLoader, PaginationControls, Button } from "@components";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 // Map order status to color classes
 const STATUS_COLORS = {

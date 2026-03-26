@@ -4,6 +4,7 @@ import SummaryApi, { baseURL } from "@config/summaryApi";
 import { endUserSession, setUserDetails } from "@store/slices/userSlice";
 import { setCart, clearCartState } from "@store/slices/cartSlice";
 import { setFavorites, clearFavoritesState } from "@store/slices/favoritesSlice";
+import { apiSlice } from "@store/api/apiSlice"; 
 
 // Checks user authentication status on app load
 // Automatically refreshes access token when expired using refresh token
@@ -29,6 +30,8 @@ export const useAuthCheck = () => {
       dispatch(endUserSession());
       dispatch(clearCartState());
       dispatch(clearFavoritesState());
+      // Clear private user data from RTK Query cache on logout
+      dispatch(apiSlice.util.invalidateTags(["Order", "AdminOrder", "Address", "Favorites", "Cart"]));
     };
 
     // Helper function to update Redux store with user data

@@ -10,11 +10,12 @@ import {
   Loader,
   SearchBar,
 } from "@components";
+import MobileMenu from "@layouts/MobileMenu";
 import SummaryApi, { baseURL } from "@config/summaryApi";
 import { endUserSession } from "@store/slices/userSlice";
 import { clearCartState } from "@store/slices/cartSlice";
 import { clearFavoritesState } from "@store/slices/favoritesSlice";
-import MobileMenu from "@layouts/MobileMenu";
+import { apiSlice } from "@store/api/apiSlice";
 
 const Header = () => {
   const [loading, setLoading] = useState(false);
@@ -51,6 +52,16 @@ const Header = () => {
         dispatch(clearCartState());
         // Clear favorites from Redux store
         dispatch(clearFavoritesState());
+        // Clear private user data from RTK Query cache on logout
+        dispatch(
+          apiSlice.util.invalidateTags([
+            "Order",
+            "AdminOrder",
+            "Address",
+            "Favorites",
+            "Cart",
+          ]),
+        );
         // Clear localStorage authentication flag
         // isLoggedIn: Used by ProtectedRoutes & PublicRoutes
         localStorage.removeItem("isLoggedIn");

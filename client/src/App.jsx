@@ -28,6 +28,7 @@ import {
   AddressesPage,
   OrdersPage,
   OrderDetailPage,
+  AdminOrdersPage,
 } from "@features/dashboard";
 import { ProtectedRoutes } from "./routes/ProtectedRoutes";
 import { PublicRoutes } from "./routes/PublicRoutes";
@@ -77,6 +78,7 @@ function App() {
               <Route path="profile" element={<ProfilePage />} />
               <Route path="orders" element={<OrdersPage />} />
               <Route path="orders/:id" element={<OrderDetailPage />} />
+              <Route path="all-orders" element={<AdminOrdersPage />} />
               <Route path="favorites" element={<FavoritesPage />} />
               <Route path="addresses" element={<AddressesPage />} />
               <Route path="categories" element={<CategoryPage />} />

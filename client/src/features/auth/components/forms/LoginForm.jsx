@@ -9,6 +9,7 @@ import { setUserDetails } from "@store/slices/userSlice";
 import { setCart } from "@store/slices/cartSlice";
 import { setFavorites } from "@store/slices/favoritesSlice";
 import { useMergeCartMutation } from "@store/api/apiSlice";
+import { apiSlice } from "@store/api/apiSlice";
 
 const LoginForm = () => {
   const [loading, setLoading] = useState(false);
@@ -132,6 +133,8 @@ const LoginForm = () => {
           email: "",
           password: "",
         });
+        // Clear previous user's cached data before loading new session
+        dispatch(apiSlice.util.invalidateTags(["Order", "AdminOrder", "Address", "Favorites", "Cart"]));
         // Redirect to home page after successful login
         navigate("/");
       }

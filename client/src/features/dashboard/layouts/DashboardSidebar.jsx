@@ -8,6 +8,7 @@ import {
   Package,
   Folder,
   FolderOpen,
+  ClipboardList,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 
@@ -30,6 +31,7 @@ export const DashboardSidebar = () => {
     { to: "/dashboard/favorites", label: "Favorites", icon: Heart },
     { to: "/dashboard/addresses", label: "Addresses", icon: MapPin },
     { to: "/dashboard/users", label: "Users", icon: Users },
+    { to: "/dashboard/all-orders", label: "All Orders", icon: ClipboardList },
     { to: "/dashboard/products", label: "Products", icon: Package },
     { to: "/dashboard/categories", label: "Categories", icon: Folder },
     {

@@ -43,7 +43,9 @@ export const OrderDetailPage = () => {
     return (
       <section className="max-w-7xl mx-auto">
         <div className="p-6 mt-6 lg:mt-0 bg-white rounded-xl shadow-sm border border-slate-300">
-          <p className="text-slate-500 text-sm text-center py-20">Order not found</p>
+          <p className="text-slate-500 text-sm text-center py-20">
+            Order not found
+          </p>
         </div>
       </section>
     );
@@ -91,7 +93,9 @@ export const OrderDetailPage = () => {
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
               Order Status
             </p>
-            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${STATUS_COLORS[order.orderStatus]}`}>
+            <span
+              className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${STATUS_COLORS[order.orderStatus]}`}
+            >
               {order.orderStatus}
             </span>
           </div>
@@ -101,8 +105,12 @@ export const OrderDetailPage = () => {
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
               Payment Method
             </p>
-            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${PAYMENT_METHOD_COLORS[order.paymentMethod]}`}>
-              {order.paymentMethod === "online_payment" ? "Online Payment" : "Cash on Delivery"}
+            <span
+              className={`px-2.5 py-1 rounded-full text-xs font-semibold ${PAYMENT_METHOD_COLORS[order.paymentMethod]}`}
+            >
+              {order.paymentMethod === "online_payment"
+                ? "Online Payment"
+                : "Cash on Delivery"}
             </span>
           </div>
 
@@ -111,7 +119,9 @@ export const OrderDetailPage = () => {
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
               Payment Status
             </p>
-            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${PAYMENT_STATUS_COLORS[order.paymentStatus]}`}>
+            <span
+              className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${PAYMENT_STATUS_COLORS[order.paymentStatus]}`}
+            >
               {order.paymentStatus}
             </span>
           </div>
@@ -188,7 +198,9 @@ export const OrderDetailPage = () => {
             <div className="flex items-center justify-between gap-8 w-full sm:w-64">
               <span className="text-sm text-slate-500">Shipping</span>
               <span className="text-sm font-semibold text-green-600">
-                {order.shippingCost === 0 ? "FREE" : `$${order.shippingCost.toFixed(2)}`}
+                {order.shippingCost === 0
+                  ? "FREE"
+                  : `$${order.shippingCost.toFixed(2)}`}
               </span>
             </div>
           </div>
