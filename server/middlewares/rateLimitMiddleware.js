@@ -1,12 +1,11 @@
-import rateLimit from 'express-rate-limit';
+import rateLimit from "express-rate-limit";
 
-// Rate limiter for login - 10 attempts every 10 minutes
-export const loginLimiter = rateLimit({
-  windowMs: 10 * 60 * 1000,
+// Rate limiter for sensitive auth endpoints - 10 attempts every 15 minutes
+export const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
   max: 10,
   message: {
-    message:
-      'Too many login attempts. Please try again in 10 minutes or reset your password',
+    message: "Too many attempts. Please try again in 15 minutes",
     error: true,
     success: false,
   },
