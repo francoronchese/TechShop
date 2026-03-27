@@ -8,6 +8,8 @@ import verifyEmailTemplate from "../utils/verifyEmailTemplate.js";
 import generateAccessToken from "../utils/generateAccessToken.js";
 import generateRefreshToken from "../utils/generateRefreshToken.js";
 import forgotPasswordTemplate from "../utils/forgotPasswordTemplate.js";
+import CartModel from "../models/CartModel.js";
+import AddressModel from "../models/AddressModel.js";
 
 //REGISTER CONTROLLERS
 export const registerUser = asyncHandler(async (req, res) => {
@@ -586,6 +588,12 @@ export const deleteUser = asyncHandler(async (req, res) => {
       success: false,
     });
   }
+
+  // Clear cart items associated with the user
+  await CartModel.deleteMany({ user: userId });
+
+  // Clear addresses associated with the user
+  await AddressModel.deleteMany({ _id: { $in: user.addresses } });
 
   // Permanent delete user from database
   await UserModel.findByIdAndDelete(userId);
