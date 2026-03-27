@@ -421,20 +421,39 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
     });
   }
 
-  // Update order status in database
-  const updatedOrder = await OrderModel.findByIdAndUpdate(
-    _id,
-    { orderStatus },
-    { new: true },
-  );
+  // Fetch order before updating to access current status and items
+  const order = await OrderModel.findById(_id);
 
-  if (!updatedOrder) {
+  if (!order) {
     return res.status(404).json({
       message: "Order not found",
       error: true,
       success: false,
     });
   }
+
+  // Restore stock when order is cancelled, decrease stock when order is reactivated
+  // Only applies if the status is actually changing to avoid double updates
+  if (orderStatus === "cancelled" && order.orderStatus !== "cancelled") {
+    for (const item of order.items) {
+      await ProductModel.findByIdAndUpdate(item.product, {
+        $inc: { stock: item.quantity }, // Restore stock
+      });
+    }
+  } else if (orderStatus !== "cancelled" && order.orderStatus === "cancelled") {
+    for (const item of order.items) {
+      await ProductModel.findByIdAndUpdate(item.product, {
+        $inc: { stock: -item.quantity }, // Decrease stock
+      });
+    }
+  }
+
+  // Update order status in database
+  const updatedOrder = await OrderModel.findByIdAndUpdate(
+    _id,
+    { orderStatus },
+    { new: true },
+  );
 
   return res.json({
     message: "Order status updated successfully",
