@@ -65,6 +65,12 @@ export const AdminOrdersPage = () => {
       const matchesSearch =
         !search.trim() ||
         order._id.toLowerCase().includes(search.toLowerCase()) ||
+        order.customerInfo?.name
+          ?.toLowerCase()
+          .includes(search.toLowerCase()) ||
+        order.customerInfo?.email
+          ?.toLowerCase()
+          .includes(search.toLowerCase()) ||
         order.user?.name?.toLowerCase().includes(search.toLowerCase()) ||
         order.user?.email?.toLowerCase().includes(search.toLowerCase());
 
@@ -166,10 +172,10 @@ export const AdminOrdersPage = () => {
                       {/* Customer */}
                       <td className="py-3 pr-4">
                         <p className="font-semibold text-slate-800 line-clamp-1">
-                          {order.user?.name || "—"}
+                          {order.customerInfo.name || "—"}
                         </p>
                         <p className="text-xs text-slate-400 line-clamp-1">
-                          {order.user?.email || "—"}
+                          {order.customerInfo.email || "—"}
                         </p>
                       </td>
 
@@ -232,7 +238,7 @@ export const AdminOrdersPage = () => {
                         #{order._id.slice(-8).toUpperCase()}
                       </p>
                       <p className="text-xs text-slate-500">
-                        {order.user?.name}
+                        {order.customerInfo.name }
                       </p>
                     </div>
                     <p className="font-bold text-orange-600">

@@ -53,6 +53,10 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    customerInfo: {
+      name: { type: String, default: "" },
+      email: { type: String, default: "" },
+    },
   },
   {
     timestamps: true,

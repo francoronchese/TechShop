@@ -63,9 +63,17 @@ export const createOrder = asyncHandler(async (req, res) => {
     });
   }
 
+  // Fetch user to store customer info in the order
+  // Persists name and email even if the user account is deleted later
+  const user = await UserModel.findById(userId).select("name email");
+
   // Create order object
   const orderData = {
     user: userId,
+    customerInfo: {
+      name: user.name,
+      email: user.email,
+    },
     items: items.map((item) => ({
       product: item.productId,
       quantity: item.quantity,
@@ -274,9 +282,17 @@ export const confirmStripeOrder = asyncHandler(async (req, res) => {
     });
   }
 
+  // Fetch user to store customer info in the order
+  // Persists name and email even if the user account is deleted later
+  const user = await UserModel.findById(userId).select("name email");
+
   // Create order in database
   const newOrder = await OrderModel.create({
     user: userId,
+    customerInfo: {
+      name: user.name,
+      email: user.email,
+    },
     items: items.map((item) => ({
       product: item.productId,
       quantity: item.quantity,

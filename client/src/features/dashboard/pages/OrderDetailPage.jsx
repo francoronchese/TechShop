@@ -145,15 +145,15 @@ export const OrderDetailPage = () => {
         </div>
 
         {/* Customer info - only shown to ADMIN */}
-        {isAdmin && order.user?.name && (
+        {isAdmin && order.customerInfo.name && (
           <div className="p-4 bg-slate-50 rounded-xl border border-slate-300 mb-6">
             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
               Customer
             </p>
             <p className="text-sm font-semibold text-slate-800">
-              {order.user.name}
+              {order.customerInfo.name}
             </p>
-            <p className="text-sm text-slate-500">{order.user.email}</p>
+            <p className="text-sm text-slate-500">{order.customerInfo.email}</p>
           </div>
         )}
 
