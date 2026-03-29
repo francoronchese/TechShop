@@ -50,6 +50,22 @@ const SummaryApi = {
     url: "/api/user/delete-account",
     method: "DELETE",
   },
+  getAllUsers: {
+    url: "/api/user/admin/get",
+    method: "GET",
+  },
+  getUserById: {
+    url: "/api/user/admin/get/:id",
+    method: "GET",
+  },
+  updateUserStatus: {
+    url: "/api/user/admin/update-status",
+    method: "PUT",
+  },
+  updateUserRole: {
+    url: "/api/user/admin/update-role",
+    method: "PUT",
+  },
 
   // CATEGORY ENDPOINTS
   createCategory: {

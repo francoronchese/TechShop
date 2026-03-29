@@ -8,7 +8,7 @@ import {
 } from "@store/api/apiSlice";
 import { PageLoader, PaginationControls } from "@components";
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = 1;
 
 // Map order status to color classes
 const STATUS_COLORS = {
@@ -148,7 +148,7 @@ export const AdminOrdersPage = () => {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-200 ">
+                  <tr className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-300 ">
                     <th className="pb-3 pr-4">Order ID</th>
                     <th className="pb-3 pr-4">Customer</th>
                     <th className="pb-3 pr-4">Date</th>
@@ -157,7 +157,7 @@ export const AdminOrdersPage = () => {
                     <th className="pb-3">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
+                <tbody className="divide-y divide-slate-300">
                   {paginatedOrders.map((order) => (
                     <tr
                       key={order._id}

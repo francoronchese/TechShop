@@ -42,7 +42,10 @@ export const DashboardSidebar = () => {
   ];
 
   // Select the appropriate navigation set based on user role
-  const navItems = user.role === "Admin" ? adminNavItems : userNavItems;
+  const navItems =
+    user.role === "Admin" || user.role === "SuperAdmin"
+      ? adminNavItems
+      : userNavItems;
 
   return (
     <nav className="p-2 bg-white rounded-xl shadow-sm border border-slate-300">

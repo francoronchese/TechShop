@@ -29,6 +29,8 @@ import {
   OrdersPage,
   OrderDetailPage,
   AdminOrdersPage,
+  UsersPage,
+  UserDetailPage,
 } from "@features/dashboard";
 import { ProtectedRoutes } from "./routes/ProtectedRoutes";
 import { PublicRoutes } from "./routes/PublicRoutes";
@@ -84,6 +86,8 @@ function App() {
               <Route path="categories" element={<CategoryPage />} />
               <Route path="sub-categories" element={<SubCategoryPage />} />
               <Route path="products" element={<ProductPage />} />
+              <Route path="users" element={<UsersPage />} />
+              <Route path="users/:id" element={<UserDetailPage />} />
             </Route>
           </Route>
 

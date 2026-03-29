@@ -9,6 +9,7 @@ export const apiSlice = createApi({
   }),
   // Tags used to control the automated re-fetching logic
   tagTypes: [
+    "User",
     "Product",
     "Category",
     "SubCategory",
@@ -19,6 +20,38 @@ export const apiSlice = createApi({
     "Favorites",
   ],
   endpoints: (builder) => ({
+    // USER ADMIN ENDPOINTS
+    // GET: Fetches all users (Admin only)
+    getAllUsers: builder.query({
+      query: () => SummaryApi.getAllUsers.url,
+      transformResponse: (res) => res.data,
+      providesTags: ["User"],
+    }),
+    // GET: Fetches a single user by ID (Admin only)
+    getUserById: builder.query({
+      query: (id) => SummaryApi.getUserById.url.replace(":id", id),
+      transformResponse: (res) => res.data,
+      providesTags: (result, error, id) => [{ type: "User", id }],
+    }),
+    // PUT: Updates user status (Admin only)
+    updateUserStatus: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.updateUserStatus.url,
+        method: SummaryApi.updateUserStatus.method,
+        body,
+      }),
+      invalidatesTags: ["User"],
+    }),
+    // PUT: Updates user role (SuperAdmin only)
+    updateUserRole: builder.mutation({
+      query: (body) => ({
+        url: SummaryApi.updateUserRole.url,
+        method: SummaryApi.updateUserRole.method,
+        body,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
     // PRODUCT ENDPOINTS
     // GET: Fetches products with optional pagination and search filters
     getProducts: builder.query({
@@ -313,6 +346,11 @@ export const apiSlice = createApi({
 });
 
 export const {
+  // User admin hooks
+  useGetAllUsersQuery,
+  useGetUserByIdQuery,
+  useUpdateUserStatusMutation,
+  useUpdateUserRoleMutation,
   // Product hooks
   useGetProductsQuery,
   useGetProductByIdQuery,

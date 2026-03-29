@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 export const DashboardLayout = () => {
   // Access Redux user state to render role-specific content for either Admin or User
   const user = useSelector((state) => state.user);
-  const isAdmin = user.role === "Admin";
+  const isAdmin = user.role === "Admin" || user.role === "SuperAdmin";
 
   return (
     <div className="max-w-7xl mx-auto w-full">

@@ -97,6 +97,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 });
 
+//VERIFY EMAIL CONTROLLER
 export const verifyEmail = asyncHandler(async (req, res) => {
   //userId comes from the registerUser function where it's sent in the verification email
   //Frontend extracts userId from URL and sends it in request body
@@ -372,6 +373,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   });
 });
 
+// VERIFY OTP CONTROLLER
 export const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
   const { email, otp } = req.body;
 
@@ -432,6 +434,7 @@ export const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
   });
 });
 
+//RESET PASSWORD CONTROLLER
 export const resetPassword = asyncHandler(async (req, res) => {
   const { email, newPassword, confirmPassword } = req.body;
 
@@ -509,7 +512,9 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
 
   // Find user by ID, exclude sensitive information
   const user = await UserModel.findById(userId)
-    .select("-password -refresh_token")
+    .select(
+      "-password -refresh_token -forgot_password_otp -forgot_password_expiry -reset_password_expiry -reset_password_verified",
+    )
     .populate({
       path: "shopping_cart_items",
       populate: {
@@ -561,7 +566,9 @@ export const updateProfile = asyncHandler(async (req, res) => {
       mobile,
     },
     { new: true }, // Return the updated document instead of the old one
-  ).select("-password -refresh_token");
+  ).select(
+    "-password -refresh_token -forgot_password_otp -forgot_password_expiry -reset_password_expiry -reset_password_verified",
+  );
 
   // Return success response
   return res.json({
@@ -615,5 +622,182 @@ export const deleteUser = asyncHandler(async (req, res) => {
     message: "Account permanently deleted successfully",
     error: false,
     success: true,
+  });
+});
+
+// GET ALL USERS CONTROLLER (ADMIN ONLY)
+export const getAllUsers = asyncHandler(async (req, res) => {
+  // Find all users, exclude sensitive information
+  const users = await UserModel.find()
+    .select(
+      "-password -refresh_token -forgot_password_otp -forgot_password_expiry -reset_password_expiry -reset_password_verified",
+    )
+    .sort({ createdAt: -1 });
+
+  return res.json({
+    message: "Users retrieved successfully",
+    error: false,
+    success: true,
+    data: users,
+  });
+});
+
+// GET USER BY ID CONTROLLER (ADMIN ONLY)
+export const getUserById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({
+      message: "Provide user ID",
+      error: true,
+      success: false,
+    });
+  }
+
+  // Find user by ID, exclude sensitive information, populate orders with product details
+  const user = await UserModel.findById(id)
+    .select(
+      "-password -refresh_token -forgot_password_otp -forgot_password_expiry -reset_password_expiry -reset_password_verified",
+    )
+    .populate({
+      path: "orders",
+      populate: { path: "items.product" },
+    })
+    .populate("addresses");
+
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found",
+      error: true,
+      success: false,
+    });
+  }
+
+  // Sort orders by date descending after populate
+  user.orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  return res.json({
+    message: "User retrieved successfully",
+    error: false,
+    success: true,
+    data: user,
+  });
+});
+
+// UPDATE USER STATUS CONTROLLER (ADMIN ONLY)
+export const updateUserStatus = asyncHandler(async (req, res) => {
+  const { _id, status } = req.body;
+
+  if (!_id) {
+    return res.status(400).json({
+      message: "Provide user ID",
+      error: true,
+      success: false,
+    });
+  }
+
+  if (!status) {
+    return res.status(400).json({
+      message: "Provide status",
+      error: true,
+      success: false,
+    });
+  }
+
+  // Validate status value
+  const validStatuses = ["Active", "Inactive", "Suspended"];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({
+      message: "Invalid status",
+      error: true,
+      success: false,
+    });
+  }
+
+  const updatedUser = await UserModel.findByIdAndUpdate(
+    _id,
+    { status },
+    { new: true },
+  ).select(
+    "-password -refresh_token -forgot_password_otp -forgot_password_expiry -reset_password_expiry -reset_password_verified",
+  );
+
+  if (!updatedUser) {
+    return res.status(404).json({
+      message: "User not found",
+      error: true,
+      success: false,
+    });
+  }
+
+  return res.json({
+    message: "User status updated successfully",
+    error: false,
+    success: true,
+    data: updatedUser,
+  });
+});
+
+// UPDATE USER ROLE CONTROLLER (SUPER ADMIN ONLY)
+export const updateUserRole = asyncHandler(async (req, res) => {
+  const { _id, role } = req.body;
+
+  if (!_id) {
+    return res.status(400).json({
+      message: "Provide user ID",
+      error: true,
+      success: false,
+    });
+  }
+
+  if (!role) {
+    return res.status(400).json({
+      message: "Provide role",
+      error: true,
+      success: false,
+    });
+  }
+
+  // Validate role value
+  const validRoles = ["SuperAdmin", "Admin", "User"];
+  if (!validRoles.includes(role)) {
+    return res.status(400).json({
+      message: "Invalid role",
+      error: true,
+      success: false,
+    });
+  }
+
+  // Only SuperAdmin can change roles
+  // req.userRole is set by isAdminMiddleware
+  if (req.userRole !== "SuperAdmin") {
+    return res.status(403).json({
+      message: "Only the Super Admin can change user roles",
+      error: true,
+      success: false,
+    });
+  }
+
+  const updatedUser = await UserModel.findByIdAndUpdate(
+    _id,
+    { role },
+    { new: true },
+  ).select(
+    "-password -refresh_token -forgot_password_otp -forgot_password_expiry -reset_password_expiry -reset_password_verified",
+  );
+
+  if (!updatedUser) {
+    return res.status(404).json({
+      message: "User not found",
+      error: true,
+      success: false,
+    });
+  }
+
+  return res.json({
+    message: "User role updated successfully",
+    error: false,
+    success: true,
+    data: updatedUser,
   });
 });

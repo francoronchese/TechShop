@@ -78,9 +78,8 @@ export const OrderDetailPage = () => {
             </p>
           </div>
           <Button
-            onClick={() =>
-              navigate(isAdmin ? "/dashboard/all-orders" : "/dashboard/orders")
-            }
+            // Navigate back to the previous page in the browser history
+            onClick={() => navigate(-1)}
             icon={ArrowLeft}
             iconSize={16}
             className="w-full sm:w-auto justify-center bg-slate-700 text-white hover:bg-slate-800"

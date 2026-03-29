@@ -8,3 +8,5 @@ export { AddressesPage } from "./pages/AddressesPage.jsx";
 export { OrdersPage } from "./pages/OrdersPage.jsx";
 export { OrderDetailPage } from "./pages/OrderDetailPage.jsx";
 export { AdminOrdersPage } from "./pages/AdminOrdersPage.jsx";
+export { UsersPage } from "./pages/UsersPage.jsx";
+export { UserDetailPage } from "./pages/UserDetailPage.jsx";
