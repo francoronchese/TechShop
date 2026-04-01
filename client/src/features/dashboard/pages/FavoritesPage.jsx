@@ -1,15 +1,24 @@
-import { useMemo, useState } from "react";
+import { useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import { Heart } from "lucide-react";
 import { ProductCard, PaginationControls } from "@components";
 
 const ITEMS_PER_PAGE = 12;
 
 export const FavoritesPage = () => {
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = parseInt(searchParams.get("page")) || 1;
 
   // Get favorites from Redux store
   const favorites = useSelector((state) => state.favorites.items);
+
+  // Sync URL on mount if 'page' param is missing
+  useEffect(() => {
+    if (!searchParams.get("page")) {
+      setSearchParams({ page: 1 }, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Paginate favorites
   const totalPages = Math.ceil(favorites.length / ITEMS_PER_PAGE);
@@ -48,8 +57,8 @@ export const FavoritesPage = () => {
             page={page}
             totalPages={totalPages}
             totalCount={favorites.length}
-            onPrev={() => setPage((prev) => prev - 1)}
-            onNext={() => setPage((prev) => prev + 1)}
+            onPrev={() => setSearchParams({ page: page - 1 })}
+            onNext={() => setSearchParams({ page: page + 1 })}
           />
         </>
       )}

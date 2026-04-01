@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useEffect } from "react";
 import { ShoppingBag, ExternalLink } from "lucide-react";
 import { useGetOrdersQuery } from "@store/api/apiSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { PageLoader, PaginationControls, Button } from "@components";
 
 const ITEMS_PER_PAGE = 10;
@@ -22,11 +22,19 @@ const PAYMENT_METHOD_COLORS = {
 };
 
 export const OrdersPage = () => {
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = parseInt(searchParams.get("page")) || 1;
   const navigate = useNavigate();
 
   // RTK Query hook to fetch user orders
   const { data: orders = [], isLoading } = useGetOrdersQuery();
+
+  // Sync URL on mount if 'page' param is missing
+  useEffect(() => {
+    if (!searchParams.get("page")) {
+      setSearchParams({ page: 1 }, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Paginate orders client-side
   const totalPages = Math.ceil(orders.length / ITEMS_PER_PAGE);
@@ -117,8 +125,8 @@ export const OrdersPage = () => {
               page={page}
               totalPages={totalPages}
               totalCount={orders.length}
-              onPrev={() => setPage((prev) => prev - 1)}
-              onNext={() => setPage((prev) => prev + 1)}
+              onPrev={() => setSearchParams({ page: page - 1 })}
+              onNext={() => setSearchParams({ page: page + 1 })}
             />
           </>
         )}

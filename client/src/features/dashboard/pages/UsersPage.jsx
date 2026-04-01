@@ -1,12 +1,11 @@
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMemo, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Users, ExternalLink } from "lucide-react";
 import {
   useGetAllUsersQuery,
   useUpdateUserStatusMutation,
 } from "@store/api/apiSlice";
-
 import { PageLoader, PaginationControls, Button } from "@components";
 
 const ITEMS_PER_PAGE = 10;
@@ -29,12 +28,20 @@ const USER_STATUSES = ["Active", "Inactive", "Suspended"];
 
 export const UsersPage = () => {
   const navigate = useNavigate();
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = parseInt(searchParams.get("page")) || 1;
   const [search, setSearch] = useState("");
 
   // RTK Query hooks
   const { data: users = [], isLoading } = useGetAllUsersQuery();
   const [updateUserStatus] = useUpdateUserStatusMutation();
+
+  // Sync URL on mount if 'page' param is missing
+  useEffect(() => {
+    if (!searchParams.get("page")) {
+      setSearchParams({ page: 1 }, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Handle status change from dropdown
   const handleStatusChange = async (e, userId) => {
@@ -94,7 +101,7 @@ export const UsersPage = () => {
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              setPage(1);
+              setSearchParams({ page: 1 });
             }}
             className="w-full max-w-sm p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-orange-500 transition-all shadow-sm"
           />
@@ -244,9 +251,9 @@ export const UsersPage = () => {
                         onChange={(e) => handleStatusChange(e, user._id)}
                         className={`px-2.5 py-1 rounded-full text-xs font-semibold border-0 outline-none cursor-pointer ${STATUS_COLORS[user.status]}`}
                       >
-                        {USER_STATUSES.map((status) => (
-                          <option key={status} value={status}>
-                            {status}
+                        {USER_STATUSES.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
                           </option>
                         ))}
                       </select>
@@ -269,8 +276,8 @@ export const UsersPage = () => {
               page={page}
               totalPages={totalPages}
               totalCount={filteredUsers.length}
-              onPrev={() => setPage((prev) => prev - 1)}
-              onNext={() => setPage((prev) => prev + 1)}
+              onPrev={() => setSearchParams({ page: page - 1 })}
+              onNext={() => setSearchParams({ page: page + 1 })}
             />
           </>
         )}

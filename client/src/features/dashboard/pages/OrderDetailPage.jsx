@@ -32,7 +32,8 @@ export const OrderDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   // Get user role from Redux store to determine which endpoint to use
-  const isAdmin = useSelector((state) => state.user.role) === "Admin";
+  const role = useSelector((state) => state.user.role);
+  const isAdmin = role === "Admin" || role === "SuperAdmin";
 
   // Use admin endpoint if user is admin, otherwise use user endpoint
   const { data: orderUser, isLoading: loadingUser } = useGetOrderByIdQuery(id, {

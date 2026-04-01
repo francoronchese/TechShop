@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMemo, useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { ClipboardList } from "lucide-react";
 import {
@@ -8,7 +8,7 @@ import {
 } from "@store/api/apiSlice";
 import { PageLoader, PaginationControls } from "@components";
 
-const ITEMS_PER_PAGE = 1;
+const ITEMS_PER_PAGE = 10;
 
 // Map order status to color classes
 const STATUS_COLORS = {
@@ -35,13 +35,21 @@ const PAYMENT_METHOD_COLORS = {
 
 export const AdminOrdersPage = () => {
   const navigate = useNavigate();
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = parseInt(searchParams.get("page")) || 1;
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
   // RTK Query hooks
   const { data: orders = [], isLoading } = useGetAllOrdersQuery();
   const [updateOrderStatus] = useUpdateOrderStatusMutation();
+
+  // Sync URL on mount if 'page' param is missing
+  useEffect(() => {
+    if (!searchParams.get("page")) {
+      setSearchParams({ page: 1 }, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
   // Handle status change from dropdown
   const handleStatusChange = async (e, orderId) => {
@@ -115,7 +123,7 @@ export const AdminOrdersPage = () => {
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
-              setPage(1);
+              setSearchParams({ page: 1 });
             }}
             className="flex-1 p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-orange-500 transition-all shadow-sm"
           />
@@ -123,7 +131,7 @@ export const AdminOrdersPage = () => {
             value={statusFilter}
             onChange={(e) => {
               setStatusFilter(e.target.value);
-              setPage(1);
+              setSearchParams({ page: 1 }); // Reset to first page on filter change
             }}
             className="p-2 text-sm border border-slate-300 rounded-lg outline-none focus:border-orange-500 bg-white shadow-sm cursor-pointer"
           >
@@ -148,7 +156,7 @@ export const AdminOrdersPage = () => {
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-300 ">
+                  <tr className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-300">
                     <th className="pb-3 pr-4">Order ID</th>
                     <th className="pb-3 pr-4">Customer</th>
                     <th className="pb-3 pr-4">Date</th>
@@ -238,7 +246,7 @@ export const AdminOrdersPage = () => {
                         #{order._id.slice(-8).toUpperCase()}
                       </p>
                       <p className="text-xs text-slate-500">
-                        {order.customerInfo.name }
+                        {order.customerInfo.name}
                       </p>
                     </div>
                     <p className="font-bold text-orange-600">
@@ -277,8 +285,8 @@ export const AdminOrdersPage = () => {
               page={page}
               totalPages={totalPages}
               totalCount={filteredOrders.length}
-              onPrev={() => setPage((prev) => prev - 1)}
-              onNext={() => setPage((prev) => prev + 1)}
+              onPrev={() => setSearchParams({ page: page - 1 })}
+              onNext={() => setSearchParams({ page: page + 1 })}
             />
           </>
         )}
