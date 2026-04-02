@@ -9,6 +9,7 @@ import SingleProductPage from "@pages/SingleProductPage";
 import NotFoundPage from "@pages/NotFoundPage";
 import CheckoutPage from "@pages/CheckoutPage";
 import OrderSuccessPage from "@pages/OrderSuccessPage";
+import { PageLoader } from "@components";
 import {
   LoginPage,
   SignUpPage,
@@ -37,7 +38,18 @@ import { PublicRoutes } from "./routes/PublicRoutes";
 
 function App() {
   // Check authentication on app load and page refresh
-  useAuthCheck();
+  // isChecking is true while the auth check is in progress
+  const { isChecking } = useAuthCheck();
+
+  // Show global loader while auth check resolves
+  // Prevents blank screens while the backend wakes up on Render
+  if (isChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <PageLoader />
+      </div>
+    );
+  }
 
   return (
     <>

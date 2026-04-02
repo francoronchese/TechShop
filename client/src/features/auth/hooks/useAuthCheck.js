@@ -1,16 +1,21 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import SummaryApi, { baseURL } from "@config/summaryApi";
 import { endUserSession, setUserDetails } from "@store/slices/userSlice";
 import { setCart, clearCartState } from "@store/slices/cartSlice";
-import { setFavorites, clearFavoritesState } from "@store/slices/favoritesSlice";
-import { apiSlice } from "@store/api/apiSlice"; 
+import {
+  setFavorites,
+  clearFavoritesState,
+} from "@store/slices/favoritesSlice";
+import { apiSlice } from "@store/api/apiSlice";
 
 // Checks user authentication status on app load
 // Automatically refreshes access token when expired using refresh token
 export const useAuthCheck = () => {
   // Send actions to update Redux store
   const dispatch = useDispatch();
+  // Controls global loading state while auth check is in progress
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     // Call backend logout endpoint to clear HTTP-only cookies
@@ -31,7 +36,15 @@ export const useAuthCheck = () => {
       dispatch(clearCartState());
       dispatch(clearFavoritesState());
       // Clear private user data from RTK Query cache on logout
-      dispatch(apiSlice.util.invalidateTags(["Order", "AdminOrder", "Address", "Favorites", "Cart"]));
+      dispatch(
+        apiSlice.util.invalidateTags([
+          "Order",
+          "AdminOrder",
+          "Address",
+          "Favorites",
+          "Cart",
+        ]),
+      );
     };
 
     // Helper function to update Redux store with user data
@@ -92,6 +105,9 @@ export const useAuthCheck = () => {
       } catch (error) {
         // Does not clear session on network errors
         console.error("Authentication check error:", error);
+      } finally {
+        // Always stop the loading state regardless of the auth result
+        setIsChecking(false);
       }
     };
 
@@ -143,4 +159,6 @@ export const useAuthCheck = () => {
 
     checkAuthStatus();
   }, [dispatch]);
+
+  return { isChecking };
 };
