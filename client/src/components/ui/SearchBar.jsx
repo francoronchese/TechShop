@@ -83,7 +83,13 @@ export const SearchBar = () => {
         onClick={handleSearch}
         className="flex items-center justify-center w-[50px] h-8 bg-orange-500 text-white rounded-r-full cursor-pointer"
       >
-        {isSearching ? <Loader /> : <Search />}
+        {isSearching ? (
+          <div className="flex items-center justify-center">
+            <Loader />
+          </div>
+        ) : (
+          <Search />
+        )}
       </div>
 
       {/* Search results dropdown */}

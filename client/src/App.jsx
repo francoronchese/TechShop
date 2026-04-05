@@ -55,7 +55,7 @@ function App() {
     <>
       <Toaster />
       <Header />
-      <main className="min-h-[calc(100vh-128px)] md:min-h-[calc(100vh-148px)] p-6 bg-slate-100">
+      <main className="min-h-screen p-6 bg-slate-100">
         <Routes>
           {/* Public Routes without auth check */}
           <Route path="/" element={<HomePage />} />
