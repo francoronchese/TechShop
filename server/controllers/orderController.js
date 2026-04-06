@@ -1,4 +1,6 @@
 import asyncHandler from "../utils/asyncHandler.js";
+import orderConfirmationTemplate from "../utils/orderConfirmationTemplate.js";
+import sendEmail from "../services/sendEmail.js";
 import OrderModel from "../models/OrderModel.js";
 import ProductModel from "../models/ProductModel.js";
 import CartModel from "../models/CartModel.js";
@@ -316,6 +318,27 @@ export const confirmStripeOrder = asyncHandler(async (req, res) => {
   await CartModel.deleteMany({ user: userId });
   await UserModel.findByIdAndUpdate(userId, {
     shopping_cart_items: [],
+  });
+
+  // Send order confirmation email to the customer
+  await sendEmail({
+    sendTo: session.customer_email,
+    subject: "Order Confirmed - TechShop",
+    html: orderConfirmationTemplate({
+      name: user.name,
+      orderId: newOrder._id.toString(),
+      items: items.map((item) => ({
+        name: lineItems.data.find(
+          (li) => li.price.product.metadata.productId === item.productId,
+        ).description,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+      total: session.amount_total / 100,
+      shippingCost,
+      shippingAddress,
+      paymentMethod,
+    }),
   });
 
   return res.json({
