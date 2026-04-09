@@ -1,4 +1,5 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import Header from "@layouts/Header";
 import Footer from "@layouts/Footer";
@@ -36,6 +37,15 @@ import {
 import { ProtectedRoutes } from "./routes/ProtectedRoutes";
 import { PublicRoutes } from "./routes/PublicRoutes";
 
+// Scrolls to top of page on every route change
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
 function App() {
   // Check authentication on app load and page refresh
   // isChecking is true while the auth check is in progress
@@ -52,7 +62,10 @@ function App() {
   }
 
   return (
-    <>
+    <> 
+      {/* Scroll to top on route change */}
+      <ScrollToTop />
+      
       <Toaster />
       <Header />
       <main className="min-h-screen p-6 bg-slate-100">
