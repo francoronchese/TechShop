@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { Toaster } from "react-hot-toast";
+import { Helmet } from "react-helmet-async";
 import Header from "@layouts/Header";
 import Footer from "@layouts/Footer";
 import HomePage from "@pages/HomePage";
@@ -62,10 +63,19 @@ function App() {
   }
 
   return (
-    <> 
+    <>
+      {/* Default meta tags - overridden by individual pages */}
+      <Helmet>
+        <title>TechShop - Next Generation Technology</title>
+        <meta
+          name="description"
+          content="Your premier destination for high-end technology and digital lifestyle products."
+        />
+      </Helmet>
+
       {/* Scroll to top on route change */}
       <ScrollToTop />
-      
+
       <Toaster />
       <Header />
       <main className="min-h-screen p-6 bg-slate-100">

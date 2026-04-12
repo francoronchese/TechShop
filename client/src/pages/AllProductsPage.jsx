@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { useSearchParams, Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import {
   useGetProductsQuery,
   useGetCategoriesQuery,
@@ -79,7 +80,13 @@ const AllProductsPage = () => {
   // Scroll to top when filters or page change
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, [page, selectedCategoryId, selectedSubCategoryId, priceMinParam, priceMaxParam]);
+  }, [
+    page,
+    selectedCategoryId,
+    selectedSubCategoryId,
+    priceMinParam,
+    priceMaxParam,
+  ]);
 
   // Sync expandedCategoryId with selectedCategoryId from URL on mount
   useEffect(() => {
@@ -183,193 +190,220 @@ const AllProductsPage = () => {
   );
 
   return (
-    <section className="max-w-7xl mx-auto">
-      {/* Page header with dynamic breadcrumb */}
-      <div className="mb-8 mt-4">
-        <div className="flex items-center gap-2 text-sm text-slate-500 mb-1">
-          <Link to="/" className="hover:text-orange-500 transition-colors">
-            Home
-          </Link>
-          <ChevronRight size={14} />
-          <span
-            className={
-              selectedCategoryId
-                ? "hover:text-orange-500 transition-colors cursor-pointer"
-                : "text-slate-700 font-medium"
-            }
-            onClick={() => selectedCategoryId && clearFilters()}
-          >
-            All Products
-          </span>
-          {selectedCategoryId && (
-            <>
-              <ChevronRight size={14} />
-              <span
-                className={
-                  selectedSubCategoryId
-                    ? "hover:text-orange-500 transition-colors cursor-pointer"
-                    : "text-slate-700 font-medium"
-                }
-                onClick={() =>
-                  selectedSubCategoryId && updateParam("subCategoryId", null)
-                }
-              >
-                {allCategories.find((c) => c._id === selectedCategoryId)?.name}
-              </span>
-            </>
-          )}
-          {selectedSubCategoryId && (
-            <>
-              <ChevronRight size={14} />
-              <span className="text-slate-700 font-medium">
-                {allSubCategories.find((sub) => sub._id === selectedSubCategoryId)?.name}
-              </span>
-            </>
-          )}
-        </div>
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-slate-800">
-            {selectedCategoryId
-              ? allCategories.find((cat) => cat._id === selectedCategoryId)?.name
-              : "Explore Collection"}
-          </h1>
-          <Button
-            onClick={() => setIsSidebarOpen(true)}
-            icon={SlidersHorizontal}
-            iconSize={18}
-            className="md:hidden bg-orange-500 text-white hover:bg-orange-600"
-          >
-            Filters
-          </Button>
-        </div>
-      </div>
+    <>
+      {/* Meta tags  */}
+      <Helmet>
+        <title>All Products - TechShop</title>
+        <meta
+          name="description"
+          content="Browse our complete collection of next-generation technology products."
+        />
+      </Helmet>
 
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Sidebar - toggle on mobile, always visible on md+ */}
-        <aside
-          className={`md:w-64 shrink-0 ${isSidebarOpen ? "block" : "hidden"} md:block`}
-        >
-          <div className="sticky top-24">
-            <AllProductsFilterSidebar
-              priceMin={priceMin}
-              priceMax={priceMax}
-              sliderRange={sliderRange}
-              setSliderRange={setSliderRange}
-              allCategories={allCategories}
-              selectedCategoryId={selectedCategoryId}
-              selectedSubCategoryId={selectedSubCategoryId}
-              expandedCategoryId={expandedCategoryId}
-              sortBy={sortBy}
-              hasActiveFilters={hasActiveFilters}
-              clearFilters={clearFilters}
-              getSubsByCategoryId={getSubsByCategoryId}
-              handleCategoryClick={handleCategoryClick}
-              updateParam={updateParam}
-              commitPriceRange={commitPriceRange}
-            />
+      <section className="max-w-7xl mx-auto">
+        {/* Page header with dynamic breadcrumb */}
+        <div className="mb-8 mt-4">
+          <div className="flex items-center gap-2 text-sm text-slate-500 mb-1">
+            <Link to="/" className="hover:text-orange-500 transition-colors">
+              Home
+            </Link>
+            <ChevronRight size={14} />
+            <span
+              className={
+                selectedCategoryId
+                  ? "hover:text-orange-500 transition-colors cursor-pointer"
+                  : "text-slate-700 font-medium"
+              }
+              onClick={() => selectedCategoryId && clearFilters()}
+            >
+              All Products
+            </span>
+            {selectedCategoryId && (
+              <>
+                <ChevronRight size={14} />
+                <span
+                  className={
+                    selectedSubCategoryId
+                      ? "hover:text-orange-500 transition-colors cursor-pointer"
+                      : "text-slate-700 font-medium"
+                  }
+                  onClick={() =>
+                    selectedSubCategoryId && updateParam("subCategoryId", null)
+                  }
+                >
+                  {
+                    allCategories.find((c) => c._id === selectedCategoryId)
+                      ?.name
+                  }
+                </span>
+              </>
+            )}
+            {selectedSubCategoryId && (
+              <>
+                <ChevronRight size={14} />
+                <span className="text-slate-700 font-medium">
+                  {
+                    allSubCategories.find(
+                      (sub) => sub._id === selectedSubCategoryId,
+                    )?.name
+                  }
+                </span>
+              </>
+            )}
           </div>
-        </aside>
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl md:text-4xl font-extrabold text-slate-800">
+              {selectedCategoryId
+                ? allCategories.find((cat) => cat._id === selectedCategoryId)
+                    ?.name
+                : "Explore Collection"}
+            </h1>
+            <Button
+              onClick={() => setIsSidebarOpen(true)}
+              icon={SlidersHorizontal}
+              iconSize={18}
+              className="md:hidden bg-orange-500 text-white hover:bg-orange-600"
+            >
+              Filters
+            </Button>
+          </div>
+        </div>
 
-        {/* Product grid area */}
-        <main className="flex-1">
-          {/* Active filter tags */}
-          {hasActiveFilters && (
-            <div className="flex flex-wrap gap-2 mb-5">
-              {selectedCategoryId && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full">
-                  {allCategories.find((cat) => cat._id === selectedCategoryId)?.name}
-                  <button
-                    onClick={() => {
-                      setExpandedCategoryId(null);
-                      setSearchParams((prev) => {
-                        const next = new URLSearchParams(prev);
-                        next.delete("categoryId"); // remove category filter
-                        next.delete("subCategoryId"); // also remove subcategory
-                        next.set("page", "1");
-                        return next;
-                      });
-                    }}
-                    className="cursor-pointer"
-                  >
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-              {selectedSubCategoryId && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
-                  {allSubCategories.find((sub) => sub._id === selectedSubCategoryId)?.name}
-                  <button
-                    onClick={() => updateParam("subCategoryId", null)}
-                    className="cursor-pointer"
-                  >
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-              {sortBy !== "default" && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full">
-                  {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}
-                  <button
-                    onClick={() => updateParam("sortBy", null)}
-                    className="cursor-pointer"
-                  >
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-              {(priceMinParam || priceMaxParam) && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
-                  ${priceMinParam} - ${priceMaxParam}
-                  <button
-                    onClick={() => {
-                      setSliderRange([priceMin ?? 0, priceMax ?? 5000]);
-                      setSearchParams((prev) => {
-                        const next = new URLSearchParams(prev);
-                        next.delete("priceMin"); // remove price filters from URL
-                        next.delete("priceMax");
-                        next.set("page", "1");
-                        return next;
-                      });
-                    }}
-                    className="cursor-pointer"
-                  >
-                    <X size={12} />
-                  </button>
-                </span>
-              )}
-            </div>
-          )}
-
-          <ProductGrid
-            products={allProducts}
-            isLoading={loadingList}
-            isFetching={isFetching}
-            isError={errorList}
-            totalCount={productsData?.totalCount}
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Sidebar - toggle on mobile, always visible on md+ */}
+          <aside
+            className={`md:w-64 shrink-0 ${isSidebarOpen ? "block" : "hidden"} md:block`}
           >
-            <PaginationControls
-              page={page}
-              totalPages={productsData?.totalPages || 1}
-              totalCount={productsData?.totalCount || 0}
-              onPrev={() =>
-                setSearchParams((prev) => {
-                  const next = new URLSearchParams(prev);
-                  next.set("page", String(page - 1)); // decrease page while keeping other params
-                  return next;
-                })
-              }
-              onNext={() =>
-                setSearchParams((prev) => {
-                  const next = new URLSearchParams(prev);
-                  next.set("page", String(page + 1)); // increase page while keeping other params
-                  return next;
-                })
-              }
-            />
-          </ProductGrid>
-        </main>
-      </div>
-    </section>
+            <div className="sticky top-24">
+              <AllProductsFilterSidebar
+                priceMin={priceMin}
+                priceMax={priceMax}
+                sliderRange={sliderRange}
+                setSliderRange={setSliderRange}
+                allCategories={allCategories}
+                selectedCategoryId={selectedCategoryId}
+                selectedSubCategoryId={selectedSubCategoryId}
+                expandedCategoryId={expandedCategoryId}
+                sortBy={sortBy}
+                hasActiveFilters={hasActiveFilters}
+                clearFilters={clearFilters}
+                getSubsByCategoryId={getSubsByCategoryId}
+                handleCategoryClick={handleCategoryClick}
+                updateParam={updateParam}
+                commitPriceRange={commitPriceRange}
+              />
+            </div>
+          </aside>
+
+          {/* Product grid area */}
+          <main className="flex-1">
+            {/* Active filter tags */}
+            {hasActiveFilters && (
+              <div className="flex flex-wrap gap-2 mb-5">
+                {selectedCategoryId && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-100 text-orange-700 text-xs font-semibold rounded-full">
+                    {
+                      allCategories.find(
+                        (cat) => cat._id === selectedCategoryId,
+                      )?.name
+                    }
+                    <button
+                      onClick={() => {
+                        setExpandedCategoryId(null);
+                        setSearchParams((prev) => {
+                          const next = new URLSearchParams(prev);
+                          next.delete("categoryId"); // remove category filter
+                          next.delete("subCategoryId"); // also remove subcategory
+                          next.set("page", "1");
+                          return next;
+                        });
+                      }}
+                      className="cursor-pointer"
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
+                )}
+                {selectedSubCategoryId && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                    {
+                      allSubCategories.find(
+                        (sub) => sub._id === selectedSubCategoryId,
+                      )?.name
+                    }
+                    <button
+                      onClick={() => updateParam("subCategoryId", null)}
+                      className="cursor-pointer"
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
+                )}
+                {sortBy !== "default" && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full">
+                    {SORT_OPTIONS.find((opt) => opt.value === sortBy)?.label}
+                    <button
+                      onClick={() => updateParam("sortBy", null)}
+                      className="cursor-pointer"
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
+                )}
+                {(priceMinParam || priceMaxParam) && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                    ${priceMinParam} - ${priceMaxParam}
+                    <button
+                      onClick={() => {
+                        setSliderRange([priceMin ?? 0, priceMax ?? 5000]);
+                        setSearchParams((prev) => {
+                          const next = new URLSearchParams(prev);
+                          next.delete("priceMin"); // remove price filters from URL
+                          next.delete("priceMax");
+                          next.set("page", "1");
+                          return next;
+                        });
+                      }}
+                      className="cursor-pointer"
+                    >
+                      <X size={12} />
+                    </button>
+                  </span>
+                )}
+              </div>
+            )}
+
+            <ProductGrid
+              products={allProducts}
+              isLoading={loadingList}
+              isFetching={isFetching}
+              isError={errorList}
+              totalCount={productsData?.totalCount}
+            >
+              <PaginationControls
+                page={page}
+                totalPages={productsData?.totalPages || 1}
+                totalCount={productsData?.totalCount || 0}
+                onPrev={() =>
+                  setSearchParams((prev) => {
+                    const next = new URLSearchParams(prev);
+                    next.set("page", String(page - 1)); // decrease page while keeping other params
+                    return next;
+                  })
+                }
+                onNext={() =>
+                  setSearchParams((prev) => {
+                    const next = new URLSearchParams(prev);
+                    next.set("page", String(page + 1)); // increase page while keeping other params
+                    return next;
+                  })
+                }
+              />
+            </ProductGrid>
+          </main>
+        </div>
+      </section>
+    </>
   );
 };
 
