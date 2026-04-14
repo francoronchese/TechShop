@@ -129,6 +129,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
     "price-desc": { price: -1 },
     "name-asc": { name: 1 },
     discount: { discount: -1 },
+    "stock-asc": { stock: 1 },
     default: { createdAt: -1 },
   };
   const sort = sortOptions[sortBy] || { createdAt: -1 };

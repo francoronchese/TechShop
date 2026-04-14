@@ -5,16 +5,17 @@ import {
   Image as ImageIcon,
   ShoppingBag,
 } from "lucide-react";
-import {Button} from '@components'
+import { Button } from "@components";
 
-const ProductList = ({ items, onEdit, onDelete }) => {
+const ProductList = ({ items, onEdit, onDelete, onView }) => {
   return (
     <div className="grid grid-cols-1 min-[485px]:grid-cols-2 md:grid-cols-3 gap-4">
       {/* Map through all existing products to display card view */}
       {items.map((item) => (
         <div
           key={item._id}
-          className="w-full bg-white border border-slate-300 hover:shadow-lg rounded-2xl overflow-hidden"
+          onClick={() => onView(item._id)}
+          className="w-full bg-white border border-slate-300 hover:shadow-lg rounded-2xl overflow-hidden cursor-pointer"
         >
           {/* Product image */}
           <div className="h-52 bg-slate-200 relative">
@@ -83,7 +84,10 @@ const ProductList = ({ items, onEdit, onDelete }) => {
             {/* Edit and Delete buttons */}
             <div className="flex flex-col min-[540px]:flex-row gap-2 mt-4">
               <Button
-                onClick={() => onEdit(item)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(item);
+                }}
                 className="flex-1 justify-center bg-blue-600 text-white text-sm"
                 icon={Pencil}
                 iconSize={14}
@@ -91,7 +95,10 @@ const ProductList = ({ items, onEdit, onDelete }) => {
                 Edit
               </Button>
               <Button
-                onClick={() => onDelete(item._id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(item._id);
+                }}
                 className="flex-1 justify-center bg-white text-red-600 border border-red-500 hover:bg-red-100 text-sm"
                 icon={Trash2}
                 iconSize={14}

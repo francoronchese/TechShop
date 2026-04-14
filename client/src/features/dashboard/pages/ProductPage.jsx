@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import imageToBase64 from "@utils/imageToBase64";
 import uploadToCloudinary from "@helpers/cloudinaryUpload";
@@ -20,6 +20,7 @@ import ProductList from "../components/product/ProductList";
 import { PageLoader, PaginationControls } from "@components";
 
 export const ProductPage = () => {
+  const navigate = useNavigate();
   // URL Search Params for pagination persistence
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page")) || 1;
@@ -31,13 +32,13 @@ export const ProductPage = () => {
   // Stores the ID of the product being edited
   const [editId, setEditId] = useState("");
 
-  // RTK Query: Fetches products with pagination and search parameters
+  // RTK Query: Fetches products with pagination, search and admin sort (stock ascending)
   const {
     data: productsData,
     isLoading: loadingList,
     isFetching,
     isError: errorList,
-  } = useGetProductsQuery({ page, search: searchProduct });
+  } = useGetProductsQuery({ page, search: searchProduct, sortBy: "stock-asc" });
 
   // RTK Query: Fetches parent categories and sub-categories for the selection form
   const { data: allCategories = [] } = useGetCategoriesQuery();
@@ -277,6 +278,7 @@ export const ProductPage = () => {
                 items={allProducts}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                onView={(id) => navigate(`/product/${id}`)}
               />
               <PaginationControls
                 page={page}
