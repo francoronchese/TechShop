@@ -1,1 +1,31 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+/* =============================================
+   TYPOGRAPHY
+   - Sora: h1, h2, h3, h4 (headings)
+   - DM Sans: body text, labels, spans, tables
+   - JetBrains Mono: order IDs and codes
+   ============================================= */
+
+/* Base body font */
+body {
+  font-family: "DM Sans", sans-serif;
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Sora", sans-serif;
+}
+
+h1,
+h2 {
+  letter-spacing: -0.025em;
+}
+
+/* Order IDs and monospaced elements */
+.font-mono {
+  font-family: "JetBrains Mono", monospace;
+}

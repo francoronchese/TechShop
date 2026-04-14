@@ -79,7 +79,7 @@ export const OrdersPage = () => {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-3">
                     {/* Left side - order info */}
                     <div className="flex flex-col gap-1.5">
-                      <p className="text-sm font-bold text-slate-800">
+                      <p className="text-sm font-bold font-mono text-slate-800">
                         #{order._id.slice(-8).toUpperCase()}
                       </p>
                       <p className="text-sm text-slate-500">
