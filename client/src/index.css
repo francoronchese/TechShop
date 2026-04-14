@@ -7,12 +7,10 @@
    - JetBrains Mono: order IDs and codes
    ============================================= */
 
-/* Base body font */
 body {
   font-family: "DM Sans", sans-serif;
 }
 
-/* Headings */
 h1,
 h2,
 h3,
@@ -21,11 +19,11 @@ h4 {
 }
 
 h1,
-h2 {
+h2,
+h3 {
   letter-spacing: -0.025em;
 }
 
-/* Order IDs and monospaced elements */
 .font-mono {
   font-family: "JetBrains Mono", monospace;
 }
