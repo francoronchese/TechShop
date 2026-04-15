@@ -10,7 +10,7 @@ import connectDB from "./config/connectDB.js";
 import userRouter from "./routes/userRoutes.js";
 import productRouter from "./routes/productRoutes.js";
 import categoryRouter from "./routes/categoryRoutes.js";
-import subCategoryRouter from "./routes/SubCategoryRoutes.js";
+import subCategoryRouter from "./routes/subCategoryRoutes.js";
 import cartRouter from "./routes/cartRoutes.js";
 import addressRouter from "./routes/addressRoutes.js";
 import orderRouter from "./routes/orderRoutes.js";
