@@ -50,6 +50,15 @@ app.use(morgan("combined"));
 
 const PORT = process.env.PORT || 3000;
 
+// Root route to verify server status
+app.get("/", (req, res) => {
+  res.json({
+    message: "Server is running smoothly!",
+    status: "OK",
+    environment: process.env.NODE_ENV,
+  });
+});
+
 // API routes
 app.use("/api/user", userRouter);
 app.use("/api/product", productRouter);
