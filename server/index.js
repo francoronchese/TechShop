@@ -18,12 +18,9 @@ import favoriteRouter from "./routes/favoriteRoutes.js";
 
 // Load environment variables based on current environment
 // This ensures correct .env file is loaded (development vs production)
-dotenv.config({
-  path:
-    process.env.NODE_ENV === "production"
-      ? ".env.production"
-      : ".env.development",
-});
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config({ path: ".env.development" });
+}
 
 const app = express();
 
@@ -66,10 +63,17 @@ app.use("/api/favorite", favoriteRouter);
 // Error handler
 app.use(errorMiddleware);
 
+// Server startup logic
+// Connect to database and start listener only in development
+// Vercel handles the execution in production via the exported app
 connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(
-      `Server running in ${process.env.NODE_ENV} mode at http://localhost:${PORT}`,
-    );
-  });
+  if (process.env.NODE_ENV !== "production") {
+    app.listen(PORT, () => {
+      console.log(
+        `Server running in ${process.env.NODE_ENV} mode at http://localhost:${PORT}`,
+      );
+    });
+  }
 });
+
+export default app;
