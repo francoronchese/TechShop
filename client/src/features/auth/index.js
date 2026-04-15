@@ -2,7 +2,7 @@
 export { LoginPage } from './pages/LoginPage.jsx';
 export { SignUpPage } from './pages/SignUpPage.jsx';
 export { ForgotPasswordPage } from './pages/ForgotPasswordPage.jsx';
-export { OTPVerificationPage } from './pages/OTPVerificationPage.jsx';
+export { OTPVerificationPage } from './pages/OtpVerificationPage.jsx';
 export { ResetPasswordPage } from './pages/ResetPasswordPage.jsx';
 export { VerifyEmailPage } from './pages/VerifyEmailPage.jsx';
 
