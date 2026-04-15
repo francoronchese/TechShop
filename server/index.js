@@ -63,17 +63,17 @@ app.use("/api/favorite", favoriteRouter);
 // Error handler
 app.use(errorMiddleware);
 
-// Server startup logic
-// Connect to database and start listener only in development
+// Execute database connection
+connectDB().catch((err) => console.error("MongoDB connection error:", err));
+
+// Only start the listener in local development
 // Vercel handles the execution in production via the exported app
-connectDB().then(() => {
-  if (process.env.NODE_ENV !== "production") {
-    app.listen(PORT, () => {
-      console.log(
-        `Server running in ${process.env.NODE_ENV} mode at http://localhost:${PORT}`,
-      );
-    });
-  }
-});
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(
+      `Server running in ${process.env.NODE_ENV} mode at http://localhost:${PORT}`,
+    );
+  });
+}
 
 export default app;
