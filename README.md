@@ -1,5 +1,7 @@
 # TechShop 🛒
 
+**Live Demo:** [https://tech-shop-hp5c.vercel.app/](https://tech-shop-hp5c.vercel.app/)
+
 A full-stack ecommerce platform for high-end technology products, built with a modern React frontend and a Node.js/Express backend.
 
 ---
@@ -87,7 +89,7 @@ This project was built to demonstrate a production-ready full-stack application 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/TechShop.git
+git clone https://github.com/francoronchese/TechShop.git
 cd TechShop
 ```
 
